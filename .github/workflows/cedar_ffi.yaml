@@ -2,7 +2,7 @@ name: cedar_ffi
 on:
   pull_request:
     paths:
-      - ".github/workflows/packages_cedar_ffi.yaml"
+      - ".github/workflows/cedar_ffi.yaml"
       - "packages/cedar_ffi/**"
       - "packages/cedar_ffi/third_party/cedar"
       - "packages/cedar_ffi/third_party/cedar/**"
