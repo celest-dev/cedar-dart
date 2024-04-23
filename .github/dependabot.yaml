@@ -22,3 +22,8 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+    groups:
+      serde:
+        patterns:
+          - "serde"
+          - "serde_*"
