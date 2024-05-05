@@ -151,19 +151,6 @@ pub extern "C" fn cedar_deinit(store: *mut CedarStore) {
     )
 }
 
-#[derive(Debug)]
-#[repr(C)]
-pub struct CCedarPolicy {
-    policy: *const c_char,
-}
-
-#[derive(Debug)]
-#[repr(C)]
-pub struct CCedarPolicySet {
-    policies_len: usize,
-    policies: *const *const c_char,
-}
-
 /// Performs a Cedar authorization check.
 ///
 /// This must be called after [cedar_init] has been called.
