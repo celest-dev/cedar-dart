@@ -6,8 +6,7 @@ import 'package:cedar_ffi/src/ffi/cedar_bindings.symbols.ffi.dart' as imp1;
 import 'dart:ffi' as ffi;
 
 /// Parses a policy set from a Cedar policy string into JSON.
-@ffi.Native<NativeCedar_parse_policy_set>(
-    symbol: 'cedar_parse_policy_set', isLeaf: true)
+@ffi.Native<NativeCedar_parse_policy_set>(isLeaf: true)
 external imp1.CCedarPolicySetResult cedar_parse_policy_set(
   ffi.Pointer<ffi.Char> policies,
 );
@@ -15,8 +14,7 @@ external imp1.CCedarPolicySetResult cedar_parse_policy_set(
 /// Links a policy template to a set of entities.
 ///
 /// Returns the linked policy template in JSON format.
-@ffi.Native<NativeCedar_link_policy_template>(
-    symbol: 'cedar_link_policy_template', isLeaf: true)
+@ffi.Native<NativeCedar_link_policy_template>(isLeaf: true)
 external ffi.Pointer<ffi.Char> cedar_link_policy_template(
   ffi.Pointer<ffi.Char> policy_template_json,
   ffi.Pointer<ffi.Char> entities_json,
@@ -25,7 +23,7 @@ external ffi.Pointer<ffi.Char> cedar_link_policy_template(
 /// Initializes the Cedar policy engine with the given configuration.
 ///
 /// This must be called exactly once before any other Cedar functions are called.
-@ffi.Native<NativeCedar_init>(symbol: 'cedar_init', isLeaf: true)
+@ffi.Native<NativeCedar_init>(isLeaf: true)
 external imp1.CInitResult cedar_init(
   ffi.Pointer<imp1.CCedarConfig> config,
 );
@@ -33,7 +31,7 @@ external imp1.CInitResult cedar_init(
 /// De-initializes the Cedar policy engine.
 ///
 /// This must be called exactly once when the Cedar policy engine is no longer needed.
-@ffi.Native<NativeCedar_deinit>(symbol: 'cedar_deinit', isLeaf: true)
+@ffi.Native<NativeCedar_deinit>(isLeaf: true)
 external void cedar_deinit(
   ffi.Pointer<imp1.CedarStore> store,
 );
@@ -41,8 +39,7 @@ external void cedar_deinit(
 /// Performs a Cedar authorization check.
 ///
 /// This must be called after [cedar_init] has been called.
-@ffi.Native<NativeCedar_is_authorized>(
-    symbol: 'cedar_is_authorized', isLeaf: true)
+@ffi.Native<NativeCedar_is_authorized>(isLeaf: true)
 external imp1.CAuthorizationDecision cedar_is_authorized(
   ffi.Pointer<imp1.CedarStore> store,
   ffi.Pointer<imp1.CCedarQuery> query,
