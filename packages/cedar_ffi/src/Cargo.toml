@@ -8,7 +8,7 @@ crate-type = ["cdylib"]
 
 [dependencies]
 anyhow = { version = "1.0.83" }
-cedar-policy = { path = "../third_party/cedar/cedar-policy" }
+cedar-policy = { version = "3.1.3" }
 log = "0.4.21"
 once_cell = "1.19.0"
 serde = "1.0.201"
