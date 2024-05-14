@@ -1,3 +1,7 @@
+## 0.1.4
+
+- chore: Remove Cargo workspace
+
 ## 0.1.3
 
 - chore: Remove git submodule dependency on cedar
