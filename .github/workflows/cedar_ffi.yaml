@@ -5,8 +5,6 @@ on:
       - ".github/workflows/cedar_ffi.yaml"
       - "packages/cedar/**"
       - "packages/cedar_ffi/**"
-      - "packages/cedar_ffi/third_party/cedar"
-      - "packages/cedar_ffi/third_party/cedar/**"
 
 # Prevent duplicate runs due to Graphite
 # https://graphite.dev/docs/troubleshooting#why-are-my-actions-running-twice
