@@ -30,7 +30,7 @@ jobs:
         with:
           submodules: true
       - name: Setup Dart
-        uses: dart-lang/setup-dart@f0ead981b4d9a35b37f30d36160575d60931ec30 # main
+        uses: dart-lang/setup-dart@0a8a0fc875eb934c15d08629302413c671d3f672 # main
       - name: Setup Rust
         uses: actions-rust-lang/setup-rust-toolchain@1fbea72663f6d4c03efaab13560c8a24cfd2a7cc # 1.9.0
       - name: Get Packages
