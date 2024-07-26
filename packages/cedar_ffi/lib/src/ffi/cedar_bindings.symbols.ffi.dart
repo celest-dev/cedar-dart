@@ -50,24 +50,31 @@ final class CInitResult extends ffi.Struct {
   ///
   /// Can be `null` to indicate no error.
   external ffi.Pointer<ffi.Char> error;
+
+  /// The length of `error`, if present.
+  @ffi.UintPtr()
+  external int error_len;
 }
 
 final class CCedarConfig extends ffi.Struct {
   /// The Cedar schema, in JSON format.
   ///
-  /// This is a required field.
+  /// Either this or `schema_idl` must be provided.
   external ffi.Pointer<ffi.Char> schema_json;
+
+  /// The Cedar schema, in IDL format.
+  ///
+  /// Either this or `schema_json` must be provided.
+  external ffi.Pointer<ffi.Char> schema_idl;
 
   /// The Cedar entities, in JSON format.
   ///
-  /// Can be `null` to indicate no entities. Entities can be added later with [cedar_add_entities]
-  /// or [cedar_set_entities].
+  /// Can be `null` to indicate no entities. Entities can be passed individually to [cedar_is_authorized].
   external ffi.Pointer<ffi.Char> entities_json;
 
   /// The Cedar policies, in JSON format.
   ///
-  /// Can be `null` to indicate no policies. Policies can be added later with [cedar_add_policies]
-  /// or [cedar_set_policies].
+  /// Can be `null` to indicate no policies. Policies can be passed individually to [cedar_is_authorized].
   external ffi.Pointer<ffi.Char> policies_json;
 
   /// Whether to validate the Cedar policies.
@@ -91,27 +98,35 @@ final class CAuthorizationDecision extends ffi.Struct {
   /// fields should be used.
   external ffi.Pointer<ffi.Char> completion_error;
 
-  /// The array of reasons.
+  /// The length of `completion_error`, if present.
+  @ffi.UintPtr()
+  external int completion_error_len;
+
+  /// The JSON array of reasons.
+  ///
+  /// Type: `[]string`
+  ///
+  /// Each entry is a policy ID which contributed to the decision.
   ///
   /// Will be `null` if there are no reasons.
-  external ffi.Pointer<ffi.Pointer<ffi.Char>> reasons;
+  external ffi.Pointer<ffi.Char> reasons_json;
 
-  /// The length of the array of reasons.
-  ///
-  /// Will be `0` if there are no reasons.
+  /// The length of `reasons_json`, if present.
   @ffi.UintPtr()
-  external int reasons_len;
+  external int reasons_json_len;
 
-  /// The array of errors.
+  /// The JSON array of errors.
+  ///
+  /// Type: `[]{ "policy_id": string, "message": string }`
+  ///
+  /// Each entry is an error that occurred during policy evaluation.
   ///
   /// Will be `null` if there are no errors.
-  external ffi.Pointer<ffi.Pointer<ffi.Char>> errors;
+  external ffi.Pointer<ffi.Char> errors_json;
 
-  /// The length of the array of errors.
-  ///
-  /// Will be `0` if there are no errors.
+  /// The length of `errors_json`, if present.
   @ffi.UintPtr()
-  external int errors_len;
+  external int errors_json_len;
 }
 
 final class CCedarQuery extends ffi.Struct {

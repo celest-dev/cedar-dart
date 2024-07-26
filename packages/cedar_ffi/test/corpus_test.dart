@@ -59,11 +59,8 @@ void main() {
             );
             expect(response.decision, query.decision);
             expect(
-              response.errorMessages,
-              orderedEquals([
-                for (final policyId in query.errors)
-                  startsWith('while evaluating policy `$policyId`')
-              ]),
+              response.errors.map((it) => it.policyId),
+              orderedEquals(query.errors),
             );
             expect(response.reasons, query.reasons);
           });

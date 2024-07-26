@@ -1,3 +1,9 @@
+## 0.2.0-wip
+
+- chore: Update dependencies
+- chore: Improve FFI bindings
+- chore: Update Cedar to latest version (`3.2`)
+
 ## 0.1.4
 
 - chore: Remove Cargo workspace
