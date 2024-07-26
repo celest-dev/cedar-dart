@@ -1,4 +1,4 @@
-use cedar_policy::{Entities, EntityUid, Policy, PolicyId, PolicySet, Schema};
+use cedar_policy::{AuthorizationError, Entities, EntityUid, Policy, PolicyId, PolicySet, Schema};
 use std::{
     ffi::c_char,
     ptr::{null, null_mut},
@@ -13,26 +13,29 @@ use crate::CedarStore;
 pub struct CCedarConfig {
     /// The Cedar schema, in JSON format.
     ///
-    /// This is a required field.
+    /// Either this or `schema_idl` must be provided.
     schema_json: *const c_char,
+
+    /// The Cedar schema, in IDL format.
+    ///
+    /// Either this or `schema_json` must be provided.
+    schema_idl: *const c_char,
 
     /// The Cedar entities, in JSON format.
     ///
-    /// Can be `null` to indicate no entities. Entities can be added later with [cedar_add_entities]
-    /// or [cedar_set_entities].
+    /// Can be `null` to indicate no entities. Entities can be passed individually to [cedar_is_authorized].
     entities_json: *const c_char,
 
     /// The Cedar policies, in JSON format.
     ///
-    /// Can be `null` to indicate no policies. Policies can be added later with [cedar_add_policies]
-    /// or [cedar_set_policies].
+    /// Can be `null` to indicate no policies. Policies can be passed individually to [cedar_is_authorized].
     policies_json: *const c_char,
 
     /// Whether to validate the Cedar policies.
     validate: bool,
 
     /// The log level to use for the Cedar policy engine.
-    /// 
+    ///
     /// Must be one of: `OFF`, `ERROR`, `WARN`, `INFO`, `DEBUG`, `TRACE`.
     log_level: *const c_char,
 }
@@ -80,6 +83,9 @@ pub struct CInitResult {
     ///
     /// Can be `null` to indicate no error.
     error: *const c_char,
+
+    /// The length of `error`, if present.
+    error_len: usize,
 }
 
 #[derive(Debug)]
@@ -94,25 +100,32 @@ pub struct CAuthorizationDecision {
     /// fields should be used.
     completion_error: *const c_char,
 
-    /// The array of reasons.
+    /// The length of `completion_error`, if present.
+    completion_error_len: usize,
+
+    /// The JSON array of reasons.
+    ///
+    /// Type: `[]string`
+    ///
+    /// Each entry is a policy ID which contributed to the decision.
     ///
     /// Will be `null` if there are no reasons.
-    reasons: *const *const c_char,
+    reasons_json: *const c_char,
 
-    /// The length of the array of reasons.
+    /// The length of `reasons_json`, if present.
+    reasons_json_len: usize,
+
+    /// The JSON array of errors.
     ///
-    /// Will be `0` if there are no reasons.
-    reasons_len: usize,
-
-    /// The array of errors.
+    /// Type: `[]{ "policy_id": string, "message": string }`
+    ///
+    /// Each entry is an error that occurred during policy evaluation.
     ///
     /// Will be `null` if there are no errors.
-    errors: *const *const c_char,
+    errors_json: *const c_char,
 
-    /// The length of the array of errors.
-    ///
-    /// Will be `0` if there are no errors.
-    errors_len: usize,
+    /// The length of `errors_json`, if present.
+    errors_json_len: usize,
 }
 
 /// Initializes the Cedar policy engine with the given configuration.
@@ -124,12 +137,16 @@ pub extern "C" fn cedar_init(config: *const CCedarConfig) -> CInitResult {
         Ok(store) => CInitResult {
             store,
             error: null(),
+            error_len: 0,
         },
         Err(error) => {
-            let error = helpers::string_to_c(error.to_string()).unwrap();
+            let error = error.to_string();
+            let error_len = error.len();
+            let cerror = helpers::string_to_c(error).unwrap();
             CInitResult {
                 store: null_mut(),
-                error,
+                error: cerror,
+                error_len,
             }
         }
     }
@@ -162,14 +179,17 @@ pub extern "C" fn cedar_is_authorized(
     match _cedar_is_authorized(store, query) {
         Ok(decision) => decision,
         Err(error) => {
-            let error_str = helpers::string_to_c(error.to_string()).unwrap();
+            let error = error.to_string();
+            let error_len = error.len();
+            let error_str = helpers::string_to_c(error).unwrap();
             CAuthorizationDecision {
                 is_authorized: false,
                 completion_error: error_str,
-                reasons: null(),
-                reasons_len: 0,
-                errors: null(),
-                errors_len: 0,
+                completion_error_len: error_len,
+                reasons_json: null(),
+                reasons_json_len: 0,
+                errors_json: null(),
+                errors_json_len: 0,
             }
         }
     }
@@ -249,22 +269,29 @@ fn _cedar_is_authorized(
     let errors = response
         .diagnostics()
         .errors()
-        .map(|e| helpers::string_to_c(e.to_string()))
-        .collect::<anyhow::Result<Vec<_>>>()?
+        .map(|e| {
+            serde_json::json!({
+                "policy_id": e.id().to_string(),
+                "message": match e {
+                    AuthorizationError::PolicyEvaluationError { error, .. } => error.to_string(),
+                },
+            })
+        })
+        .collect::<Vec<_>>()
         .to_owned();
-    let errors_len = errors.len();
-    let errors_ptr = errors.as_ptr();
-    std::mem::forget(errors);
+    let errors_json = serde_json::to_string(&errors)?;
+    let errors_json_len = errors_json.len();
+    let errors_json = helpers::string_to_c(errors_json)?;
 
     let reasons = response
         .diagnostics()
         .reason()
-        .map(|r| helpers::string_to_c(r.to_string()))
-        .collect::<anyhow::Result<Vec<_>>>()?
+        .map(|r| r.to_string())
+        .collect::<Vec<_>>()
         .to_owned();
-    let reasons_len = reasons.len();
-    let reasons_ptr = reasons.as_ptr();
-    std::mem::forget(reasons);
+    let reasons_json = serde_json::to_string(&reasons)?;
+    let reasons_json_len = reasons_json.len();
+    let reasons_json = helpers::string_to_c(reasons_json)?;
 
     let c_response = CAuthorizationDecision {
         is_authorized: match response.decision() {
@@ -272,10 +299,11 @@ fn _cedar_is_authorized(
             cedar_policy::Decision::Deny => false,
         },
         completion_error: null(),
-        reasons: reasons_ptr,
-        reasons_len,
-        errors: errors_ptr,
-        errors_len,
+        completion_error_len: 0,
+        errors_json,
+        errors_json_len,
+        reasons_json,
+        reasons_json_len,
     };
     Ok(c_response)
 }
@@ -284,14 +312,22 @@ fn _cedar_is_authorized(
 fn init_from_c_config(config: *const CCedarConfig) -> anyhow::Result<*mut CedarStore> {
     anyhow::ensure!(!config.is_null(), "config is null");
     let config = unsafe { &*config };
-    
+
     let log_level = helpers::string_from_c("log_level", config.log_level)?;
     if !log_level.eq_ignore_ascii_case("OFF") {
         helpers::init_logging(log::Level::from_str(log_level)?);
     }
 
-    let schema_json = helpers::string_from_c("schema_json", config.schema_json)?;
-    let schema = Schema::from_str(schema_json)?;
+    let schema_json = helpers::nullable_string_from_c(config.schema_json)?;
+    let schema_idl = helpers::nullable_string_from_c(config.schema_idl)?;
+    anyhow::ensure!(
+        schema_json.is_some() || schema_idl.is_some(),
+        "either schema_json or schema_idl is required"
+    );
+    let schema = match schema_json {
+        Some(schema_json) => Schema::from_json_value(serde_json::from_str(schema_json)?)?,
+        None => Schema::from_str(schema_idl.unwrap())?,
+    };
 
     let entities_json = helpers::nullable_string_from_c(config.entities_json)?;
     let entities = match entities_json {

@@ -62,27 +62,35 @@ typedef struct CInitResult {
    * Can be `null` to indicate no error.
    */
   const char *error;
+  /**
+   * The length of `error`, if present.
+   */
+  uintptr_t error_len;
 } CInitResult;
 
 typedef struct CCedarConfig {
   /**
    * The Cedar schema, in JSON format.
    *
-   * This is a required field.
+   * Either this or `schema_idl` must be provided.
    */
   const char *schema_json;
   /**
+   * The Cedar schema, in IDL format.
+   *
+   * Either this or `schema_json` must be provided.
+   */
+  const char *schema_idl;
+  /**
    * The Cedar entities, in JSON format.
    *
-   * Can be `null` to indicate no entities. Entities can be added later with [cedar_add_entities]
-   * or [cedar_set_entities].
+   * Can be `null` to indicate no entities. Entities can be passed individually to [cedar_is_authorized].
    */
   const char *entities_json;
   /**
    * The Cedar policies, in JSON format.
    *
-   * Can be `null` to indicate no policies. Policies can be added later with [cedar_add_policies]
-   * or [cedar_set_policies].
+   * Can be `null` to indicate no policies. Policies can be passed individually to [cedar_is_authorized].
    */
   const char *policies_json;
   /**
@@ -110,29 +118,37 @@ typedef struct CAuthorizationDecision {
    */
   const char *completion_error;
   /**
-   * The array of reasons.
+   * The length of `completion_error`, if present.
+   */
+  uintptr_t completion_error_len;
+  /**
+   * The JSON array of reasons.
+   *
+   * Type: `[]string`
+   *
+   * Each entry is a policy ID which contributed to the decision.
    *
    * Will be `null` if there are no reasons.
    */
-  const char *const *reasons;
+  const char *reasons_json;
   /**
-   * The length of the array of reasons.
-   *
-   * Will be `0` if there are no reasons.
+   * The length of `reasons_json`, if present.
    */
-  uintptr_t reasons_len;
+  uintptr_t reasons_json_len;
   /**
-   * The array of errors.
+   * The JSON array of errors.
+   *
+   * Type: `[]{ "policy_id": string, "message": string }`
+   *
+   * Each entry is an error that occurred during policy evaluation.
    *
    * Will be `null` if there are no errors.
    */
-  const char *const *errors;
+  const char *errors_json;
   /**
-   * The length of the array of errors.
-   *
-   * Will be `0` if there are no errors.
+   * The length of `errors_json`, if present.
    */
-  uintptr_t errors_len;
+  uintptr_t errors_json_len;
 } CAuthorizationDecision;
 
 typedef struct CCedarQuery {

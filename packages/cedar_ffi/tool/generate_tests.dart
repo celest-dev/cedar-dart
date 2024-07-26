@@ -4,11 +4,31 @@ import 'dart:io';
 import 'package:cedar_ffi/testing/cedar_test_corpus.dart';
 import 'package:path/path.dart' as p;
 
+const cedarVersion = '3.2';
+
 Future<void> main() async {
+  final tempDir = await Directory.systemTemp.createTemp('cedar_');
+  final res = await Process.run(
+    'git',
+    [
+      'clone',
+      'https://github.com/cedar-policy/cedar',
+      '--single-branch',
+      '--branch=release/$cedarVersion.x',
+      '.',
+    ],
+    workingDirectory: tempDir.path,
+  );
+  if (res.exitCode != 0) {
+    throw ProcessException(
+      'git',
+      ['clone'],
+      'Failed to checkout Cedar: ${res.stdout}\n${res.stderr}',
+      res.exitCode,
+    );
+  }
   final testRoot = p.join(
-    Directory.current.path,
-    'third_party',
-    'cedar',
+    tempDir.path,
     'cedar-integration-tests',
   );
   final outputFile = File.fromUri(

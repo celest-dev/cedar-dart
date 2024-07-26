@@ -43,7 +43,7 @@ pub fn nullable_string_from_c<'a>(c_str: *const c_char) -> anyhow::Result<Option
 /// Converts a Rust string to a C string.
 pub fn string_to_c<S>(s: S) -> anyhow::Result<*const c_char>
 where
-    S: Into<Vec<u8>>,
+    S: AsRef<str>,
 {
-    Ok(CString::new(s)?.into_raw() as *const _)
+    Ok(CString::new(s.as_ref())?.into_raw() as *const _)
 }

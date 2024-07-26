@@ -46,7 +46,7 @@ final class CedarEngine implements CedarAuthorizer, Finalizable {
       if (initResult.error != nullptr) {
         throw StateError(
           'Error initializing Cedar: '
-          '${initResult.error.cast<Utf8>().toDartString()}',
+          '${initResult.error.cast<Utf8>().toDartString(length: initResult.error_len)}',
         );
       }
       assert(
@@ -122,36 +122,46 @@ final class CedarEngine implements CedarAuthorizer, Finalizable {
         };
       final cDecision = bindings.cedar_is_authorized(_ref, query);
       return switch (cDecision) {
-        CAuthorizationDecision(:final completion_error)
+        CAuthorizationDecision(
+          :final completion_error,
+          :final completion_error_len
+        )
             when completion_error != nullptr =>
           throw Exception(
             'Error performing authorization: '
-            '${completion_error.cast<Utf8>().toDartString()}',
+            '${completion_error.cast<Utf8>().toDartString(length: completion_error_len)}',
           ),
         CAuthorizationDecision(
           :final is_authorized,
-          :final reasons,
-          :final reasons_len,
-          :final errors,
-          :final errors_len,
+          :final reasons_json,
+          :final reasons_json_len,
+          :final errors_json,
+          :final errors_json_len,
         ) =>
           CedarAuthorizationResponse(
             decision: switch (is_authorized) {
               true => CedarAuthorizationDecision.allow,
               false => CedarAuthorizationDecision.deny,
             },
-            reasons: reasons == nullptr || reasons_len == 0
+            reasons: reasons_json == nullptr
                 ? const []
-                : [
-                    for (var i = 0; i < reasons_len; i++)
-                      reasons[i].cast<Utf8>().toDartString(),
-                  ],
-            errors: errors == nullptr || errors_len == 0
+                : (jsonDecode(
+                    reasons_json
+                        .cast<Utf8>()
+                        .toDartString(length: reasons_json_len),
+                  ) as List)
+                    .cast<String>(),
+            errors: errors_json == nullptr
                 ? const []
-                : [
-                    for (var i = 0; i < errors_len; i++)
-                      errors[i].cast<Utf8>().toDartString(),
-                  ],
+                : () {
+                    final json = jsonDecode(
+                      errors_json
+                          .cast<Utf8>()
+                          .toDartString(length: errors_json_len),
+                    ) as List;
+                    return json.cast<Map>().map(
+                        (it) => CedarAuthorizationError.fromJson(it.cast()));
+                  }(),
           ),
       };
     });
