@@ -9,29 +9,14 @@ final class CedarStore extends ffi.Opaque {}
 /// The result of parsing policies from a Cedar policy string into JSON
 /// via [cedar_parse_policies].
 final class CCedarPolicySetResult extends ffi.Struct {
-  /// The number of policies in the policy set.
+  /// The length of the `policy_set_json` string.
   @ffi.UintPtr()
-  external int policies_len;
+  external int policy_set_json_len;
 
-  /// The policies in the policy set, in JSON format.
+  /// The policy set in JSON format.
   ///
-  /// This is only valid if `policies_len` is greater than 0 and `errors_len` is 0.
-  external ffi.Pointer<ffi.Pointer<ffi.Char>> policies;
-
-  /// The IDs for the `policies` in the policy set.
-  external ffi.Pointer<ffi.Pointer<ffi.Char>> policy_ids;
-
-  /// The number of templates in the policy set.
-  @ffi.UintPtr()
-  external int templates_len;
-
-  /// The templates in the policy set, in JSON format.
-  ///
-  /// This is only valid if `templates_len` is greater than 0 and `errors_len` is 0.
-  external ffi.Pointer<ffi.Pointer<ffi.Char>> templates;
-
-  /// The IDs for the `templates` in the policy set.
-  external ffi.Pointer<ffi.Pointer<ffi.Char>> template_ids;
+  /// This is only valid if `errors` is null.
+  external ffi.Pointer<ffi.Char> policy_set_json;
 
   /// The number of errors encountered while parsing the policy set.
   @ffi.UintPtr()

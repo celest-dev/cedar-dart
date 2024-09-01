@@ -1,0 +1,5 @@
+{
+    "dart.vmAdditionalArgs": [
+        "--enable-experiment=native-assets",
+    ],
+}

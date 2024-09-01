@@ -9,27 +9,13 @@ use super::helpers;
 #[derive(Debug)]
 #[repr(C)]
 pub struct CCedarPolicySetResult {
-    /// The number of policies in the policy set.
-    policies_len: usize,
+    /// The length of the `policy_set_json` string.
+    policy_set_json_len: usize,
 
-    /// The policies in the policy set, in JSON format.
+    /// The policy set in JSON format.
     ///
-    /// This is only valid if `policies_len` is greater than 0 and `errors_len` is 0.
-    policies: *const *const c_char,
-
-    /// The IDs for the `policies` in the policy set.
-    policy_ids: *const *const c_char,
-
-    /// The number of templates in the policy set.
-    templates_len: usize,
-
-    /// The templates in the policy set, in JSON format.
-    ///
-    /// This is only valid if `templates_len` is greater than 0 and `errors_len` is 0.
-    templates: *const *const c_char,
-
-    /// The IDs for the `templates` in the policy set.
-    template_ids: *const *const c_char,
+    /// This is only valid if `errors` is null.
+    policy_set_json: *const c_char,
 
     /// The number of errors encountered while parsing the policy set.
     errors_len: usize,
@@ -50,51 +36,9 @@ pub extern "C" fn cedar_parse_policy_set(policies: *const c_char) -> CCedarPolic
                 Err(e) => (cedar_policy::PolicySet::new(), e.0),
             };
 
-            let policy_ids = policy_set
-                .policies()
-                .map(|p| Ok(helpers::string_to_c(p.id().to_string())?))
-                .collect::<anyhow::Result<Vec<_>>>()?
-                .to_owned();
-            let policy_ids_len = policy_ids.len();
-            let policy_ids_ptr = policy_ids.as_ptr();
-            std::mem::forget(policy_ids);
-
-            let policies = policy_set
-                .policies()
-                .map(|p| Ok(helpers::string_to_c(serde_json::to_string(&p.to_json()?)?)?))
-                .collect::<anyhow::Result<Vec<_>>>()?
-                .to_owned();
-            let policies_len = policies.len();
-            let policies_ptr = policies.as_ptr();
-            std::mem::forget(policies);
-
-            assert!(
-                policy_ids_len == policies_len,
-                "policy_ids_len != policies_len"
-            );
-
-            let template_ids = policy_set
-                .templates()
-                .map(|t| Ok(helpers::string_to_c(t.id().to_string())?))
-                .collect::<anyhow::Result<Vec<_>>>()?
-                .to_owned();
-            let template_ids_len = template_ids.len();
-            let template_ids_ptr = template_ids.as_ptr();
-            std::mem::forget(template_ids);
-
-            let templates = policy_set
-                .templates()
-                .map(|t| Ok(helpers::string_to_c(serde_json::to_string(&t.to_json()?)?)?))
-                .collect::<anyhow::Result<Vec<_>>>()?
-                .to_owned();
-            let templates_len = templates.len();
-            let templates_ptr = templates.as_ptr();
-            std::mem::forget(templates);
-
-            assert!(
-                template_ids_len == templates_len,
-                "template_ids_len != templates_len"
-            );
+            let policy_set_json = serde_json::to_string(&policy_set.to_json()?)?;
+            let policy_set_json_len = policy_set_json.len();
+            let policy_set_json = helpers::string_to_c(policy_set_json)?;
 
             let errors = errors
                 .iter()
@@ -106,12 +50,8 @@ pub extern "C" fn cedar_parse_policy_set(policies: *const c_char) -> CCedarPolic
             std::mem::forget(errors);
 
             Ok(CCedarPolicySetResult {
-                policies_len,
-                policies: policies_ptr,
-                policy_ids: policy_ids_ptr,
-                templates_len,
-                templates: templates_ptr,
-                template_ids: template_ids_ptr,
+                policy_set_json_len,
+                policy_set_json,
                 errors_len,
                 errors: errors_ptr,
             })
@@ -120,12 +60,8 @@ pub extern "C" fn cedar_parse_policy_set(policies: *const c_char) -> CCedarPolic
         |e| {
             let error_str = helpers::string_to_c(e.to_string()).unwrap();
             CCedarPolicySetResult {
-                policies_len: 0,
-                policies: null(),
-                policy_ids: null(),
-                templates_len: 0,
-                templates: null(),
-                template_ids: null(),
+                policy_set_json_len: 0,
+                policy_set_json: null(),
                 errors_len: 1,
                 errors: &error_str,
             }

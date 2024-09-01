@@ -1,0 +1,22 @@
+name: cedar_tests
+description: Shared testing code for Cedar Dart packages.
+publish_to: none
+
+environment:
+  sdk: ^3.3.0
+
+dependencies:
+  cedar:
+    path: ../cedar
+  json_annotation: ^4.9.0
+  test: ^1.24.0
+
+dependency_overrides:
+  cedar:
+    path: ../cedar
+
+dev_dependencies:
+  lints: ^4.0.0
+  build_runner: ^2.4.12
+  json_serializable: ^6.8.0
+  path: ^1.9.0

@@ -1,4 +1,4 @@
-use cedar_policy::{AuthorizationError, Entities, EntityUid, Policy, PolicyId, PolicySet, Schema};
+use cedar_policy::{AuthorizationError, Entities, EntityUid, PolicySet, Schema};
 use std::{
     ffi::c_char,
     ptr::{null, null_mut},
@@ -243,19 +243,7 @@ fn _cedar_is_authorized(
         None => None,
     };
     let policies = match policies_json {
-        Some(policies_json_str) => {
-            let policies_json: serde_json::Value = serde_json::from_str(policies_json_str)?;
-            let policies_map = policies_json
-                .as_object()
-                .ok_or(anyhow::anyhow!("policies must be an object"))?;
-            let mut policy_set = PolicySet::new();
-            for (k, v) in policies_map.to_owned() {
-                let policy_id = k.as_str();
-                let policy = Policy::from_json(Some(PolicyId::from_str(policy_id)?), v)?;
-                policy_set.add(policy)?;
-            }
-            Some(policy_set)
-        }
+        Some(policies_json_str) => Some(PolicySet::from_json_str(policies_json_str)?),
         None => None,
     };
     let response = store.is_authorized(
@@ -337,19 +325,7 @@ fn init_from_c_config(config: *const CCedarConfig) -> anyhow::Result<*mut CedarS
 
     let policies_json = helpers::nullable_string_from_c(config.policies_json)?;
     let policies = match policies_json {
-        Some(policies_json_str) => {
-            let policies_json: serde_json::Value = serde_json::from_str(policies_json_str)?;
-            let policies_map = policies_json
-                .as_object()
-                .ok_or(anyhow::anyhow!("policies must be an object"))?;
-            let mut policy_set = PolicySet::new();
-            for (k, v) in policies_map.to_owned() {
-                let policy_id = k.as_str();
-                let policy = Policy::from_json(Some(PolicyId::from_str(policy_id)?), v)?;
-                policy_set.add(policy)?;
-            }
-            policy_set
-        }
+        Some(policies_json_str) => PolicySet::from_json_str(policies_json_str)?,
         None => PolicySet::new(),
     };
 

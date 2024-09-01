@@ -22,6 +22,8 @@ dependencies:
 dev_dependencies:
   build_runner: ^2.4.10
   built_value_generator: ^8.9.2
+  cedar_tests:
+    path: ../cedar_tests
   ffigen: ^13.0.0
   json_serializable: ^6.8.0
   lints: ^4.0.0

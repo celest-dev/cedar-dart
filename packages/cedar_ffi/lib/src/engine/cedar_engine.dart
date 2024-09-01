@@ -19,7 +19,7 @@ final class CedarEngine implements CedarAuthorizer, Finalizable {
   factory CedarEngine({
     required CedarSchema schema,
     List<CedarEntity>? entities,
-    CedarPolicySet? policies,
+    CedarPolicySet? policySet,
     CedarLogLevel logLevel = CedarLogLevel.off,
     @visibleForTesting bool validate = true,
   }) {
@@ -28,7 +28,7 @@ final class CedarEngine implements CedarAuthorizer, Finalizable {
       config.ref
         ..schema_json =
             jsonEncode(schema.toJson()).toNativeUtf8(allocator: arena).cast()
-        ..policies_json = switch (policies) {
+        ..policies_json = switch (policySet) {
           final policies? =>
             jsonEncode(policies.toJson()).toNativeUtf8(allocator: arena).cast(),
           null => nullptr,

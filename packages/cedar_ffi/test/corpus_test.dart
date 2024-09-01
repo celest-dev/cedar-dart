@@ -1,6 +1,6 @@
 import 'package:cedar/cedar.dart';
 import 'package:cedar_ffi/cedar_ffi.dart';
-import 'package:cedar_ffi/testing/cedar_test_corpus.dart';
+import 'package:cedar_tests/corpus_tests.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -26,7 +26,7 @@ void main() {
                   ),
                 )
                 .toList(),
-            policies: CedarPolicySetFfi.fromCedar(policiesCedar),
+            policySet: CedarPolicySetFfi.fromCedar(policiesCedar),
             validate: shouldValidate,
             logLevel: CedarLogLevel.trace,
           );
@@ -54,7 +54,7 @@ void main() {
                 action: query.action,
                 resource: query.resource,
                 context: query.context
-                    .map((k, v) => MapEntry(k, CedarValueJson.fromJson(v))),
+                    .map((k, v) => MapEntry(k, CedarValue.fromJson(v))),
               ),
             );
             expect(response.decision, query.decision);
@@ -68,9 +68,11 @@ void main() {
 
         test('can parse policies', () {
           final rawPolicies = parsePolicies(policiesCedar);
+          final rawStaticPolicies =
+              rawPolicies['staticPolicies'] as Map? ?? const {};
           final policies = CedarPolicySet.fromJson(rawPolicies).policies;
           for (final MapEntry(key: id, value: policy) in policies.entries) {
-            expect(policy.toJson(), equals(rawPolicies[id]));
+            expect(policy.toJson(), equals(rawStaticPolicies[id]));
           }
         });
       });

@@ -11,33 +11,15 @@ typedef struct CedarStore CedarStore;
  */
 typedef struct CCedarPolicySetResult {
   /**
-   * The number of policies in the policy set.
+   * The length of the `policy_set_json` string.
    */
-  uintptr_t policies_len;
+  uintptr_t policy_set_json_len;
   /**
-   * The policies in the policy set, in JSON format.
+   * The policy set in JSON format.
    *
-   * This is only valid if `policies_len` is greater than 0 and `errors_len` is 0.
+   * This is only valid if `errors` is null.
    */
-  const char *const *policies;
-  /**
-   * The IDs for the `policies` in the policy set.
-   */
-  const char *const *policy_ids;
-  /**
-   * The number of templates in the policy set.
-   */
-  uintptr_t templates_len;
-  /**
-   * The templates in the policy set, in JSON format.
-   *
-   * This is only valid if `templates_len` is greater than 0 and `errors_len` is 0.
-   */
-  const char *const *templates;
-  /**
-   * The IDs for the `templates` in the policy set.
-   */
-  const char *const *template_ids;
+  const char *policy_set_json;
   /**
    * The number of errors encountered while parsing the policy set.
    */

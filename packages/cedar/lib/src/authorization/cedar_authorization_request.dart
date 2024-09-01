@@ -6,11 +6,15 @@ import 'package:cedar/cedar.dart';
 final class CedarAuthorizationRequest {
   /// {@macro cedar.cedar_authorization_request}
   const CedarAuthorizationRequest({
+    this.entities = const {},
     this.principal,
     this.action,
     this.resource,
     this.context,
   });
+
+  /// The entities in the request.
+  final Map<CedarEntityId, CedarEntity> entities;
 
   /// The principal component of the request.
   final CedarEntityId? principal;
@@ -22,5 +26,5 @@ final class CedarAuthorizationRequest {
   final CedarEntityId? resource;
 
   /// The context of the request.
-  final Map<String, CedarValueJson>? context;
+  final Map<String, CedarValue>? context;
 }
