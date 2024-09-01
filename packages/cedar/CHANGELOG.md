@@ -1,3 +1,7 @@
+## 0.2.0
+
+- feat: Add Dart evaluation
+
 ## 0.1.3
 
 - Update repository URL

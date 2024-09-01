@@ -1,8 +1,8 @@
-## 0.2.0-wip
+## 0.2.0
 
 - chore: Update dependencies
 - chore: Improve FFI bindings
-- chore: Update Cedar to latest version (`3.2`)
+- chore: Update Cedar to latest version (`3.3`)
 
 ## 0.1.4
 

@@ -15,7 +15,7 @@ Future<void> main() async {
     schema: CedarSchema.fromJson(
       jsonDecode(schemaJson) as Map<String, Object?>,
     ),
-    policies: CedarPolicySetFfi.fromCedar(policiesCedar),
+    policySet: CedarPolicySetFfi.fromCedar(policiesCedar),
   );
 
   final app = CedarEntity(
@@ -25,7 +25,7 @@ Future<void> main() async {
     id: CedarEntityId('User', 'alice'),
     parents: [app.id],
     attributes: {
-      'name': CedarValueJson.string('Alice'),
+      'name': CedarValue.string('Alice'),
     },
   );
   final canCreateTodo = cedar.isAuthorized(

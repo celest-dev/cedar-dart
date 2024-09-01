@@ -15,7 +15,7 @@ extension type CedarPolicySetFfi._(CedarPolicySet _policySet)
 
 /// Parses a set of Cedar policies from the given [policiesIdl] using the
 /// Cedar Rust engine via FFI.
-Map<String, Map<String, Object?>> parsePolicies(String policiesIdl) {
+Map<String, Object?> parsePolicies(String policiesIdl) {
   return using((arena) {
     final cPolicies = bindings.cedar_parse_policy_set(
       policiesIdl.toNativeUtf8(allocator: arena).cast(),
@@ -33,23 +33,14 @@ Map<String, Map<String, Object?>> parsePolicies(String policiesIdl) {
           policiesIdl,
         );
       case CCedarPolicySetResult(
-          :final policies,
-          :final policy_ids,
-          :final policies_len,
-          :final templates,
-          :final template_ids,
-          :final templates_len,
+          :final policy_set_json,
+          :final policy_set_json_len,
         ):
-        return {
-          for (var i = 0; i < policies_len; i++)
-            policy_ids[i].cast<Utf8>().toDartString():
-                jsonDecode(policies[i].cast<Utf8>().toDartString())
-                    as Map<String, Object?>,
-          for (var i = 0; i < templates_len; i++)
-            template_ids[i].cast<Utf8>().toDartString():
-                jsonDecode(templates[i].cast<Utf8>().toDartString())
-                    as Map<String, Object?>,
-        };
+        return jsonDecode(
+          policy_set_json
+              .cast<Utf8>()
+              .toDartString(length: policy_set_json_len),
+        ) as Map<String, Object?>;
     }
   });
 }
