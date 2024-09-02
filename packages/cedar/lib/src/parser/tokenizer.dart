@@ -1,5 +1,6 @@
 import 'package:cedar/src/util/character.dart';
 import 'package:cedar/src/util/string_util.dart';
+import 'package:fixnum/fixnum.dart';
 import 'package:meta/meta.dart';
 import 'package:source_span/source_span.dart';
 import 'package:string_scanner/string_scanner.dart';
@@ -36,8 +37,17 @@ final class Token {
     return value.unquoted(star: false);
   }
 
-  int get intValue {
-    return int.parse(text);
+  Int64 get intValue {
+    final value = Int64.parseInt(text);
+    // Check for overflow. Since `text` is always a positive integer, we only
+    // need to check for negative values.
+    if (value < 0) {
+      throw FormatException(
+        'Positive input exceeds the limit of integer',
+        text,
+      );
+    }
+    return value;
   }
 
   @override

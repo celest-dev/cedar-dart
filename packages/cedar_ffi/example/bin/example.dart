@@ -18,28 +18,28 @@ Future<void> main() async {
     policySet: CedarPolicySetFfi.fromCedar(policiesCedar),
   );
 
-  final app = CedarEntity(
-    id: CedarEntityId('Application', 'TinyTodo'),
+  final app = Entity(
+    uid: EntityUid.of('Application', 'TinyTodo'),
   );
-  final user = CedarEntity(
-    id: CedarEntityId('User', 'alice'),
-    parents: [app.id],
+  final user = Entity(
+    uid: EntityUid.of('User', 'alice'),
+    parents: [app.uid],
     attributes: {
-      'name': CedarValue.string('Alice'),
+      'name': Value.string('Alice'),
     },
   );
   final canCreateTodo = cedar.isAuthorized(
-    CedarAuthorizationRequest(
-      principal: user.id,
-      action: CedarEntityId('Action', 'CreateList'),
-      resource: app.id,
+    AuthorizationRequest(
+      principal: user.uid,
+      action: EntityUid.of('Action', 'CreateList'),
+      resource: app.uid,
     ),
     entities: [app, user],
   );
   switch (canCreateTodo) {
-    case CedarAuthorizationResponse(decision: CedarAuthorizationDecision.allow):
+    case AuthorizationResponse(decision: Decision.allow):
       print('Alice can create the todo list!');
-    case CedarAuthorizationResponse(
+    case AuthorizationResponse(
         :final errorMessages,
         :final reasons,
       ):

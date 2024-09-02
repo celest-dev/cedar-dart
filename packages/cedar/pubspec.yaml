@@ -12,6 +12,7 @@ dependencies:
   characters: ^1.3.0
   collection: ^1.18.0
   decimal: ^3.0.2
+  fixnum: ^1.1.0
   json_annotation: ^4.8.1
   meta: ^1.11.0
   source_span: ^1.10.0

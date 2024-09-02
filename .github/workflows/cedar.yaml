@@ -31,3 +31,7 @@ jobs:
         run: dart pub get
       - name: Test
         run: dart test --fail-fast
+      - name: Test (dart2js)
+        run: dart test -p chrome --fail-fast
+      - name: Test (dart2wasm)
+        run: dart test -p chrome -c dart2wasm --fail-fast

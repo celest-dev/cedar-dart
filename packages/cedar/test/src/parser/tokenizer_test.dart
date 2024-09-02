@@ -1,4 +1,5 @@
 import 'package:cedar/src/parser/tokenizer.dart';
+import 'package:fixnum/fixnum.dart';
 import 'package:string_scanner/string_scanner.dart';
 import 'package:test/test.dart';
 
@@ -224,10 +225,10 @@ multiline comment
 
     test('int token values', () {
       final intValueTests = <_IntValueTest>[
-        (input: '0', want: 0, wantErr: null),
+        (input: '0', want: Int64.ZERO, wantErr: null),
         (
           input: '9223372036854775807',
-          want: 9223372036854775807,
+          want: Int64.parseInt('9223372036854775807'),
           wantErr: null
         ),
         (
@@ -386,7 +387,7 @@ typedef _ErrorTest = ({
 
 typedef _IntValueTest = ({
   String input,
-  int? want,
+  Int64? want,
   Matcher? wantErr,
 });
 

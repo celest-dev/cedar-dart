@@ -4,50 +4,50 @@
 /// See: https://docs.cedarpolicy.com/policies/json-format.html#JsonExpr-objects
 library;
 
+import 'package:cedar/cedar.dart';
 import 'package:cedar/src/ast.dart';
-import 'package:cedar/src/model/types/cedar_value.dart';
 import 'package:cedar/src/util/pretty_json.dart';
 import 'package:collection/collection.dart';
 import 'package:meta/meta.dart';
 
-sealed class CedarOp {
-  factory CedarOp.fromJson(String json) => switch (json) {
-        'Value' => CedarOpCode.value,
-        'Var' => CedarOpCode.variable,
-        'Slot' => CedarOpCode.slot,
-        'Unknown' => CedarOpCode.unknown,
-        '!' => CedarOpCode.not,
-        'neg' => CedarOpCode.neg,
-        '==' => CedarOpCode.equals,
-        '!=' => CedarOpCode.notEquals,
-        'in' => CedarOpCode.in$,
-        '<' => CedarOpCode.lessThan,
-        '<=' => CedarOpCode.lessThanOrEquals,
-        '>' => CedarOpCode.greaterThan,
-        '>=' => CedarOpCode.greaterThanOrEquals,
-        '&&' => CedarOpCode.and,
-        '||' => CedarOpCode.or,
-        '+' => CedarOpCode.plus,
-        '-' => CedarOpCode.minus,
-        '*' => CedarOpCode.times,
-        'contains' => CedarOpCode.contains,
-        'containsAll' => CedarOpCode.containsAll,
-        'containsAny' => CedarOpCode.containsAny,
-        '.' => CedarOpCode.getAttribute,
-        'has' => CedarOpCode.hasAttribute,
-        'like' => CedarOpCode.like,
-        'is' => CedarOpCode.is$,
-        'if-then-else' => CedarOpCode.ifThenElse,
-        'Set' => CedarOpCode.set,
-        'Record' => CedarOpCode.record,
-        _ => CedarOpFunction(json),
+sealed class Op {
+  factory Op.fromJson(String json) => switch (json) {
+        'Value' => OpBuiltin.value,
+        'Var' => OpBuiltin.variable,
+        'Slot' => OpBuiltin.slot,
+        'Unknown' => OpBuiltin.unknown,
+        '!' => OpBuiltin.not,
+        'neg' => OpBuiltin.neg,
+        '==' => OpBuiltin.equals,
+        '!=' => OpBuiltin.notEquals,
+        'in' => OpBuiltin.in$,
+        '<' => OpBuiltin.lessThan,
+        '<=' => OpBuiltin.lessThanOrEquals,
+        '>' => OpBuiltin.greaterThan,
+        '>=' => OpBuiltin.greaterThanOrEquals,
+        '&&' => OpBuiltin.and,
+        '||' => OpBuiltin.or,
+        '+' => OpBuiltin.plus,
+        '-' => OpBuiltin.minus,
+        '*' => OpBuiltin.times,
+        'contains' => OpBuiltin.contains,
+        'containsAll' => OpBuiltin.containsAll,
+        'containsAny' => OpBuiltin.containsAny,
+        '.' => OpBuiltin.getAttribute,
+        'has' => OpBuiltin.hasAttribute,
+        'like' => OpBuiltin.like,
+        'is' => OpBuiltin.is$,
+        'if-then-else' => OpBuiltin.ifThenElse,
+        'Set' => OpBuiltin.set,
+        'Record' => OpBuiltin.record,
+        _ => OpExtension(json),
       };
 
   String toJson();
 }
 
-final class CedarOpFunction implements CedarOp {
-  const CedarOpFunction(this.name);
+final class OpExtension implements Op {
+  const OpExtension(this.name);
 
   final String name;
 
@@ -56,13 +56,13 @@ final class CedarOpFunction implements CedarOp {
 
   @override
   bool operator ==(Object other) =>
-      identical(this, other) || other is CedarOpFunction && name == other.name;
+      identical(this, other) || other is OpExtension && name == other.name;
 
   @override
   int get hashCode => name.hashCode;
 }
 
-enum CedarOpCode implements CedarOp {
+enum OpBuiltin implements Op {
   value,
   variable,
   slot,
@@ -125,200 +125,193 @@ enum CedarOpCode implements CedarOp {
       };
 }
 
-sealed class CedarExpr {
-  const CedarExpr();
+sealed class Expr {
+  const Expr();
 
-  factory CedarExpr.fromJson(Map<String, Object?> json) {
+  factory Expr.fromJson(Map<String, Object?> json) {
     if (json.keys.length != 1) {
       throw FormatException('Expected exactly one key in JSON expression');
     }
     final MapEntry(:key, :value) = json.entries.first;
-    final op = CedarOp.fromJson(key);
+    final op = Op.fromJson(key);
     return switch (op) {
-      CedarOpCode.value => CedarExprValue.fromJson(value),
-      CedarOpCode.variable => CedarExprVariable.fromJson(value as String),
-      CedarOpCode.slot => CedarExprSlot.fromJson(value as String),
-      CedarOpCode.unknown =>
-        CedarExprUnknown.fromJson(value as Map<String, Object?>),
-      CedarOpCode.not => CedarExprNot.fromJson(value as Map<String, Object?>),
-      CedarOpCode.neg =>
-        CedarExprNegate.fromJson(value as Map<String, Object?>),
-      CedarOpCode.equals =>
-        CedarExprEquals.fromJson(value as Map<String, Object?>),
-      CedarOpCode.notEquals =>
-        CedarExprNotEquals.fromJson(value as Map<String, Object?>),
-      CedarOpCode.in$ => CedarExprIn.fromJson(value as Map<String, Object?>),
-      CedarOpCode.lessThan =>
-        CedarExprLessThan.fromJson(value as Map<String, Object?>),
-      CedarOpCode.lessThanOrEquals =>
-        CedarExprLessThanOrEquals.fromJson(value as Map<String, Object?>),
-      CedarOpCode.greaterThan =>
-        CedarExprGreaterThan.fromJson(value as Map<String, Object?>),
-      CedarOpCode.greaterThanOrEquals =>
-        CedarExprGreaterThanOrEquals.fromJson(value as Map<String, Object?>),
-      CedarOpCode.and => CedarExprAnd.fromJson(value as Map<String, Object?>),
-      CedarOpCode.or => CedarExprOr.fromJson(value as Map<String, Object?>),
-      CedarOpCode.plus => CedarExprPlus.fromJson(value as Map<String, Object?>),
-      CedarOpCode.minus =>
-        CedarExprMinus.fromJson(value as Map<String, Object?>),
-      CedarOpCode.times =>
-        CedarExprTimes.fromJson(value as Map<String, Object?>),
-      CedarOpCode.contains =>
-        CedarExprContains.fromJson(value as Map<String, Object?>),
-      CedarOpCode.containsAll =>
-        CedarExprContainsAll.fromJson(value as Map<String, Object?>),
-      CedarOpCode.containsAny =>
-        CedarExprContainsAny.fromJson(value as Map<String, Object?>),
-      CedarOpCode.getAttribute =>
-        CedarExprGetAttribute.fromJson(value as Map<String, Object?>),
-      CedarOpCode.hasAttribute =>
-        CedarExprHasAttribute.fromJson(value as Map<String, Object?>),
-      CedarOpCode.like => CedarExprLike.fromJson(value as Map<String, Object?>),
-      CedarOpCode.is$ => CedarExprIs.fromJson(value as Map<String, Object?>),
-      CedarOpCode.ifThenElse =>
-        CedarExprIfThenElse.fromJson(value as Map<String, Object?>),
-      CedarOpCode.set => CedarExprSet.fromJson(value as List<Object?>),
-      CedarOpCode.record =>
-        CedarExprRecord.fromJson(value as Map<String, Object?>),
-      final CedarOpFunction op => CedarExprFunctionCall(
+      OpBuiltin.value => ExprValue.fromJson(value),
+      OpBuiltin.variable => ExprVariable.fromJson(value as String),
+      OpBuiltin.slot => ExprSlot.fromJson(value as String),
+      OpBuiltin.unknown => ExprUnknown.fromJson(value as Map<String, Object?>),
+      OpBuiltin.not => ExprNot.fromJson(value as Map<String, Object?>),
+      OpBuiltin.neg => ExprNegate.fromJson(value as Map<String, Object?>),
+      OpBuiltin.equals => ExprEquals.fromJson(value as Map<String, Object?>),
+      OpBuiltin.notEquals =>
+        ExprNotEquals.fromJson(value as Map<String, Object?>),
+      OpBuiltin.in$ => ExprIn.fromJson(value as Map<String, Object?>),
+      OpBuiltin.lessThan =>
+        ExprLessThan.fromJson(value as Map<String, Object?>),
+      OpBuiltin.lessThanOrEquals =>
+        ExprLessThanOrEquals.fromJson(value as Map<String, Object?>),
+      OpBuiltin.greaterThan =>
+        ExprGreaterThan.fromJson(value as Map<String, Object?>),
+      OpBuiltin.greaterThanOrEquals =>
+        ExprGreaterThanOrEquals.fromJson(value as Map<String, Object?>),
+      OpBuiltin.and => ExprAnd.fromJson(value as Map<String, Object?>),
+      OpBuiltin.or => ExprOr.fromJson(value as Map<String, Object?>),
+      OpBuiltin.plus => ExprAdd.fromJson(value as Map<String, Object?>),
+      OpBuiltin.minus => ExprSubt.fromJson(value as Map<String, Object?>),
+      OpBuiltin.times => ExprMult.fromJson(value as Map<String, Object?>),
+      OpBuiltin.contains =>
+        ExprContains.fromJson(value as Map<String, Object?>),
+      OpBuiltin.containsAll =>
+        ExprContainsAll.fromJson(value as Map<String, Object?>),
+      OpBuiltin.containsAny =>
+        ExprContainsAny.fromJson(value as Map<String, Object?>),
+      OpBuiltin.getAttribute =>
+        ExprGetAttribute.fromJson(value as Map<String, Object?>),
+      OpBuiltin.hasAttribute =>
+        ExprHasAttribute.fromJson(value as Map<String, Object?>),
+      OpBuiltin.like => ExprLike.fromJson(value as Map<String, Object?>),
+      OpBuiltin.is$ => ExprIs.fromJson(value as Map<String, Object?>),
+      OpBuiltin.ifThenElse =>
+        ExprIfThenElse.fromJson(value as Map<String, Object?>),
+      OpBuiltin.set => ExprSet.fromJson(value as List<Object?>),
+      OpBuiltin.record => ExprRecord.fromJson(value as Map<String, Object?>),
+      final OpExtension op => ExprExtensionCall(
           fn: op.name,
           args: (value as List<Object?>)
-              .map((el) => CedarExpr.fromJson(el as Map<String, Object?>))
+              .map((el) => Expr.fromJson(el as Map<String, Object?>))
               .toList(),
         ),
     };
   }
 
-  const factory CedarExpr.value(CedarValue value) = CedarExprValue;
+  const factory Expr.value(Value value) = ExprValue;
 
-  const factory CedarExpr.variable(CedarVariable variable) = CedarExprVariable;
+  const factory Expr.variable(CedarVariable variable) = ExprVariable;
 
-  const factory CedarExpr.slot(CedarSlotId slotId) = CedarExprSlot;
+  const factory Expr.slot(SlotId slotId) = ExprSlot;
 
-  const factory CedarExpr.unknown(String name) = CedarExprUnknown;
+  const factory Expr.unknown(String name) = ExprUnknown;
 
-  const factory CedarExpr.not(CedarExpr arg) = CedarExprNot;
+  const factory Expr.not(Expr arg) = ExprNot;
 
-  const factory CedarExpr.negate(CedarExpr arg) = CedarExprNegate;
+  const factory Expr.negate(Expr arg) = ExprNegate;
 
-  const factory CedarExpr.equals({
-    required CedarExpr left,
-    required CedarExpr right,
-  }) = CedarExprEquals;
+  const factory Expr.equals({
+    required Expr left,
+    required Expr right,
+  }) = ExprEquals;
 
-  const factory CedarExpr.notEquals({
-    required CedarExpr left,
-    required CedarExpr right,
-  }) = CedarExprNotEquals;
+  const factory Expr.notEquals({
+    required Expr left,
+    required Expr right,
+  }) = ExprNotEquals;
 
-  const factory CedarExpr.in_({
-    required CedarExpr left,
-    required CedarExpr right,
-  }) = CedarExprIn;
+  const factory Expr.in_({
+    required Expr left,
+    required Expr right,
+  }) = ExprIn;
 
-  const factory CedarExpr.lessThan({
-    required CedarExpr left,
-    required CedarExpr right,
-  }) = CedarExprLessThan;
+  const factory Expr.lessThan({
+    required Expr left,
+    required Expr right,
+  }) = ExprLessThan;
 
-  const factory CedarExpr.lessThanOrEquals({
-    required CedarExpr left,
-    required CedarExpr right,
-  }) = CedarExprLessThanOrEquals;
+  const factory Expr.lessThanOrEquals({
+    required Expr left,
+    required Expr right,
+  }) = ExprLessThanOrEquals;
 
-  const factory CedarExpr.greaterThan({
-    required CedarExpr left,
-    required CedarExpr right,
-  }) = CedarExprGreaterThan;
+  const factory Expr.greaterThan({
+    required Expr left,
+    required Expr right,
+  }) = ExprGreaterThan;
 
-  const factory CedarExpr.greaterThanOrEquals({
-    required CedarExpr left,
-    required CedarExpr right,
-  }) = CedarExprGreaterThanOrEquals;
+  const factory Expr.greaterThanOrEquals({
+    required Expr left,
+    required Expr right,
+  }) = ExprGreaterThanOrEquals;
 
-  const factory CedarExpr.and({
-    required CedarExpr left,
-    required CedarExpr right,
-  }) = CedarExprAnd;
+  const factory Expr.and({
+    required Expr left,
+    required Expr right,
+  }) = ExprAnd;
 
-  const factory CedarExpr.or({
-    required CedarExpr left,
-    required CedarExpr right,
-  }) = CedarExprOr;
+  const factory Expr.or({
+    required Expr left,
+    required Expr right,
+  }) = ExprOr;
 
-  const factory CedarExpr.plus({
-    required CedarExpr left,
-    required CedarExpr right,
-  }) = CedarExprPlus;
+  const factory Expr.plus({
+    required Expr left,
+    required Expr right,
+  }) = ExprAdd;
 
-  const factory CedarExpr.minus({
-    required CedarExpr left,
-    required CedarExpr right,
-  }) = CedarExprMinus;
+  const factory Expr.minus({
+    required Expr left,
+    required Expr right,
+  }) = ExprSubt;
 
-  const factory CedarExpr.times({
-    required CedarExpr left,
-    required CedarExpr right,
-  }) = CedarExprTimes;
+  const factory Expr.times({
+    required Expr left,
+    required Expr right,
+  }) = ExprMult;
 
-  const factory CedarExpr.contains({
-    required CedarExpr left,
-    required CedarExpr right,
-  }) = CedarExprContains;
+  const factory Expr.contains({
+    required Expr left,
+    required Expr right,
+  }) = ExprContains;
 
-  const factory CedarExpr.containsAll({
-    required CedarExpr left,
-    required CedarExpr right,
-  }) = CedarExprContainsAll;
+  const factory Expr.containsAll({
+    required Expr left,
+    required Expr right,
+  }) = ExprContainsAll;
 
-  const factory CedarExpr.containsAny({
-    required CedarExpr left,
-    required CedarExpr right,
-  }) = CedarExprContainsAny;
+  const factory Expr.containsAny({
+    required Expr left,
+    required Expr right,
+  }) = ExprContainsAny;
 
-  const factory CedarExpr.getAttribute({
-    required CedarExpr left,
+  const factory Expr.getAttribute({
+    required Expr left,
     required String attr,
-  }) = CedarExprGetAttribute;
+  }) = ExprGetAttribute;
 
-  const factory CedarExpr.hasAttribute({
-    required CedarExpr left,
+  const factory Expr.hasAttribute({
+    required Expr left,
     required String attr,
-  }) = CedarExprHasAttribute;
+  }) = ExprHasAttribute;
 
-  const factory CedarExpr.like({
-    required CedarExpr left,
+  const factory Expr.like({
+    required Expr left,
     required CedarPattern pattern,
-  }) = CedarExprLike;
+  }) = ExprLike;
 
-  const factory CedarExpr.is_({
-    required CedarExpr left,
+  const factory Expr.is_({
+    required Expr left,
     required String entityType,
-    CedarExpr? inExpr,
-  }) = CedarExprIs;
+    Expr? inExpr,
+  }) = ExprIs;
 
-  const factory CedarExpr.ifThenElse({
-    required CedarExpr cond,
-    required CedarExpr then,
-    required CedarExpr else$,
-  }) = CedarExprIfThenElse;
+  const factory Expr.ifThenElse({
+    required Expr cond,
+    required Expr then,
+    required Expr else$,
+  }) = ExprIfThenElse;
 
-  const factory CedarExpr.set(List<CedarExpr> expressions) = CedarExprSet;
+  const factory Expr.set(List<Expr> expressions) = ExprSet;
 
-  const factory CedarExpr.record(Map<String, CedarExpr> attributes) =
-      CedarExprRecord;
+  const factory Expr.record(Map<String, Expr> attributes) = ExprRecord;
 
-  const factory CedarExpr.funcCall({
+  const factory Expr.funcCall({
     required String fn,
-    required List<CedarExpr> args,
-  }) = CedarExprFunctionCall;
+    required List<Expr> args,
+  }) = ExprExtensionCall;
 
-  operator +(CedarExpr rhs) => add(rhs);
-  operator -(CedarExpr rhs) => subtract(rhs);
-  operator *(CedarExpr rhs) => multiply(rhs);
+  operator +(Expr rhs) => add(rhs);
+  operator -(Expr rhs) => subtract(rhs);
+  operator *(Expr rhs) => multiply(rhs);
   operator -() => negate();
 
-  CedarOp get op;
+  Op get op;
 
   Object? valueToJson();
 
@@ -334,24 +327,24 @@ sealed class CedarExpr {
   String toString() => prettyJson(toJson());
 }
 
-final class CedarExprFunctionCall extends CedarExpr {
-  const CedarExprFunctionCall({
+final class ExprExtensionCall extends Expr {
+  const ExprExtensionCall({
     required this.fn,
     required this.args,
   });
 
   final String fn;
-  final List<CedarExpr> args;
+  final List<Expr> args;
 
   @override
-  CedarOpFunction get op => CedarOpFunction(fn);
+  OpExtension get op => OpExtension(fn);
 
   @override
-  R accept<R>(ExprVisitor<R> visitor) => visitor.visitFunctionCall(this);
+  R accept<R>(ExprVisitor<R> visitor) => visitor.visitExtensionCall(this);
 
   @override
   R acceptWithArg<R, A>(ExprVisitorWithArg<R, A> visitor, A arg) =>
-      visitor.visitFunctionCall(this, arg);
+      visitor.visitExtensionCall(this, arg);
 
   @override
   List<Map<String, Object?>> valueToJson() =>
@@ -360,7 +353,7 @@ final class CedarExprFunctionCall extends CedarExpr {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is CedarExprFunctionCall &&
+      other is ExprExtensionCall &&
           fn == other.fn &&
           const ListEquality().equals(args, other.args);
 
@@ -368,17 +361,17 @@ final class CedarExprFunctionCall extends CedarExpr {
   int get hashCode => Object.hash(fn, args);
 }
 
-final class CedarExprValue extends CedarExpr {
-  const CedarExprValue(this.value);
+final class ExprValue extends Expr {
+  const ExprValue(this.value);
 
-  factory CedarExprValue.fromJson(Object? json) {
-    return CedarExprValue(CedarValue.fromJson(json));
+  factory ExprValue.fromJson(Object? json) {
+    return ExprValue(Value.fromJson(json));
   }
 
-  final CedarValue value;
+  final Value value;
 
   @override
-  CedarOpCode get op => CedarOpCode.value;
+  OpBuiltin get op => OpBuiltin.value;
 
   @override
   R accept<R>(ExprVisitor<R> visitor) => visitor.visitValue(this);
@@ -392,30 +385,23 @@ final class CedarExprValue extends CedarExpr {
 
   @override
   bool operator ==(Object other) =>
-      identical(this, other) || other is CedarExprValue && value == other.value;
+      identical(this, other) || other is ExprValue && value == other.value;
 
   @override
   int get hashCode => Object.hash(op, value);
 }
 
-enum CedarVariable {
-  principal,
-  action,
-  resource,
-  context;
-}
+final class ExprVariable extends Expr {
+  const ExprVariable(this.variable);
 
-final class CedarExprVariable extends CedarExpr {
-  const CedarExprVariable(this.variable);
-
-  factory CedarExprVariable.fromJson(String json) {
-    return CedarExprVariable(CedarVariable.values.byName(json));
+  factory ExprVariable.fromJson(String json) {
+    return ExprVariable(CedarVariable.values.byName(json));
   }
 
   final CedarVariable variable;
 
   @override
-  CedarOpCode get op => CedarOpCode.variable;
+  OpBuiltin get op => OpBuiltin.variable;
 
   @override
   R accept<R>(ExprVisitor<R> visitor) => visitor.visitVariable(this);
@@ -430,23 +416,23 @@ final class CedarExprVariable extends CedarExpr {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is CedarExprVariable && variable == other.variable;
+      other is ExprVariable && variable == other.variable;
 
   @override
   int get hashCode => Object.hash(op, variable);
 }
 
-final class CedarExprSlot extends CedarExpr {
-  const CedarExprSlot(this.slotId);
+final class ExprSlot extends Expr {
+  const ExprSlot(this.slotId);
 
-  factory CedarExprSlot.fromJson(String json) {
-    return CedarExprSlot(CedarSlotId.fromJson(json));
+  factory ExprSlot.fromJson(String json) {
+    return ExprSlot(SlotId.fromJson(json));
   }
 
-  final CedarSlotId slotId;
+  final SlotId slotId;
 
   @override
-  CedarOpCode get op => CedarOpCode.slot;
+  OpBuiltin get op => OpBuiltin.slot;
 
   @override
   R accept<R>(ExprVisitor<R> visitor) => visitor.visitSlot(this);
@@ -460,24 +446,23 @@ final class CedarExprSlot extends CedarExpr {
 
   @override
   bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is CedarExprSlot && slotId == other.slotId;
+      identical(this, other) || other is ExprSlot && slotId == other.slotId;
 
   @override
   int get hashCode => Object.hash(op, slotId);
 }
 
-final class CedarExprUnknown extends CedarExpr {
-  const CedarExprUnknown(this.name);
+final class ExprUnknown extends Expr {
+  const ExprUnknown(this.name);
 
-  factory CedarExprUnknown.fromJson(Map<String, Object?> json) {
-    return CedarExprUnknown(json['name'] as String);
+  factory ExprUnknown.fromJson(Map<String, Object?> json) {
+    return ExprUnknown(json['name'] as String);
   }
 
   final String name;
 
   @override
-  CedarOpCode get op => CedarOpCode.unknown;
+  OpBuiltin get op => OpBuiltin.unknown;
 
   @override
   R accept<R>(ExprVisitor<R> visitor) => visitor.visitUnknown(this);
@@ -493,25 +478,25 @@ final class CedarExprUnknown extends CedarExpr {
 
   @override
   bool operator ==(Object other) =>
-      identical(this, other) || other is CedarExprUnknown && name == other.name;
+      identical(this, other) || other is ExprUnknown && name == other.name;
 
   @override
   int get hashCode => Object.hash(op, name);
 }
 
-final class CedarExprNot extends CedarExpr {
-  const CedarExprNot(this.arg);
+final class ExprNot extends Expr {
+  const ExprNot(this.arg);
 
-  factory CedarExprNot.fromJson(Map<String, Object?> json) {
-    return CedarExprNot(
-      CedarExpr.fromJson(json['arg'] as Map<String, Object?>),
+  factory ExprNot.fromJson(Map<String, Object?> json) {
+    return ExprNot(
+      Expr.fromJson(json['arg'] as Map<String, Object?>),
     );
   }
 
-  final CedarExpr arg;
+  final Expr arg;
 
   @override
-  CedarOpCode get op => CedarOpCode.not;
+  OpBuiltin get op => OpBuiltin.not;
 
   @override
   R accept<R>(ExprVisitor<R> visitor) => visitor.visitNot(this);
@@ -527,25 +512,25 @@ final class CedarExprNot extends CedarExpr {
 
   @override
   bool operator ==(Object other) =>
-      identical(this, other) || other is CedarExprNot && arg == other.arg;
+      identical(this, other) || other is ExprNot && arg == other.arg;
 
   @override
   int get hashCode => Object.hash(op, arg);
 }
 
-final class CedarExprNegate extends CedarExpr {
-  const CedarExprNegate(this.arg);
+final class ExprNegate extends Expr {
+  const ExprNegate(this.arg);
 
-  factory CedarExprNegate.fromJson(Map<String, Object?> json) {
-    return CedarExprNegate(
-      CedarExpr.fromJson(json['arg'] as Map<String, Object?>),
+  factory ExprNegate.fromJson(Map<String, Object?> json) {
+    return ExprNegate(
+      Expr.fromJson(json['arg'] as Map<String, Object?>),
     );
   }
 
-  final CedarExpr arg;
+  final Expr arg;
 
   @override
-  CedarOpCode get op => CedarOpCode.neg;
+  OpBuiltin get op => OpBuiltin.neg;
 
   @override
   R accept<R>(ExprVisitor<R> visitor) => visitor.visitNegate(this);
@@ -561,20 +546,20 @@ final class CedarExprNegate extends CedarExpr {
 
   @override
   bool operator ==(Object other) =>
-      identical(this, other) || other is CedarExprNegate && arg == other.arg;
+      identical(this, other) || other is ExprNegate && arg == other.arg;
 
   @override
   int get hashCode => Object.hash(op, arg);
 }
 
-sealed class CedarBinaryExpr extends CedarExpr {
+sealed class CedarBinaryExpr extends Expr {
   const CedarBinaryExpr({
     required this.left,
     required this.right,
   });
 
-  final CedarExpr left;
-  final CedarExpr right;
+  final Expr left;
+  final Expr right;
 
   @nonVirtual
   @override
@@ -595,21 +580,21 @@ sealed class CedarBinaryExpr extends CedarExpr {
   int get hashCode => Object.hash(op, left, right);
 }
 
-final class CedarExprEquals extends CedarBinaryExpr {
-  const CedarExprEquals({
+final class ExprEquals extends CedarBinaryExpr {
+  const ExprEquals({
     required super.left,
     required super.right,
   });
 
-  factory CedarExprEquals.fromJson(Map<String, Object?> json) {
-    return CedarExprEquals(
-      left: CedarExpr.fromJson(json['left'] as Map<String, Object?>),
-      right: CedarExpr.fromJson(json['right'] as Map<String, Object?>),
+  factory ExprEquals.fromJson(Map<String, Object?> json) {
+    return ExprEquals(
+      left: Expr.fromJson(json['left'] as Map<String, Object?>),
+      right: Expr.fromJson(json['right'] as Map<String, Object?>),
     );
   }
 
   @override
-  CedarOpCode get op => CedarOpCode.equals;
+  OpBuiltin get op => OpBuiltin.equals;
 
   @override
   R accept<R>(ExprVisitor<R> visitor) => visitor.visitEquals(this);
@@ -619,21 +604,21 @@ final class CedarExprEquals extends CedarBinaryExpr {
       visitor.visitEquals(this, arg);
 }
 
-final class CedarExprNotEquals extends CedarBinaryExpr {
-  const CedarExprNotEquals({
+final class ExprNotEquals extends CedarBinaryExpr {
+  const ExprNotEquals({
     required super.left,
     required super.right,
   });
 
-  factory CedarExprNotEquals.fromJson(Map<String, Object?> json) {
-    return CedarExprNotEquals(
-      left: CedarExpr.fromJson(json['left'] as Map<String, Object?>),
-      right: CedarExpr.fromJson(json['right'] as Map<String, Object?>),
+  factory ExprNotEquals.fromJson(Map<String, Object?> json) {
+    return ExprNotEquals(
+      left: Expr.fromJson(json['left'] as Map<String, Object?>),
+      right: Expr.fromJson(json['right'] as Map<String, Object?>),
     );
   }
 
   @override
-  CedarOpCode get op => CedarOpCode.notEquals;
+  OpBuiltin get op => OpBuiltin.notEquals;
 
   @override
   R accept<R>(ExprVisitor<R> visitor) => visitor.visitNotEquals(this);
@@ -643,21 +628,21 @@ final class CedarExprNotEquals extends CedarBinaryExpr {
       visitor.visitNotEquals(this, arg);
 }
 
-final class CedarExprIn extends CedarBinaryExpr {
-  const CedarExprIn({
+final class ExprIn extends CedarBinaryExpr {
+  const ExprIn({
     required super.left,
     required super.right,
   });
 
-  factory CedarExprIn.fromJson(Map<String, Object?> json) {
-    return CedarExprIn(
-      left: CedarExpr.fromJson(json['left'] as Map<String, Object?>),
-      right: CedarExpr.fromJson(json['right'] as Map<String, Object?>),
+  factory ExprIn.fromJson(Map<String, Object?> json) {
+    return ExprIn(
+      left: Expr.fromJson(json['left'] as Map<String, Object?>),
+      right: Expr.fromJson(json['right'] as Map<String, Object?>),
     );
   }
 
   @override
-  CedarOpCode get op => CedarOpCode.in$;
+  OpBuiltin get op => OpBuiltin.in$;
 
   @override
   R accept<R>(ExprVisitor<R> visitor) => visitor.visitIn(this);
@@ -667,21 +652,21 @@ final class CedarExprIn extends CedarBinaryExpr {
       visitor.visitIn(this, arg);
 }
 
-final class CedarExprLessThan extends CedarBinaryExpr {
-  const CedarExprLessThan({
+final class ExprLessThan extends CedarBinaryExpr {
+  const ExprLessThan({
     required super.left,
     required super.right,
   });
 
-  factory CedarExprLessThan.fromJson(Map<String, Object?> json) {
-    return CedarExprLessThan(
-      left: CedarExpr.fromJson(json['left'] as Map<String, Object?>),
-      right: CedarExpr.fromJson(json['right'] as Map<String, Object?>),
+  factory ExprLessThan.fromJson(Map<String, Object?> json) {
+    return ExprLessThan(
+      left: Expr.fromJson(json['left'] as Map<String, Object?>),
+      right: Expr.fromJson(json['right'] as Map<String, Object?>),
     );
   }
 
   @override
-  CedarOpCode get op => CedarOpCode.lessThan;
+  OpBuiltin get op => OpBuiltin.lessThan;
 
   @override
   R accept<R>(ExprVisitor<R> visitor) => visitor.visitLessThan(this);
@@ -691,21 +676,21 @@ final class CedarExprLessThan extends CedarBinaryExpr {
       visitor.visitLessThan(this, arg);
 }
 
-final class CedarExprLessThanOrEquals extends CedarBinaryExpr {
-  const CedarExprLessThanOrEquals({
+final class ExprLessThanOrEquals extends CedarBinaryExpr {
+  const ExprLessThanOrEquals({
     required super.left,
     required super.right,
   });
 
-  factory CedarExprLessThanOrEquals.fromJson(Map<String, Object?> json) {
-    return CedarExprLessThanOrEquals(
-      left: CedarExpr.fromJson(json['left'] as Map<String, Object?>),
-      right: CedarExpr.fromJson(json['right'] as Map<String, Object?>),
+  factory ExprLessThanOrEquals.fromJson(Map<String, Object?> json) {
+    return ExprLessThanOrEquals(
+      left: Expr.fromJson(json['left'] as Map<String, Object?>),
+      right: Expr.fromJson(json['right'] as Map<String, Object?>),
     );
   }
 
   @override
-  CedarOpCode get op => CedarOpCode.lessThanOrEquals;
+  OpBuiltin get op => OpBuiltin.lessThanOrEquals;
 
   @override
   R accept<R>(ExprVisitor<R> visitor) => visitor.visitLessThanOrEquals(this);
@@ -715,21 +700,21 @@ final class CedarExprLessThanOrEquals extends CedarBinaryExpr {
       visitor.visitLessThanOrEquals(this, arg);
 }
 
-final class CedarExprGreaterThan extends CedarBinaryExpr {
-  const CedarExprGreaterThan({
+final class ExprGreaterThan extends CedarBinaryExpr {
+  const ExprGreaterThan({
     required super.left,
     required super.right,
   });
 
-  factory CedarExprGreaterThan.fromJson(Map<String, Object?> json) {
-    return CedarExprGreaterThan(
-      left: CedarExpr.fromJson(json['left'] as Map<String, Object?>),
-      right: CedarExpr.fromJson(json['right'] as Map<String, Object?>),
+  factory ExprGreaterThan.fromJson(Map<String, Object?> json) {
+    return ExprGreaterThan(
+      left: Expr.fromJson(json['left'] as Map<String, Object?>),
+      right: Expr.fromJson(json['right'] as Map<String, Object?>),
     );
   }
 
   @override
-  CedarOpCode get op => CedarOpCode.greaterThan;
+  OpBuiltin get op => OpBuiltin.greaterThan;
 
   @override
   R accept<R>(ExprVisitor<R> visitor) => visitor.visitGreaterThan(this);
@@ -739,21 +724,21 @@ final class CedarExprGreaterThan extends CedarBinaryExpr {
       visitor.visitGreaterThan(this, arg);
 }
 
-final class CedarExprGreaterThanOrEquals extends CedarBinaryExpr {
-  const CedarExprGreaterThanOrEquals({
+final class ExprGreaterThanOrEquals extends CedarBinaryExpr {
+  const ExprGreaterThanOrEquals({
     required super.left,
     required super.right,
   });
 
-  factory CedarExprGreaterThanOrEquals.fromJson(Map<String, Object?> json) {
-    return CedarExprGreaterThanOrEquals(
-      left: CedarExpr.fromJson(json['left'] as Map<String, Object?>),
-      right: CedarExpr.fromJson(json['right'] as Map<String, Object?>),
+  factory ExprGreaterThanOrEquals.fromJson(Map<String, Object?> json) {
+    return ExprGreaterThanOrEquals(
+      left: Expr.fromJson(json['left'] as Map<String, Object?>),
+      right: Expr.fromJson(json['right'] as Map<String, Object?>),
     );
   }
 
   @override
-  CedarOpCode get op => CedarOpCode.greaterThanOrEquals;
+  OpBuiltin get op => OpBuiltin.greaterThanOrEquals;
 
   @override
   R accept<R>(ExprVisitor<R> visitor) => visitor.visitGreaterThanOrEquals(this);
@@ -763,21 +748,21 @@ final class CedarExprGreaterThanOrEquals extends CedarBinaryExpr {
       visitor.visitGreaterThanOrEquals(this, arg);
 }
 
-final class CedarExprAnd extends CedarBinaryExpr {
-  const CedarExprAnd({
+final class ExprAnd extends CedarBinaryExpr {
+  const ExprAnd({
     required super.left,
     required super.right,
   });
 
-  factory CedarExprAnd.fromJson(Map<String, Object?> json) {
-    return CedarExprAnd(
-      left: CedarExpr.fromJson(json['left'] as Map<String, Object?>),
-      right: CedarExpr.fromJson(json['right'] as Map<String, Object?>),
+  factory ExprAnd.fromJson(Map<String, Object?> json) {
+    return ExprAnd(
+      left: Expr.fromJson(json['left'] as Map<String, Object?>),
+      right: Expr.fromJson(json['right'] as Map<String, Object?>),
     );
   }
 
   @override
-  CedarOpCode get op => CedarOpCode.and;
+  OpBuiltin get op => OpBuiltin.and;
 
   @override
   R accept<R>(ExprVisitor<R> visitor) => visitor.visitAnd(this);
@@ -787,21 +772,21 @@ final class CedarExprAnd extends CedarBinaryExpr {
       visitor.visitAnd(this, arg);
 }
 
-final class CedarExprOr extends CedarBinaryExpr {
-  const CedarExprOr({
+final class ExprOr extends CedarBinaryExpr {
+  const ExprOr({
     required super.left,
     required super.right,
   });
 
-  factory CedarExprOr.fromJson(Map<String, Object?> json) {
-    return CedarExprOr(
-      left: CedarExpr.fromJson(json['left'] as Map<String, Object?>),
-      right: CedarExpr.fromJson(json['right'] as Map<String, Object?>),
+  factory ExprOr.fromJson(Map<String, Object?> json) {
+    return ExprOr(
+      left: Expr.fromJson(json['left'] as Map<String, Object?>),
+      right: Expr.fromJson(json['right'] as Map<String, Object?>),
     );
   }
 
   @override
-  CedarOpCode get op => CedarOpCode.or;
+  OpBuiltin get op => OpBuiltin.or;
 
   @override
   R accept<R>(ExprVisitor<R> visitor) => visitor.visitOr(this);
@@ -811,93 +796,93 @@ final class CedarExprOr extends CedarBinaryExpr {
       visitor.visitOr(this, arg);
 }
 
-final class CedarExprPlus extends CedarBinaryExpr {
-  const CedarExprPlus({
+final class ExprAdd extends CedarBinaryExpr {
+  const ExprAdd({
     required super.left,
     required super.right,
   });
 
-  factory CedarExprPlus.fromJson(Map<String, Object?> json) {
-    return CedarExprPlus(
-      left: CedarExpr.fromJson(json['left'] as Map<String, Object?>),
-      right: CedarExpr.fromJson(json['right'] as Map<String, Object?>),
+  factory ExprAdd.fromJson(Map<String, Object?> json) {
+    return ExprAdd(
+      left: Expr.fromJson(json['left'] as Map<String, Object?>),
+      right: Expr.fromJson(json['right'] as Map<String, Object?>),
     );
   }
 
   @override
-  CedarOpCode get op => CedarOpCode.plus;
+  OpBuiltin get op => OpBuiltin.plus;
 
   @override
-  R accept<R>(ExprVisitor<R> visitor) => visitor.visitPlus(this);
+  R accept<R>(ExprVisitor<R> visitor) => visitor.visitAdd(this);
 
   @override
   R acceptWithArg<R, A>(ExprVisitorWithArg<R, A> visitor, A arg) =>
-      visitor.visitPlus(this, arg);
+      visitor.visitAdd(this, arg);
 }
 
-final class CedarExprMinus extends CedarBinaryExpr {
-  const CedarExprMinus({
+final class ExprSubt extends CedarBinaryExpr {
+  const ExprSubt({
     required super.left,
     required super.right,
   });
 
-  factory CedarExprMinus.fromJson(Map<String, Object?> json) {
-    return CedarExprMinus(
-      left: CedarExpr.fromJson(json['left'] as Map<String, Object?>),
-      right: CedarExpr.fromJson(json['right'] as Map<String, Object?>),
+  factory ExprSubt.fromJson(Map<String, Object?> json) {
+    return ExprSubt(
+      left: Expr.fromJson(json['left'] as Map<String, Object?>),
+      right: Expr.fromJson(json['right'] as Map<String, Object?>),
     );
   }
 
   @override
-  CedarOpCode get op => CedarOpCode.minus;
+  OpBuiltin get op => OpBuiltin.minus;
 
   @override
-  R accept<R>(ExprVisitor<R> visitor) => visitor.visitMinus(this);
+  R accept<R>(ExprVisitor<R> visitor) => visitor.visitSubt(this);
 
   @override
   R acceptWithArg<R, A>(ExprVisitorWithArg<R, A> visitor, A arg) =>
-      visitor.visitMinus(this, arg);
+      visitor.visitSubt(this, arg);
 }
 
-final class CedarExprTimes extends CedarBinaryExpr {
-  const CedarExprTimes({
+final class ExprMult extends CedarBinaryExpr {
+  const ExprMult({
     required super.left,
     required super.right,
   });
 
-  factory CedarExprTimes.fromJson(Map<String, Object?> json) {
-    return CedarExprTimes(
-      left: CedarExpr.fromJson(json['left'] as Map<String, Object?>),
-      right: CedarExpr.fromJson(json['right'] as Map<String, Object?>),
+  factory ExprMult.fromJson(Map<String, Object?> json) {
+    return ExprMult(
+      left: Expr.fromJson(json['left'] as Map<String, Object?>),
+      right: Expr.fromJson(json['right'] as Map<String, Object?>),
     );
   }
 
   @override
-  CedarOpCode get op => CedarOpCode.times;
+  OpBuiltin get op => OpBuiltin.times;
 
   @override
-  R accept<R>(ExprVisitor<R> visitor) => visitor.visitTimes(this);
+  R accept<R>(ExprVisitor<R> visitor) => visitor.visitMult(this);
 
   @override
   R acceptWithArg<R, A>(ExprVisitorWithArg<R, A> visitor, A arg) =>
-      visitor.visitTimes(this, arg);
+      visitor.visitMult(this, arg);
 }
 
-final class CedarExprContains extends CedarBinaryExpr {
-  const CedarExprContains({
+final class ExprContains extends CedarBinaryExpr {
+  const ExprContains({
     required super.left,
     required super.right,
   });
 
-  factory CedarExprContains.fromJson(Map<String, Object?> json) {
-    return CedarExprContains(
-      left: CedarExpr.fromJson(json['left'] as Map<String, Object?>),
-      right: CedarExpr.fromJson(json['right'] as Map<String, Object?>),
+  factory ExprContains.fromJson(Map<String, Object?> json) {
+    return ExprContains(
+      left: Expr.fromJson(json['left'] as Map<String, Object?>),
+      right: Expr.fromJson(json['right'] as Map<String, Object?>),
     );
   }
 
   @override
-  CedarOpCode get op => CedarOpCode.contains;
+  OpBuiltin get op => OpBuiltin.contains;
 
   @override
   R accept<R>(ExprVisitor<R> visitor) => visitor.visitContains(this);
@@ -907,21 +892,21 @@ final class CedarExprContains extends CedarBinaryExpr {
       visitor.visitContains(this, arg);
 }
 
-final class CedarExprContainsAll extends CedarBinaryExpr {
-  const CedarExprContainsAll({
+final class ExprContainsAll extends CedarBinaryExpr {
+  const ExprContainsAll({
     required super.left,
     required super.right,
   });
 
-  factory CedarExprContainsAll.fromJson(Map<String, Object?> json) {
-    return CedarExprContainsAll(
-      left: CedarExpr.fromJson(json['left'] as Map<String, Object?>),
-      right: CedarExpr.fromJson(json['right'] as Map<String, Object?>),
+  factory ExprContainsAll.fromJson(Map<String, Object?> json) {
+    return ExprContainsAll(
+      left: Expr.fromJson(json['left'] as Map<String, Object?>),
+      right: Expr.fromJson(json['right'] as Map<String, Object?>),
     );
   }
 
   @override
-  CedarOpCode get op => CedarOpCode.containsAll;
+  OpBuiltin get op => OpBuiltin.containsAll;
 
   @override
   R accept<R>(ExprVisitor<R> visitor) => visitor.visitContainsAll(this);
@@ -931,21 +916,21 @@ final class CedarExprContainsAll extends CedarBinaryExpr {
       visitor.visitContainsAll(this, arg);
 }
 
-final class CedarExprContainsAny extends CedarBinaryExpr {
-  const CedarExprContainsAny({
+final class ExprContainsAny extends CedarBinaryExpr {
+  const ExprContainsAny({
     required super.left,
     required super.right,
   });
 
-  factory CedarExprContainsAny.fromJson(Map<String, Object?> json) {
-    return CedarExprContainsAny(
-      left: CedarExpr.fromJson(json['left'] as Map<String, Object?>),
-      right: CedarExpr.fromJson(json['right'] as Map<String, Object?>),
+  factory ExprContainsAny.fromJson(Map<String, Object?> json) {
+    return ExprContainsAny(
+      left: Expr.fromJson(json['left'] as Map<String, Object?>),
+      right: Expr.fromJson(json['right'] as Map<String, Object?>),
     );
   }
 
   @override
-  CedarOpCode get op => CedarOpCode.containsAny;
+  OpBuiltin get op => OpBuiltin.containsAny;
 
   @override
   R accept<R>(ExprVisitor<R> visitor) => visitor.visitContainsAny(this);
@@ -955,34 +940,34 @@ final class CedarExprContainsAny extends CedarBinaryExpr {
       visitor.visitContainsAny(this, arg);
 }
 
-sealed class CedarStringExpr extends CedarExpr {
+sealed class CedarStringExpr extends Expr {
   const CedarStringExpr();
 
-  CedarExpr get left;
+  Expr get left;
   String get attr;
 }
 
-final class CedarExprGetAttribute extends CedarStringExpr {
-  const CedarExprGetAttribute({
+final class ExprGetAttribute extends CedarStringExpr {
+  const ExprGetAttribute({
     required this.left,
     required this.attr,
   });
 
-  factory CedarExprGetAttribute.fromJson(Map<String, Object?> json) {
-    return CedarExprGetAttribute(
-      left: CedarExpr.fromJson(json['left'] as Map<String, Object?>),
+  factory ExprGetAttribute.fromJson(Map<String, Object?> json) {
+    return ExprGetAttribute(
+      left: Expr.fromJson(json['left'] as Map<String, Object?>),
       attr: json['attr'] as String,
     );
   }
 
   @override
-  final CedarExpr left;
+  final Expr left;
 
   @override
   final String attr;
 
   @override
-  CedarOpCode get op => CedarOpCode.getAttribute;
+  OpBuiltin get op => OpBuiltin.getAttribute;
 
   @override
   R accept<R>(ExprVisitor<R> visitor) => visitor.visitGetAttribute(this);
@@ -1000,35 +985,33 @@ final class CedarExprGetAttribute extends CedarStringExpr {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is CedarExprGetAttribute &&
-          left == other.left &&
-          attr == other.attr;
+      other is ExprGetAttribute && left == other.left && attr == other.attr;
 
   @override
   int get hashCode => Object.hash(op, left, attr);
 }
 
-final class CedarExprHasAttribute extends CedarStringExpr {
-  const CedarExprHasAttribute({
+final class ExprHasAttribute extends CedarStringExpr {
+  const ExprHasAttribute({
     required this.left,
     required this.attr,
   });
 
-  factory CedarExprHasAttribute.fromJson(Map<String, Object?> json) {
-    return CedarExprHasAttribute(
-      left: CedarExpr.fromJson(json['left'] as Map<String, Object?>),
+  factory ExprHasAttribute.fromJson(Map<String, Object?> json) {
+    return ExprHasAttribute(
+      left: Expr.fromJson(json['left'] as Map<String, Object?>),
       attr: json['attr'] as String,
     );
   }
 
   @override
-  final CedarExpr left;
+  final Expr left;
 
   @override
   final String attr;
 
   @override
-  CedarOpCode get op => CedarOpCode.hasAttribute;
+  OpBuiltin get op => OpBuiltin.hasAttribute;
 
   @override
   R accept<R>(ExprVisitor<R> visitor) => visitor.visitHasAttribute(this);
@@ -1046,32 +1029,30 @@ final class CedarExprHasAttribute extends CedarStringExpr {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is CedarExprHasAttribute &&
-          left == other.left &&
-          attr == other.attr;
+      other is ExprHasAttribute && left == other.left && attr == other.attr;
 
   @override
   int get hashCode => Object.hash(op, left, attr);
 }
 
-final class CedarExprLike extends CedarExpr {
-  const CedarExprLike({
+final class ExprLike extends Expr {
+  const ExprLike({
     required this.left,
     required this.pattern,
   });
 
-  factory CedarExprLike.fromJson(Map<String, Object?> json) {
-    return CedarExprLike(
-      left: CedarExpr.fromJson(json['left'] as Map<String, Object?>),
+  factory ExprLike.fromJson(Map<String, Object?> json) {
+    return ExprLike(
+      left: Expr.fromJson(json['left'] as Map<String, Object?>),
       pattern: CedarPattern.parse(json['pattern'] as String),
     );
   }
 
-  final CedarExpr left;
+  final Expr left;
   final CedarPattern pattern;
 
   @override
-  CedarOpCode get op => CedarOpCode.like;
+  OpBuiltin get op => OpBuiltin.like;
 
   @override
   R accept<R>(ExprVisitor<R> visitor) => visitor.visitLike(this);
@@ -1089,35 +1070,35 @@ final class CedarExprLike extends CedarExpr {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is CedarExprLike && left == other.left && pattern == other.pattern;
+      other is ExprLike && left == other.left && pattern == other.pattern;
 
   @override
   int get hashCode => Object.hash(op, left, pattern);
 }
 
-final class CedarExprIs extends CedarExpr {
-  const CedarExprIs({
+final class ExprIs extends Expr {
+  const ExprIs({
     required this.left,
     required this.entityType,
     this.inExpr,
   });
 
-  factory CedarExprIs.fromJson(Map<String, Object?> json) {
-    return CedarExprIs(
-      left: CedarExpr.fromJson(json['left'] as Map<String, Object?>),
+  factory ExprIs.fromJson(Map<String, Object?> json) {
+    return ExprIs(
+      left: Expr.fromJson(json['left'] as Map<String, Object?>),
       entityType: ['entity_type'] as String,
       inExpr: json['in'] != null
-          ? CedarExpr.fromJson(json['in'] as Map<String, Object?>)
+          ? Expr.fromJson(json['in'] as Map<String, Object?>)
           : null,
     );
   }
 
-  final CedarExpr left;
+  final Expr left;
   final String entityType;
-  final CedarExpr? inExpr;
+  final Expr? inExpr;
 
   @override
-  CedarOpCode get op => CedarOpCode.is$;
+  OpBuiltin get op => OpBuiltin.is$;
 
   @override
   R accept<R>(ExprVisitor<R> visitor) => visitor.visitIs(this);
@@ -1136,7 +1117,7 @@ final class CedarExprIs extends CedarExpr {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is CedarExprIs &&
+      other is ExprIs &&
           left == other.left &&
           entityType == other.entityType &&
           inExpr == other.inExpr;
@@ -1145,27 +1126,27 @@ final class CedarExprIs extends CedarExpr {
   int get hashCode => Object.hash(op, left, entityType, inExpr);
 }
 
-final class CedarExprIfThenElse extends CedarExpr {
-  const CedarExprIfThenElse({
+final class ExprIfThenElse extends Expr {
+  const ExprIfThenElse({
     required this.cond,
     required this.then,
     required this.else$,
   });
 
-  factory CedarExprIfThenElse.fromJson(Map<String, Object?> json) {
-    return CedarExprIfThenElse(
-      cond: CedarExpr.fromJson(json['if'] as Map<String, Object?>),
-      then: CedarExpr.fromJson(json['then'] as Map<String, Object?>),
-      else$: CedarExpr.fromJson(json['else'] as Map<String, Object?>),
+  factory ExprIfThenElse.fromJson(Map<String, Object?> json) {
+    return ExprIfThenElse(
+      cond: Expr.fromJson(json['if'] as Map<String, Object?>),
+      then: Expr.fromJson(json['then'] as Map<String, Object?>),
+      else$: Expr.fromJson(json['else'] as Map<String, Object?>),
     );
   }
 
-  final CedarExpr cond;
-  final CedarExpr then;
-  final CedarExpr else$;
+  final Expr cond;
+  final Expr then;
+  final Expr else$;
 
   @override
-  CedarOpCode get op => CedarOpCode.ifThenElse;
+  OpBuiltin get op => OpBuiltin.ifThenElse;
 
   @override
   R accept<R>(ExprVisitor<R> visitor) => visitor.visitIfThenElse(this);
@@ -1184,7 +1165,7 @@ final class CedarExprIfThenElse extends CedarExpr {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is CedarExprIfThenElse &&
+      other is ExprIfThenElse &&
           cond == other.cond &&
           then == other.then &&
           else$ == other.else$;
@@ -1193,20 +1174,20 @@ final class CedarExprIfThenElse extends CedarExpr {
   int get hashCode => Object.hash(op, cond, then, else$);
 }
 
-final class CedarExprSet extends CedarExpr {
-  const CedarExprSet(this.expressions);
+final class ExprSet extends Expr {
+  const ExprSet(this.expressions);
 
-  factory CedarExprSet.fromJson(List<Object?> json) {
-    return CedarExprSet([
+  factory ExprSet.fromJson(List<Object?> json) {
+    return ExprSet([
       for (final expression in json)
-        CedarExpr.fromJson(expression as Map<String, Object?>)
+        Expr.fromJson(expression as Map<String, Object?>)
     ]);
   }
 
-  final List<CedarExpr> expressions;
+  final List<Expr> expressions;
 
   @override
-  CedarOpCode get op => CedarOpCode.set;
+  OpBuiltin get op => OpBuiltin.set;
 
   @override
   R accept<R>(ExprVisitor<R> visitor) => visitor.visitSet(this);
@@ -1223,7 +1204,7 @@ final class CedarExprSet extends CedarExpr {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is CedarExprSet &&
+      other is ExprSet &&
           const UnorderedIterableEquality()
               .equals(expressions, other.expressions);
 
@@ -1231,20 +1212,20 @@ final class CedarExprSet extends CedarExpr {
   int get hashCode => Object.hashAllUnordered(expressions);
 }
 
-final class CedarExprRecord extends CedarExpr {
-  const CedarExprRecord(this.attributes);
+final class ExprRecord extends Expr {
+  const ExprRecord(this.attributes);
 
-  factory CedarExprRecord.fromJson(Map<String, Object?> json) {
-    return CedarExprRecord({
+  factory ExprRecord.fromJson(Map<String, Object?> json) {
+    return ExprRecord({
       for (final entry in json.entries)
-        entry.key: CedarExpr.fromJson(entry.value as Map<String, Object?>)
+        entry.key: Expr.fromJson(entry.value as Map<String, Object?>)
     });
   }
 
-  final Map<String, CedarExpr> attributes;
+  final Map<String, Expr> attributes;
 
   @override
-  CedarOpCode get op => CedarOpCode.record;
+  OpBuiltin get op => OpBuiltin.record;
 
   @override
   R accept<R>(ExprVisitor<R> visitor) => visitor.visitRecord(this);
@@ -1261,7 +1242,7 @@ final class CedarExprRecord extends CedarExpr {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is CedarExprRecord &&
+      other is ExprRecord &&
           const MapEquality().equals(attributes, other.attributes);
 
   @override

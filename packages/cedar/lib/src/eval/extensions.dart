@@ -1,5 +1,4 @@
 import 'package:cedar/ast.dart';
-import 'package:cedar/cedar.dart';
 import 'package:cedar/src/eval/evalutator.dart';
 import 'package:decimal/decimal.dart';
 
@@ -10,7 +9,7 @@ abstract interface class CedarFunction {
   int get numArgs;
   bool get isMethod;
 
-  CedarValue evaluate(Evalutator evaluator, List<CedarExpr> args);
+  Value evaluate(Evalutator evaluator, List<Expr> args);
 }
 
 const Map<String, CedarFunction> extensions = {
@@ -37,10 +36,10 @@ final class CedarFunctionDecimal implements CedarFunction {
   bool get isMethod => false;
 
   @override
-  CedarValue evaluate(Evalutator evaluator, List<CedarExpr> args) {
+  Value evaluate(Evalutator evaluator, List<Expr> args) {
     final literal = args[0].accept(evaluator).expectString();
     final decimal = Decimal.parse(literal.value);
-    return CedarDecimal(decimal);
+    return DecimalValue(decimal);
   }
 }
 
@@ -54,10 +53,10 @@ final class CedarFunctionLessThan implements CedarFunction {
   bool get isMethod => true;
 
   @override
-  CedarValue evaluate(Evalutator evaluator, List<CedarExpr> args) {
+  Value evaluate(Evalutator evaluator, List<Expr> args) {
     final left = args[0].accept(evaluator).expectDecimal();
     final right = args[1].accept(evaluator).expectDecimal();
-    return CedarBool(left.value < right.value);
+    return BoolValue(left.value < right.value);
   }
 }
 
@@ -71,10 +70,10 @@ final class CedarFunctionLessThanOrEqual implements CedarFunction {
   bool get isMethod => true;
 
   @override
-  CedarValue evaluate(Evalutator evaluator, List<CedarExpr> args) {
+  Value evaluate(Evalutator evaluator, List<Expr> args) {
     final left = args[0].accept(evaluator).expectDecimal();
     final right = args[1].accept(evaluator).expectDecimal();
-    return CedarBool(left.value <= right.value);
+    return BoolValue(left.value <= right.value);
   }
 }
 
@@ -88,10 +87,10 @@ final class CedarFunctionGreaterThan implements CedarFunction {
   bool get isMethod => true;
 
   @override
-  CedarValue evaluate(Evalutator evaluator, List<CedarExpr> args) {
+  Value evaluate(Evalutator evaluator, List<Expr> args) {
     final left = args[0].accept(evaluator).expectDecimal();
     final right = args[1].accept(evaluator).expectDecimal();
-    return CedarBool(left.value > right.value);
+    return BoolValue(left.value > right.value);
   }
 }
 
@@ -105,9 +104,9 @@ final class CedarFunctionGreaterThanOrEqual implements CedarFunction {
   bool get isMethod => true;
 
   @override
-  CedarValue evaluate(Evalutator evaluator, List<CedarExpr> args) {
+  Value evaluate(Evalutator evaluator, List<Expr> args) {
     final left = args[0].accept(evaluator).expectDecimal();
     final right = args[1].accept(evaluator).expectDecimal();
-    return CedarBool(left.value >= right.value);
+    return BoolValue(left.value >= right.value);
   }
 }
