@@ -1,29 +1,28 @@
 import 'package:cedar/src/ast.dart';
-import 'package:cedar/src/ast/expr.dart';
 
-extension Comparison on CedarExpr {
-  CedarExpr equals(CedarExpr rhs) {
-    return CedarExprEquals(left: this, right: rhs);
+extension Comparison on Expr {
+  Expr equals(Expr rhs) {
+    return ExprEquals(left: this, right: rhs);
   }
 
-  CedarExpr notEquals(CedarExpr rhs) {
-    return CedarExprNotEquals(left: this, right: rhs);
+  Expr notEquals(Expr rhs) {
+    return ExprNotEquals(left: this, right: rhs);
   }
 
-  CedarExpr lessThan(CedarExpr rhs) {
-    return CedarExprLessThan(left: this, right: rhs);
+  Expr lessThan(Expr rhs) {
+    return ExprLessThan(left: this, right: rhs);
   }
 
-  CedarExpr lessThanOrEquals(CedarExpr rhs) {
-    return CedarExprLessThanOrEquals(left: this, right: rhs);
+  Expr lessThanOrEquals(Expr rhs) {
+    return ExprLessThanOrEquals(left: this, right: rhs);
   }
 
-  CedarExpr greaterThan(CedarExpr rhs) {
-    return CedarExprGreaterThan(left: this, right: rhs);
+  Expr greaterThan(Expr rhs) {
+    return ExprGreaterThan(left: this, right: rhs);
   }
 
-  CedarExpr greaterThanOrEquals(CedarExpr rhs) {
-    return CedarExprGreaterThanOrEquals(left: this, right: rhs);
+  Expr greaterThanOrEquals(Expr rhs) {
+    return ExprGreaterThanOrEquals(left: this, right: rhs);
   }
 
   // CedarExpr decimalLessThan(CedarExpr rhs) {
@@ -58,30 +57,30 @@ extension Comparison on CedarExpr {
   //   );
   // }
 
-  CedarExpr like(CedarPattern pattern) {
-    return CedarExprLike(left: this, pattern: pattern);
+  Expr like(CedarPattern pattern) {
+    return ExprLike(left: this, pattern: pattern);
   }
 }
 
-extension Logical on CedarExpr {
-  CedarExpr and(CedarExpr rhs) {
-    return CedarExprAnd(left: this, right: rhs);
+extension Logical on Expr {
+  Expr and(Expr rhs) {
+    return ExprAnd(left: this, right: rhs);
   }
 
-  CedarExpr or(CedarExpr rhs) {
-    return CedarExprOr(left: this, right: rhs);
+  Expr or(Expr rhs) {
+    return ExprOr(left: this, right: rhs);
   }
 
-  CedarExpr not() {
-    return CedarExprNot(this);
+  Expr not() {
+    return ExprNot(this);
   }
 
-  CedarExpr ifThenElse(
-    CedarExpr condition,
-    CedarExpr thenCedarExpr,
-    CedarExpr elseCedarExpr,
+  Expr ifThenElse(
+    Expr condition,
+    Expr thenCedarExpr,
+    Expr elseCedarExpr,
   ) {
-    return CedarExprIfThenElse(
+    return ExprIfThenElse(
       cond: condition,
       then: thenCedarExpr,
       else$: elseCedarExpr,
@@ -89,102 +88,102 @@ extension Logical on CedarExpr {
   }
 }
 
-CedarExpr not(CedarExpr expr) => CedarExpr.not(expr);
+Expr not(Expr expr) => Expr.not(expr);
 
-CedarExpr ifThenElse(
-  CedarExpr condition,
-  CedarExpr thenCedarExpr,
-  CedarExpr elseCedarExpr,
+Expr ifThenElse(
+  Expr condition,
+  Expr thenCedarExpr,
+  Expr elseCedarExpr,
 ) =>
-    CedarExprIfThenElse(
+    ExprIfThenElse(
       cond: condition,
       then: thenCedarExpr,
       else$: elseCedarExpr,
     );
 
-extension Arithmetic on CedarExpr {
-  CedarExpr add(CedarExpr rhs) {
-    return CedarExprPlus(left: this, right: rhs);
+extension Arithmetic on Expr {
+  Expr add(Expr rhs) {
+    return ExprAdd(left: this, right: rhs);
   }
 
-  CedarExpr subtract(CedarExpr rhs) {
-    return CedarExprMinus(left: this, right: rhs);
+  Expr subtract(Expr rhs) {
+    return ExprSubt(left: this, right: rhs);
   }
 
-  CedarExpr multiply(CedarExpr rhs) {
-    return CedarExprTimes(left: this, right: rhs);
+  Expr multiply(Expr rhs) {
+    return ExprMult(left: this, right: rhs);
   }
 
-  CedarExpr negate() {
-    return CedarExprNegate(this);
-  }
-}
-
-extension Hierarchy on CedarExpr {
-  CedarExpr in_(CedarExpr rhs) {
-    return CedarExprIn(left: this, right: rhs);
-  }
-
-  CedarExpr is_(String entityType) {
-    return CedarExprIs(left: this, entityType: entityType);
-  }
-
-  CedarExpr isIn(String entityType, CedarExpr rhs) {
-    return CedarExprIs(left: this, entityType: entityType, inExpr: rhs);
-  }
-
-  CedarExpr contains(CedarExpr rhs) {
-    return CedarExprContains(left: this, right: rhs);
-  }
-
-  CedarExpr containsAll(CedarExpr rhs) {
-    return CedarExprContainsAll(left: this, right: rhs);
-  }
-
-  CedarExpr containsAny(CedarExpr rhs) {
-    return CedarExprContainsAny(left: this, right: rhs);
-  }
-
-  CedarExpr access(String attr) {
-    return CedarExprGetAttribute(left: this, attr: attr);
-  }
-
-  CedarExpr has(String attr) {
-    return CedarExprHasAttribute(left: this, attr: attr);
+  Expr negate() {
+    return ExprNegate(this);
   }
 }
 
-extension IpAddressOperators on CedarExpr {
-  CedarExpr isIpv4() {
-    return CedarExprFunctionCall(
+extension Hierarchy on Expr {
+  Expr in_(Expr rhs) {
+    return ExprIn(left: this, right: rhs);
+  }
+
+  Expr is_(String entityType) {
+    return ExprIs(left: this, entityType: entityType);
+  }
+
+  Expr isIn(String entityType, Expr rhs) {
+    return ExprIs(left: this, entityType: entityType, inExpr: rhs);
+  }
+
+  Expr contains(Expr rhs) {
+    return ExprContains(left: this, right: rhs);
+  }
+
+  Expr containsAll(Expr rhs) {
+    return ExprContainsAll(left: this, right: rhs);
+  }
+
+  Expr containsAny(Expr rhs) {
+    return ExprContainsAny(left: this, right: rhs);
+  }
+
+  Expr access(String attr) {
+    return ExprGetAttribute(left: this, attr: attr);
+  }
+
+  Expr has(String attr) {
+    return ExprHasAttribute(left: this, attr: attr);
+  }
+}
+
+extension IpAddressOperators on Expr {
+  Expr isIpv4() {
+    return ExprExtensionCall(
       fn: 'isIpv4',
       args: [this],
     );
   }
 
-  CedarExpr isIpv6() {
-    return CedarExprFunctionCall(
+  Expr isIpv6() {
+    return ExprExtensionCall(
       fn: 'isIpv6',
       args: [this],
     );
   }
 
-  CedarExpr isMulticast() {
-    return CedarExprFunctionCall(
+  Expr isMulticast() {
+    return ExprExtensionCall(
       fn: 'isMulticast',
       args: [this],
     );
   }
 
-  CedarExpr isLoopback() {
-    return CedarExprFunctionCall(
+  Expr isLoopback() {
+    return ExprExtensionCall(
       fn: 'isLoopback',
       args: [this],
     );
   }
 
-  CedarExpr isInRange(CedarExpr rhs) {
-    return CedarExprFunctionCall(
+  Expr isInRange(Expr rhs) {
+    return ExprExtensionCall(
       fn: 'isInRange',
       args: [this, rhs],
     );

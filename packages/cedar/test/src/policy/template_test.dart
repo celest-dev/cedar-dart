@@ -1,4 +1,3 @@
-import 'package:cedar/ast.dart';
 import 'package:cedar/cedar.dart';
 import 'package:test/test.dart';
 
@@ -14,18 +13,18 @@ permit(
 );
 ''';
 
-        final policySet = CedarPolicySet.parse(principalTemplate);
+        final policySet = PolicySet.parse(principalTemplate);
         expect(policySet.templates, hasLength(1));
 
-        final serded = CedarPolicySet.fromJson(policySet.toJson());
+        final serded = PolicySet.fromJson(policySet.toJson());
         expect(serded.templates, hasLength(1));
 
         final template = policySet.templates.values.first;
         expect(template.isTemplate, true);
         expect(
           template.principal,
-          isA<CedarPrincipalEquals>()
-              .having((it) => it.entity, 'entity', CedarSlotId.principal),
+          isA<PrincipalEquals>()
+              .having((it) => it.entity, 'entity', SlotId.principal),
         );
 
         // final linkedPolicy = template.link(
@@ -50,18 +49,18 @@ permit(
 );
 ''';
 
-        final policySet = CedarPolicySet.parse(principalTemplate);
+        final policySet = PolicySet.parse(principalTemplate);
         expect(policySet.templates, hasLength(1));
 
-        final serded = CedarPolicySet.fromJson(policySet.toJson());
+        final serded = PolicySet.fromJson(policySet.toJson());
         expect(serded.templates, hasLength(1));
 
         final template = policySet.templates.values.first;
         expect(template.isTemplate, true);
         expect(
           template.principal,
-          isA<CedarPrincipalIn>()
-              .having((it) => it.entity, 'entity', CedarSlotId.principal),
+          isA<PrincipalIn>()
+              .having((it) => it.entity, 'entity', SlotId.principal),
         );
 
         // final linkedPolicy = template.link(
@@ -86,19 +85,19 @@ permit(
 );
 ''';
 
-        final policySet = CedarPolicySet.parse(principalTemplate);
+        final policySet = PolicySet.parse(principalTemplate);
         expect(policySet.templates, hasLength(1));
 
-        final serded = CedarPolicySet.fromJson(policySet.toJson());
+        final serded = PolicySet.fromJson(policySet.toJson());
         expect(serded.templates, hasLength(1));
 
         final template = policySet.templates.values.first;
         expect(template.isTemplate, true);
         expect(
           template.principal,
-          isA<CedarPrincipalIsIn>()
+          isA<PrincipalIsIn>()
               .having((it) => it.entityType, 'entityType', 'Test')
-              .having((it) => it.entity, 'entity', CedarSlotId.principal),
+              .having((it) => it.entity, 'entity', SlotId.principal),
         );
 
         // final linkedPolicy = template.link(
@@ -125,20 +124,20 @@ permit(
 );
 ''';
 
-        final policySet = CedarPolicySet.parse(resourceTemplate);
+        final policySet = PolicySet.parse(resourceTemplate);
         expect(policySet.templates, hasLength(1));
 
-        final serded = CedarPolicySet.fromJson(policySet.toJson());
+        final serded = PolicySet.fromJson(policySet.toJson());
         expect(serded.templates, hasLength(1));
 
         final template = policySet.templates.values.first;
         expect(template.isTemplate, true);
         expect(
           template.resource,
-          isA<CedarResourceEquals>().having(
+          isA<ResourceEquals>().having(
             (it) => it.entity,
             'entity',
-            CedarSlotId.resource,
+            SlotId.resource,
           ),
         );
 
@@ -164,20 +163,20 @@ permit(
 );
 ''';
 
-        final policySet = CedarPolicySet.parse(resourceTemplate);
+        final policySet = PolicySet.parse(resourceTemplate);
         expect(policySet.templates, hasLength(1));
 
-        final serded = CedarPolicySet.fromJson(policySet.toJson());
+        final serded = PolicySet.fromJson(policySet.toJson());
         expect(serded.templates, hasLength(1));
 
         final template = policySet.templates.values.first;
         expect(template.isTemplate, true);
         expect(
           template.resource,
-          isA<CedarResourceIn>().having(
+          isA<ResourceIn>().having(
             (it) => it.entity,
             'entity',
-            CedarSlotId.resource,
+            SlotId.resource,
           ),
         );
 
@@ -204,19 +203,19 @@ permit(
 );
 ''';
 
-        final policySet = CedarPolicySet.parse(resourceTemplate);
+        final policySet = PolicySet.parse(resourceTemplate);
         expect(policySet.templates, hasLength(1));
 
-        final serded = CedarPolicySet.fromJson(policySet.toJson());
+        final serded = PolicySet.fromJson(policySet.toJson());
         expect(serded.templates, hasLength(1));
 
         final template = policySet.templates.values.first;
         expect(template.isTemplate, true);
         expect(
           template.resource,
-          isA<CedarResourceIsIn>()
+          isA<ResourceIsIn>()
               .having((it) => it.entityType, 'entityType', 'Test')
-              .having((it) => it.entity, 'entity', CedarSlotId.resource),
+              .having((it) => it.entity, 'entity', SlotId.resource),
         );
 
         // final linkedPolicy = template.link(

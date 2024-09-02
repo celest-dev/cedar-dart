@@ -1,15 +1,12 @@
-part of 'cedar_value.dart';
+part of '../value.dart';
 
-@Deprecated('Use CedarExtensionCall instead')
-typedef CedarValueExtension = CedarExtensionCall;
-
-final class CedarExtensionCall extends CedarValue {
-  const CedarExtensionCall({
+final class ExtensionCall extends Value {
+  const ExtensionCall({
     required this.fn,
     required this.arg,
   });
 
-  factory CedarExtensionCall.fromJson(Map<String, Object?> json) {
+  factory ExtensionCall.fromJson(Map<String, Object?> json) {
     if (json
         case {
           '__extn': {
@@ -17,16 +14,16 @@ final class CedarExtensionCall extends CedarValue {
             'arg': final Object? arg,
           }
         }) {
-      return CedarExtensionCall(
+      return ExtensionCall(
         fn: fn,
-        arg: CedarValue.fromJson(arg),
+        arg: Value.fromJson(arg),
       );
     }
     throw FormatException('Invalid Cedar extension call: $json');
   }
 
   final String fn;
-  final CedarValue arg;
+  final Value arg;
 
   @override
   Map<String, Object?> toJson() => {
@@ -37,7 +34,7 @@ final class CedarExtensionCall extends CedarValue {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is CedarExtensionCall && fn == other.fn && arg == other.arg;
+      other is ExtensionCall && fn == other.fn && arg == other.arg;
 
   @override
   int get hashCode => Object.hash(fn, arg);

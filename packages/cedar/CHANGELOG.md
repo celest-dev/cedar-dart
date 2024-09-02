@@ -1,6 +1,7 @@
 ## 0.2.0
 
 - feat: Add Dart evaluation
+- chore!: Rename several types from `CedarX` to just `X` to improve readability and consistency with Rust impl
 
 ## 0.1.3
 

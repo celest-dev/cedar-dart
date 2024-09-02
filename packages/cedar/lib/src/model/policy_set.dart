@@ -6,39 +6,39 @@ import 'package:cedar/src/util/pretty_json.dart';
 import 'package:collection/collection.dart';
 
 /// A collection of Cedar policies.
-final class CedarPolicySet implements CedarAuthorizer {
-  const CedarPolicySet({
+final class PolicySet implements CedarAuthorizer {
+  const PolicySet({
     this.policies = const {},
     this.templates = const {},
     this.templateLinks = const [],
   });
 
-  factory CedarPolicySet.fromJson(Map<String, Object?> json) {
-    return CedarPolicySet(
+  factory PolicySet.fromJson(Map<String, Object?> json) {
+    return PolicySet(
       policies:
           (json['staticPolicies'] as Map<String, Object?>? ?? const {}).map(
         (k, v) => MapEntry(
           k,
-          CedarPolicy.fromJson(v as Map<String, Object?>),
+          Policy.fromJson(v as Map<String, Object?>),
         ),
       ),
       templates: (json['templates'] as Map<String, Object?>? ?? const {}).map(
         (k, v) => MapEntry(
           k,
-          CedarPolicy.fromJson(v as Map<String, Object?>),
+          Policy.fromJson(v as Map<String, Object?>),
         ),
       ),
       templateLinks: (json['templateLinks'] as List<Object?>? ?? const [])
-          .map((l) => CedarTemplateLink.fromJson(l as Map<String, Object?>))
+          .map((l) => TemplateLink.fromJson(l as Map<String, Object?>))
           .toList(),
     );
   }
 
-  factory CedarPolicySet.parse(String cedar) {
+  factory PolicySet.parse(String cedar) {
     final tokens = Tokenizer(cedar).tokenize();
     final parser = Parser(tokens);
-    final policies = <String, CedarPolicy>{};
-    final templates = <String, CedarPolicy>{};
+    final policies = <String, Policy>{};
+    final templates = <String, Policy>{};
     var polIndex = 0, tmplIndex = 0;
     while (!parser.isDone) {
       final policyOrTemplate = parser.readPolicy();
@@ -51,12 +51,12 @@ final class CedarPolicySet implements CedarAuthorizer {
         polIndex++;
       }
     }
-    return CedarPolicySet(policies: policies, templates: templates);
+    return PolicySet(policies: policies, templates: templates);
   }
 
-  final Map<String, CedarPolicy> policies;
-  final Map<String, CedarPolicy> templates;
-  final List<CedarTemplateLink> templateLinks;
+  final Map<String, Policy> policies;
+  final Map<String, Policy> templates;
+  final List<TemplateLink> templateLinks;
 
   Map<String, Object?> toJson() => {
         'staticPolicies':
@@ -67,17 +67,17 @@ final class CedarPolicySet implements CedarAuthorizer {
       };
 
   @override
-  CedarAuthorizationResponse isAuthorized(CedarAuthorizationRequest request) {
+  AuthorizationResponse isAuthorized(AuthorizationRequest request) {
     final context = EvaluationContext(
       entities: request.entities,
-      principal: request.principal ?? CedarEntityId.unknown(),
-      action: request.action ?? CedarEntityId.unknown(),
-      resource: request.resource ?? CedarEntityId.unknown(),
-      context: CedarRecord(request.context ?? const {}),
+      principal: request.principal ?? EntityUid.unknown(),
+      action: request.action ?? EntityUid.unknown(),
+      resource: request.resource ?? EntityUid.unknown(),
+      context: RecordValue(request.context ?? const {}),
     );
     final evaluator = Evalutator(context);
 
-    final diagnostics = <CedarAuthorizationError>[];
+    final diagnostics = <AuthorizationException>[];
     final permitReasons = <String>[];
     final forbidReasons = <String>[];
     var forbidden = false;
@@ -94,7 +94,7 @@ final class CedarPolicySet implements CedarAuthorizer {
         if (!result.value) {
           continue;
         }
-        if (policy.effect == CedarEffect.forbid) {
+        if (policy.effect == Effect.forbid) {
           forbidden = true;
           forbidReasons.add(id);
         } else {
@@ -102,7 +102,7 @@ final class CedarPolicySet implements CedarAuthorizer {
           permitReasons.add(id);
         }
       } on EvaluationException catch (e) {
-        diagnostics.add(CedarAuthorizationError(
+        diagnostics.add(AuthorizationException(
           policyId: id,
           message: e.toString(),
         ));
@@ -110,19 +110,16 @@ final class CedarPolicySet implements CedarAuthorizer {
     }
 
     final reasons = permitted ? permitReasons : forbidReasons;
-    return CedarAuthorizationResponse(
-      decision: permitted && !forbidden
-          ? CedarAuthorizationDecision.allow
-          : CedarAuthorizationDecision.deny,
+    return AuthorizationResponse(
+      decision: permitted && !forbidden ? Decision.allow : Decision.deny,
       reasons: reasons.isEmpty ? null : reasons,
-      errors:
-          diagnostics.isEmpty ? null : CedarAuthorizationErrors(diagnostics),
+      errors: diagnostics.isEmpty ? null : AuthorizationErrors(diagnostics),
     );
   }
 }
 
-final class CedarTemplateLink {
-  const CedarTemplateLink({
+final class TemplateLink {
+  const TemplateLink({
     required this.templateId,
     required this.newId,
     required this.values,
@@ -130,7 +127,7 @@ final class CedarTemplateLink {
 
   final String templateId;
   final String newId;
-  final Map<CedarSlotId, CedarEntityId> values;
+  final Map<SlotId, EntityUid> values;
 
   Map<String, Object?> toJson() => {
         'templateId': templateId,
@@ -138,14 +135,14 @@ final class CedarTemplateLink {
         'values': values.map((k, v) => MapEntry(k.toJson(), v.toString())),
       };
 
-  factory CedarTemplateLink.fromJson(Map<String, Object?> json) {
-    return CedarTemplateLink(
+  factory TemplateLink.fromJson(Map<String, Object?> json) {
+    return TemplateLink(
       templateId: json['templateId'] as String,
       newId: json['newId'] as String,
       values: (json['values'] as Map<String, Object?>).map(
         (k, v) => MapEntry(
-          CedarSlotId.fromJson(k),
-          CedarEntityId.fromJson(v as Map<String, Object?>),
+          SlotId.fromJson(k),
+          EntityUid.fromJson(v as Map<String, Object?>),
         ),
       ),
     );
@@ -153,7 +150,7 @@ final class CedarTemplateLink {
 
   @override
   bool operator ==(Object other) =>
-      other is CedarTemplateLink &&
+      other is TemplateLink &&
       templateId == other.templateId &&
       newId == other.newId &&
       const MapEquality().equals(values, other.values);

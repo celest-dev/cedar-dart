@@ -33,7 +33,7 @@ final class CedarPattern {
       switch (comp) {
         case Literal(literal: final String value) ||
               final String value ||
-              CedarString(:final value):
+              StringValue(:final value):
           final component = switch (comps.lastOrNull) {
             null || Wildcard() => Literal(value),
             Literal() => Literal(comps.removeLast().literal + value),

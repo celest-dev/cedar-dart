@@ -1,22 +1,19 @@
-import 'dart:convert';
-import 'dart:io';
-
 import 'package:cedar/cedar.dart';
-import 'package:cedar_ffi/cedar_ffi.dart';
 
-Future<void> main() async {
-  final root = Platform.script.resolve('cedar/');
-  final schemaJson =
-      File.fromUri(root.resolve('example.cedarschema.json')).readAsStringSync();
-  final policiesCedar =
-      File.fromUri(root.resolve('example.cedar')).readAsStringSync();
+void main() {
+  const policies = '''
+// Policy 0: Any User can create a list and see what lists they own
+permit (
+    principal,
+    action in [Action::"CreateList", Action::"GetLists"],
+    resource == Application::"TinyTodo"
+);
 
-  final cedar = CedarEngine(
-    schema: CedarSchema.fromJson(
-      jsonDecode(schemaJson) as Map<String, Object?>,
-    ),
-    policySet: CedarPolicySetFfi.fromCedar(policiesCedar),
-  );
+// Policy 1: A User can perform any action on a List they own
+permit (principal, action, resource)
+when { resource has owner && resource.owner == principal };
+''';
+  final policySet = PolicySet.parse(policies);
 
   final app = Entity(
     uid: EntityUid.of('Application', 'TinyTodo'),
@@ -28,13 +25,13 @@ Future<void> main() async {
       'name': Value.string('Alice'),
     },
   );
-  final canCreateTodo = cedar.isAuthorized(
+  final canCreateTodo = policySet.isAuthorized(
     AuthorizationRequest(
       principal: user.uid,
       action: EntityUid.of('Action', 'CreateList'),
       resource: app.uid,
+      entities: {app.uid: app, user.uid: user},
     ),
-    entities: [app, user],
   );
   switch (canCreateTodo) {
     case AuthorizationResponse(decision: Decision.allow):

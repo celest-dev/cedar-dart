@@ -5,12 +5,11 @@ import 'package:cedar/cedar.dart';
 import 'package:cedar_ffi/src/ffi/cedar_bindings.dart';
 import 'package:ffi/ffi.dart';
 
-/// An FFI extension of [CedarPolicySet].
-extension type CedarPolicySetFfi._(CedarPolicySet _policySet)
-    implements CedarPolicySet {
+/// An FFI extension of [PolicySet].
+extension type CedarPolicySetFfi._(PolicySet _policySet) implements PolicySet {
   /// Parses a set of Cedar policies from the given [policiesIdl].
   CedarPolicySetFfi.fromCedar(String policiesIdl)
-      : _policySet = CedarPolicySet.fromJson(parsePolicies(policiesIdl));
+      : _policySet = PolicySet.fromJson(parsePolicies(policiesIdl));
 }
 
 /// Parses a set of Cedar policies from the given [policiesIdl] using the
@@ -45,8 +44,8 @@ Map<String, Object?> parsePolicies(String policiesIdl) {
   });
 }
 
-extension CedarPolicyLinkFfi on CedarPolicy {
-  CedarPolicy link(Map<CedarSlotId, CedarEntityId> values) => using((arena) {
+extension CedarPolicyLinkFfi on Policy {
+  Policy link(Map<SlotId, EntityUid> values) => using((arena) {
         final linkedPolicy = bindings.cedar_link_policy_template(
           jsonEncode(toJson()).toNativeUtf8(allocator: arena).cast(),
           jsonEncode(values.map((k, v) => MapEntry(k.toJson(), v.toString())))
@@ -56,7 +55,7 @@ extension CedarPolicyLinkFfi on CedarPolicy {
         if (linkedPolicy == nullptr) {
           throw FormatException('Could not link policy');
         }
-        return CedarPolicy.fromJson(
+        return Policy.fromJson(
           jsonDecode(linkedPolicy.cast<Utf8>().toDartString()),
         );
       });

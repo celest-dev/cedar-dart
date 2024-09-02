@@ -13,16 +13,16 @@ void main() {
         ) in cedarCorpusTests.values) {
       group(name, () {
         late final CedarAuthorizer cedar;
-        late final Map<CedarEntityId, CedarEntity> entities;
+        late final Map<EntityUid, Entity> entities;
 
         setUpAll(() {
-          cedar = CedarPolicySet.parse(policiesCedar);
+          cedar = PolicySet.parse(policiesCedar);
           entities = Map.fromEntries(
             entitiesJson.map((json) {
-              final entity = CedarEntity.fromJson(
+              final entity = Entity.fromJson(
                 json as Map<String, Object?>,
               );
-              return MapEntry(entity.id, entity);
+              return MapEntry(entity.uid, entity);
             }),
           );
         });
@@ -34,30 +34,37 @@ void main() {
 
         test('can parse entities', () {
           final entities = entitiesJson
-              .map((entity) =>
-                  CedarEntity.fromJson(entity as Map<String, Object?>))
+              .map((entity) => Entity.fromJson(entity as Map<String, Object?>))
               .toList();
           expect(entities.map((e) => e.toJson()), equals(entitiesJson));
         });
 
         for (final query in queries) {
           test(query.description, () {
-            final response = cedar.isAuthorized(
-              CedarAuthorizationRequest(
-                entities: entities,
-                principal: query.principal,
-                action: query.action,
-                resource: query.resource,
-                context: query.context
-                    .map((k, v) => MapEntry(k, CedarValue.fromJson(v))),
-              ),
-            );
-            expect(response.decision, query.decision);
-            expect(
-              response.errors.map((it) => it.policyId),
-              orderedEquals(query.errors),
-            );
-            expect(response.reasons, query.reasons);
+            try {
+              final response = cedar.isAuthorized(
+                AuthorizationRequest(
+                  entities: entities,
+                  principal: query.principal,
+                  action: query.action,
+                  resource: query.resource,
+                  context: query.context
+                      .map((k, v) => MapEntry(k, Value.fromJson(v))),
+                ),
+              );
+              expect(response.decision, query.decision);
+              expect(
+                response.errors.map((it) => it.policyId),
+                orderedEquals(query.errors),
+              );
+              expect(response.reasons, query.reasons);
+            } on UnsupportedError {
+              if (!const bool.fromEnvironment('dart.library.io')) {
+                // OK, some methods not implemented on web
+                return;
+              }
+              rethrow;
+            }
           });
         }
       });

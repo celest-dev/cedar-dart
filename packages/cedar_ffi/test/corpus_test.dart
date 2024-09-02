@@ -21,7 +21,7 @@ void main() {
             schema: CedarSchema.fromJson(schemaJson),
             entities: entitiesJson
                 .map(
-                  (entity) => CedarEntity.fromJson(
+                  (entity) => Entity.fromJson(
                     entity as Map<String, Object?>,
                   ),
                 )
@@ -40,8 +40,7 @@ void main() {
 
         test('can parse entities', () {
           final entities = entitiesJson
-              .map((entity) =>
-                  CedarEntity.fromJson(entity as Map<String, Object?>))
+              .map((entity) => Entity.fromJson(entity as Map<String, Object?>))
               .toList();
           expect(entities.map((e) => e.toJson()), equals(entitiesJson));
         });
@@ -49,12 +48,12 @@ void main() {
         for (final query in queries) {
           test(query.description, () {
             final response = cedar.isAuthorized(
-              CedarAuthorizationRequest(
+              AuthorizationRequest(
                 principal: query.principal,
                 action: query.action,
                 resource: query.resource,
-                context: query.context
-                    .map((k, v) => MapEntry(k, CedarValue.fromJson(v))),
+                context:
+                    query.context.map((k, v) => MapEntry(k, Value.fromJson(v))),
               ),
             );
             expect(response.decision, query.decision);
@@ -70,7 +69,7 @@ void main() {
           final rawPolicies = parsePolicies(policiesCedar);
           final rawStaticPolicies =
               rawPolicies['staticPolicies'] as Map? ?? const {};
-          final policies = CedarPolicySet.fromJson(rawPolicies).policies;
+          final policies = PolicySet.fromJson(rawPolicies).policies;
           for (final MapEntry(key: id, value: policy) in policies.entries) {
             expect(policy.toJson(), equals(rawStaticPolicies[id]));
           }

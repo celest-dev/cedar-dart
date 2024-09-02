@@ -14,12 +14,15 @@
 /// native assets of `package:cedar_ffi`.
 library;
 
-export 'src/authorization/cedar_authorization_request.dart';
-export 'src/authorization/cedar_authorization_response.dart';
-export 'src/authorization/cedar_authorizer.dart';
-export 'src/eval/errors.dart';
-export 'src/model/cedar_entity.dart';
-export 'src/model/cedar_schema.dart' hide CedarEntityType;
-export 'src/model/types/cedar_value.dart';
-export 'src/policy/cedar_policy.dart';
-export 'src/policy/cedar_policy_set.dart';
+export 'src/authorization/authorization_request.dart';
+export 'src/authorization/authorization_response.dart';
+export 'src/authorization/authorizer.dart';
+export 'src/model/entity.dart';
+export 'src/model/errors.dart';
+export 'src/model/policy.dart';
+export 'src/model/policy_constraint.dart';
+export 'src/model/policy_set.dart';
+export 'src/model/schema.dart';
+export 'src/model/schema_type.dart';
+export 'src/model/value.dart';
+export 'src/model/variable.dart';

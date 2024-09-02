@@ -1,50 +1,51 @@
 import 'package:cedar/cedar.dart';
 import 'package:cedar/src/ast.dart';
+import 'package:fixnum/fixnum.dart';
 
-CedarExpr boolean(bool value) {
-  return CedarExprValue(CedarValue.bool(value));
+Expr boolean(bool value) {
+  return ExprValue(Value.bool(value));
 }
 
-CedarExpr true_() {
+Expr true_() {
   return boolean(true);
 }
 
-CedarExpr false_() {
+Expr false_() {
   return boolean(false);
 }
 
-CedarExpr string(String value) {
-  return CedarExprValue(CedarValue.string(value));
+Expr string(String value) {
+  return ExprValue(Value.string(value));
 }
 
-CedarExpr long(int value) {
-  return CedarExprValue(CedarValue.long(value));
+Expr long(int value) {
+  return ExprValue(Value.long(Int64(value)));
 }
 
-CedarExpr set(Iterable<CedarExpr> value) {
-  return CedarExprSet(value.toList());
+Expr set(Iterable<Expr> value) {
+  return ExprSet(value.toList());
 }
 
-typedef Pair = (String key, CedarExpr value);
+typedef Pair = (String key, Expr value);
 
-CedarExpr record(Iterable<Pair> pairs) {
-  return CedarExprRecord({
+Expr record(Iterable<Pair> pairs) {
+  return ExprRecord({
     for (final (key, value) in pairs) key: value,
   });
 }
 
-CedarExpr entityUid(String type, String id) {
-  return CedarExprValue(CedarValue.entity(entityId: CedarEntityId(type, id)));
+Expr entityUid(String type, String id) {
+  return ExprValue(Value.entity(uid: EntityUid.of(type, id)));
 }
 
-CedarExpr extensionCall(String name, List<CedarExpr> args) {
-  return CedarExprFunctionCall(fn: name, args: args);
+Expr extensionCall(String name, List<Expr> args) {
+  return ExprExtensionCall(fn: name, args: args);
 }
 
-CedarPolicy permit() {
-  return const CedarPolicy.permit();
+Policy permit() {
+  return const Policy.permit();
 }
 
-CedarPolicy forbid() {
-  return const CedarPolicy.forbid();
+Policy forbid() {
+  return const Policy.forbid();
 }

@@ -57,11 +57,11 @@ final class CedarQuery {
 
   @JsonKey(name: 'desc')
   final String description;
-  final CedarEntityId? principal;
-  final CedarEntityId? resource;
-  final CedarEntityId action;
+  final EntityUid? principal;
+  final EntityUid? resource;
+  final EntityUid action;
   final Map<String, Object?> context;
-  final CedarAuthorizationDecision decision;
+  final Decision decision;
   final List<String> reasons;
   final List<String> errors;
 

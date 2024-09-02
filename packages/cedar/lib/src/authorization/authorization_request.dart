@@ -3,9 +3,9 @@ import 'package:cedar/cedar.dart';
 /// {@template cedar.cedar_authorization_request}
 /// A request for authorization to a [CedarEngine].
 /// {@endtemplate}
-final class CedarAuthorizationRequest {
+final class AuthorizationRequest {
   /// {@macro cedar.cedar_authorization_request}
-  const CedarAuthorizationRequest({
+  const AuthorizationRequest({
     this.entities = const {},
     this.principal,
     this.action,
@@ -14,17 +14,17 @@ final class CedarAuthorizationRequest {
   });
 
   /// The entities in the request.
-  final Map<CedarEntityId, CedarEntity> entities;
+  final Map<EntityUid, Entity> entities;
 
   /// The principal component of the request.
-  final CedarEntityId? principal;
+  final EntityUid? principal;
 
   /// The action component of the request.
-  final CedarEntityId? action;
+  final EntityUid? action;
 
   /// The resource component of the request.
-  final CedarEntityId? resource;
+  final EntityUid? resource;
 
   /// The context of the request.
-  final Map<String, CedarValue>? context;
+  final Map<String, Value>? context;
 }

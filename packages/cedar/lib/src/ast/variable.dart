@@ -1,17 +1,18 @@
+import 'package:cedar/cedar.dart';
 import 'package:cedar/src/ast.dart';
 
-CedarExprVariable principal() {
-  return CedarExprVariable(CedarVariable.principal);
+ExprVariable principal() {
+  return ExprVariable(CedarVariable.principal);
 }
 
-CedarExprVariable action() {
-  return CedarExprVariable(CedarVariable.action);
+ExprVariable action() {
+  return ExprVariable(CedarVariable.action);
 }
 
-CedarExprVariable resource() {
-  return CedarExprVariable(CedarVariable.resource);
+ExprVariable resource() {
+  return ExprVariable(CedarVariable.resource);
 }
 
-CedarExprVariable context() {
-  return CedarExprVariable(CedarVariable.context);
+ExprVariable context() {
+  return ExprVariable(CedarVariable.context);
 }

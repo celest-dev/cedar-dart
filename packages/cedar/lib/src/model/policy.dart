@@ -10,53 +10,53 @@ import 'package:cedar/ast.dart';
 import 'package:cedar/src/parser/parser.dart';
 import 'package:cedar/src/parser/tokenizer.dart';
 
-enum CedarEffect {
+enum Effect {
   permit,
   forbid;
 
-  factory CedarEffect.fromJson(String json) {
-    return CedarEffect.values.byName(json);
+  factory Effect.fromJson(String json) {
+    return Effect.values.byName(json);
   }
 
   String toJson() => name;
 }
 
-enum CedarConditionKind {
+enum ConditionKind {
   when,
   unless;
 
-  factory CedarConditionKind.fromJson(String json) {
-    return CedarConditionKind.values.byName(json);
+  factory ConditionKind.fromJson(String json) {
+    return ConditionKind.values.byName(json);
   }
 
   String toJson() => name;
 }
 
-final class CedarPolicy {
-  const CedarPolicy({
+final class Policy {
+  const Policy({
     required this.effect,
-    this.principal = const CedarPrincipalAll(),
-    this.action = const CedarActionAll(),
-    this.resource = const CedarResourceAll(),
+    this.principal = const PrincipalAll(),
+    this.action = const ActionAll(),
+    this.resource = const ResourceAll(),
     this.conditions = const [],
     this.annotations,
     this.position,
   });
 
-  factory CedarPolicy.fromJson(Map<String, dynamic> json) {
-    return CedarPolicy(
-      effect: CedarEffect.fromJson(json['effect'] as String),
-      principal: CedarPrincipalScope.fromJson(
+  factory Policy.fromJson(Map<String, dynamic> json) {
+    return Policy(
+      effect: Effect.fromJson(json['effect'] as String),
+      principal: PrincipalConstraint.fromJson(
         json['principal'] as Map<String, Object?>,
       ),
-      action: CedarActionScope.fromJson(
+      action: ActionConstraint.fromJson(
         json['action'] as Map<String, Object?>,
       ),
-      resource: CedarResourceScope.fromJson(
+      resource: ResourceConstraint.fromJson(
         json['resource'] as Map<String, Object?>,
       ),
       conditions: (json['conditions'] as List<Object?>)
-          .map((c) => CedarCondition.fromJson(c as Map<String, Object?>))
+          .map((c) => Condition.fromJson(c as Map<String, Object?>))
           .toList(),
       annotations: json['annotations'] == null
           ? null
@@ -67,7 +67,7 @@ final class CedarPolicy {
     );
   }
 
-  factory CedarPolicy.parse(String cedar) {
+  factory Policy.parse(String cedar) {
     final tokens = Tokenizer(cedar).tokenize();
     final parser = Parser(tokens);
     final policy = parser.readPolicy();
@@ -75,14 +75,14 @@ final class CedarPolicy {
     return policy;
   }
 
-  const CedarPolicy.permit() : this(effect: CedarEffect.permit);
-  const CedarPolicy.forbid() : this(effect: CedarEffect.forbid);
+  const Policy.permit() : this(effect: Effect.permit);
+  const Policy.forbid() : this(effect: Effect.forbid);
 
-  final CedarEffect effect;
-  final CedarPrincipalScope principal;
-  final CedarActionScope action;
-  final CedarResourceScope resource;
-  final List<CedarCondition> conditions;
+  final Effect effect;
+  final PrincipalConstraint principal;
+  final ActionConstraint action;
+  final ResourceConstraint resource;
+  final List<Condition> conditions;
   final Annotations? annotations;
   final Position? position;
 
@@ -95,14 +95,14 @@ final class CedarPolicy {
     return false;
   }
 
-  CedarPolicy rebuild(void Function(CedarPolicyBuilder policy) builder) {
+  Policy rebuild(void Function(PolicyBuilder policy) builder) {
     final policy = toBuilder();
     builder(policy);
     return policy.build();
   }
 
-  CedarPolicyBuilder toBuilder() {
-    return CedarPolicyBuilder()
+  PolicyBuilder toBuilder() {
+    return PolicyBuilder()
       ..effect = effect
       ..principal = principal
       ..action = action
@@ -113,30 +113,30 @@ final class CedarPolicy {
       ..position = position;
   }
 
-  CedarPolicy when(CedarExpr expr) {
+  Policy when(Expr expr) {
     return rebuild((policy) => policy.when(expr));
   }
 
-  CedarPolicy unless(CedarExpr expr) {
+  Policy unless(Expr expr) {
     return rebuild((policy) => policy.unless(expr));
   }
 
-  CedarPolicy annotate(String key, String value) {
+  Policy annotate(String key, String value) {
     return rebuild(
         (policy) => (policy.annotations ??= Annotations({}))[key] = value);
   }
 
-  CedarExpr toExpr() {
-    final exprs = <CedarExpr>[
+  Expr toExpr() {
+    final exprs = <Expr>[
       principal.toExpr(),
       action.toExpr(),
       resource.toExpr(),
     ];
     for (final condition in conditions) {
       switch (condition.kind) {
-        case CedarConditionKind.when:
+        case ConditionKind.when:
           exprs.add(condition.body);
-        case CedarConditionKind.unless:
+        case ConditionKind.unless:
           exprs.add(not(condition.body));
       }
     }
@@ -161,7 +161,7 @@ final class CedarPolicy {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is CedarPolicy &&
+      other is Policy &&
           effect == other.effect &&
           principal == other.principal &&
           action == other.action &&
@@ -182,47 +182,47 @@ final class CedarPolicy {
       );
 }
 
-final class CedarPolicyBuilder {
-  CedarPolicyBuilder();
+final class PolicyBuilder {
+  PolicyBuilder();
 
-  CedarEffect? effect;
-  CedarPrincipalScope? principal;
-  CedarActionScope? action;
-  CedarResourceScope? resource;
-  List<CedarCondition>? conditions;
+  Effect? effect;
+  PrincipalConstraint? principal;
+  ActionConstraint? action;
+  ResourceConstraint? resource;
+  List<Condition>? conditions;
   Annotations? annotations;
   Position? position;
 
-  CedarPolicyBuilder when(CedarExpr expr) {
+  PolicyBuilder when(Expr expr) {
     conditions ??= [];
-    conditions!.add(CedarCondition(
-      kind: CedarConditionKind.when,
+    conditions!.add(Condition(
+      kind: ConditionKind.when,
       body: expr,
     ));
     return this;
   }
 
-  CedarPolicyBuilder unless(CedarExpr expr) {
+  PolicyBuilder unless(Expr expr) {
     conditions ??= [];
-    conditions!.add(CedarCondition(
-      kind: CedarConditionKind.unless,
+    conditions!.add(Condition(
+      kind: ConditionKind.unless,
       body: expr,
     ));
     return this;
   }
 
-  CedarPolicyBuilder annotate(String key, String value) {
+  PolicyBuilder annotate(String key, String value) {
     annotations ??= Annotations({});
     annotations![key] = value;
     return this;
   }
 
-  CedarPolicy build() {
-    return CedarPolicy(
-      effect: effect ?? CedarEffect.permit,
-      principal: principal ?? const CedarPrincipalAll(),
-      action: action ?? const CedarActionAll(),
-      resource: resource ?? const CedarResourceAll(),
+  Policy build() {
+    return Policy(
+      effect: effect ?? Effect.permit,
+      principal: principal ?? const PrincipalAll(),
+      action: action ?? const ActionAll(),
+      resource: resource ?? const ResourceAll(),
       conditions: conditions ?? const [],
       annotations: annotations,
       position: position,
@@ -230,29 +230,29 @@ final class CedarPolicyBuilder {
   }
 }
 
-final class CedarCondition {
-  const CedarCondition({
+final class Condition {
+  const Condition({
     required this.kind,
     required this.body,
   });
 
-  final CedarConditionKind kind;
-  final CedarExpr body;
+  final ConditionKind kind;
+  final Expr body;
 
   Map<String, Object?> toJson() => {
         'kind': kind.toJson(),
         'body': body.toJson(),
       };
 
-  factory CedarCondition.fromJson(Map<String, Object?> json) => CedarCondition(
-        kind: CedarConditionKind.fromJson(json['kind'] as String),
-        body: CedarExpr.fromJson(json['body'] as Map<String, Object?>),
+  factory Condition.fromJson(Map<String, Object?> json) => Condition(
+        kind: ConditionKind.fromJson(json['kind'] as String),
+        body: Expr.fromJson(json['body'] as Map<String, Object?>),
       );
 
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is CedarCondition && kind == other.kind && body == other.body;
+      other is Condition && kind == other.kind && body == other.body;
 
   @override
   int get hashCode => Object.hash(kind, body);
@@ -262,22 +262,22 @@ final class _IsTemplateVisitor extends DefaultExprVisitor<void> {
   var isTemplate = false;
 
   @override
-  void visitEquals(CedarExprEquals equals) {
-    if (equals.right case CedarExprSlot()) {
+  void visitEquals(ExprEquals equals) {
+    if (equals.right case ExprSlot()) {
       isTemplate = true;
     }
   }
 
   @override
-  void visitIn(CedarExprIn in_) {
-    if (in_.right case CedarExprSlot()) {
+  void visitIn(ExprIn in_) {
+    if (in_.right case ExprSlot()) {
       isTemplate = true;
     }
   }
 
   @override
-  void visitIs(CedarExprIs is_) {
-    if (is_.inExpr case CedarExprSlot()) {
+  void visitIs(ExprIs is_) {
+    if (is_.inExpr case ExprSlot()) {
       isTemplate = true;
     }
   }

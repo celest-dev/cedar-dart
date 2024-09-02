@@ -4,7 +4,7 @@ import 'package:cedar/cedar.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 /// The decision of an authorization request.
-enum CedarAuthorizationDecision {
+enum Decision {
   @JsonValue('Allow')
   allow,
 
@@ -15,17 +15,17 @@ enum CedarAuthorizationDecision {
 /// {@template cedar.cedar_authorization_response}
 /// The response to a [CedarAuthorizer] request.
 /// {@endtemplate}
-final class CedarAuthorizationResponse {
+final class AuthorizationResponse {
   /// {@macro cedar.cedar_authorization_response}
-  CedarAuthorizationResponse({
+  AuthorizationResponse({
     required this.decision,
     List<String>? reasons,
-    Iterable<CedarAuthorizationError>? errors,
+    Iterable<AuthorizationException>? errors,
   })  : reasons = reasons ?? const [],
-        errors = CedarAuthorizationErrors(errors ?? const []);
+        errors = AuthorizationErrors(errors ?? const []);
 
   /// The decision of the authorization request.
-  final CedarAuthorizationDecision decision;
+  final Decision decision;
 
   /// The policy IDs of the policies that contributed to the decision.
   ///
@@ -35,7 +35,7 @@ final class CedarAuthorizationResponse {
   /// Any evaluation errors which occurred during the request.
   ///
   /// If no errors occurred, this will be empty.
-  final CedarAuthorizationErrors errors;
+  final AuthorizationErrors errors;
 
   /// Any evaluation errors which occurred during the request.
   ///
@@ -44,12 +44,12 @@ final class CedarAuthorizationResponse {
 }
 
 /// {@template cedar.cedar_authorization_errors}
-/// The errors which caused a [CedarAuthorizationDecision.deny].
+/// The errors which caused a [Decision.deny].
 /// {@endtemplate}
-final class CedarAuthorizationErrors
-    extends UnmodifiableListView<CedarAuthorizationError> {
+final class AuthorizationErrors
+    extends UnmodifiableListView<AuthorizationException> {
   /// {@macro cedar.cedar_authorization_errors}
-  CedarAuthorizationErrors(super.source);
+  AuthorizationErrors(super.source);
 
   @override
   String toString() {
@@ -66,19 +66,19 @@ final class CedarAuthorizationErrors
 }
 
 /// {@template cedar.cedar_authorization_error}
-/// An error in approving a [CedarAuthorizationRequest], including potentially
+/// An error in approving a [AuthorizationRequest], including potentially
 /// the [policyId] which caused the error.
 /// {@endtemplate}
-final class CedarAuthorizationError implements Exception {
+final class AuthorizationException implements CedarException {
   /// {@macro cedar.cedar_authorization_error}
-  const CedarAuthorizationError({
+  const AuthorizationException({
     this.policyId,
     required this.message,
   });
 
-  /// Deserializes a [CedarAuthorizationError] from JSON.
-  factory CedarAuthorizationError.fromJson(Map<String, Object?> json) {
-    return CedarAuthorizationError(
+  /// Deserializes a [AuthorizationException] from JSON.
+  factory AuthorizationException.fromJson(Map<String, Object?> json) {
+    return AuthorizationException(
       policyId: json['policy_id'] as String?,
       message: json['message'] as String,
     );

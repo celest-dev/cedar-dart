@@ -1,11 +1,13 @@
 import 'package:cedar/cedar.dart';
 
-abstract interface class EvaluationException implements Exception {}
+abstract interface class CedarException implements Exception {}
+
+abstract interface class EvaluationException implements CedarException {}
 
 final class EntityNotFoundException implements EvaluationException {
   const EntityNotFoundException(this.entityId);
 
-  final CedarEntityId entityId;
+  final EntityUid entityId;
 
   @override
   String toString() => 'Entity `$entityId` not found';

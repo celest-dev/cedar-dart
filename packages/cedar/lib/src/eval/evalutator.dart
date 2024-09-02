@@ -1,52 +1,53 @@
 import 'package:cedar/ast.dart';
 import 'package:cedar/cedar.dart';
 import 'package:cedar/src/eval/extensions.dart';
+import 'package:fixnum/fixnum.dart';
 
-extension ExpectCedarValue on CedarValue {
-  CedarBool expectBool() {
-    if (this case final CedarBool bool) {
+extension ExpectCedarValue on Value {
+  BoolValue expectBool() {
+    if (this case final BoolValue bool) {
       return bool;
     }
     throw TypeException('Expected a boolean, got $runtimeType');
   }
 
-  CedarString expectString() {
-    if (this case final CedarString string) {
+  StringValue expectString() {
+    if (this case final StringValue string) {
       return string;
     }
     throw TypeException('Expected a string, got $runtimeType');
   }
 
-  CedarLong expectLong() {
-    if (this case final CedarLong long) {
+  LongValue expectLong() {
+    if (this case final LongValue long) {
       return long;
     }
     throw TypeException('Expected a long, got $runtimeType');
   }
 
-  CedarSet expectSet() {
-    if (this case final CedarSet set) {
+  SetValue expectSet() {
+    if (this case final SetValue set) {
       return set;
     }
     throw TypeException('Expected a set, got $runtimeType');
   }
 
-  CedarRecord expectRecord() {
-    if (this case final CedarRecord record) {
+  RecordValue expectRecord() {
+    if (this case final RecordValue record) {
       return record;
     }
     throw TypeException('Expected a record, got $runtimeType');
   }
 
-  CedarEntityId expectEntityId() {
-    if (this case CedarEntityValue(:final entityId)) {
+  EntityUid expectEntityId() {
+    if (this case EntityValue(uid: final entityId)) {
       return entityId;
     }
     throw TypeException('Expected an entity ID, got $runtimeType');
   }
 
-  CedarDecimal expectDecimal() {
-    if (this case final CedarDecimal decimal) {
+  DecimalValue expectDecimal() {
+    if (this case final DecimalValue decimal) {
       return decimal;
     }
     throw TypeException('Expected a decimal, got $runtimeType');
@@ -62,19 +63,19 @@ final class EvaluationContext {
     required this.context,
   });
 
-  final Map<CedarEntityId, CedarEntity> entities;
-  final CedarEntityId principal;
-  final CedarEntityId action;
-  final CedarEntityId resource;
-  final CedarRecord context;
+  final Map<EntityUid, Entity> entities;
+  final EntityUid principal;
+  final EntityUid action;
+  final EntityUid resource;
+  final RecordValue context;
 }
 
-final class Evalutator implements ExprVisitor<CedarValue> {
+final class Evalutator implements ExprVisitor<Value> {
   Evalutator(this.context);
 
   final EvaluationContext context;
 
-  static int _checkedAddI64(int lhs, int rhs) {
+  static Int64 _checkedAddI64(Int64 lhs, Int64 rhs) {
     final res = lhs + rhs;
     if ((res > lhs) != (rhs > 0)) {
       throw OverflowException(
@@ -84,7 +85,7 @@ final class Evalutator implements ExprVisitor<CedarValue> {
     return res;
   }
 
-  static int _checkedSubI64(int lhs, int rhs) {
+  static Int64 _checkedSubI64(Int64 lhs, Int64 rhs) {
     final res = lhs - rhs;
     if ((res > lhs) != (rhs < 0)) {
       throw OverflowException(
@@ -94,9 +95,9 @@ final class Evalutator implements ExprVisitor<CedarValue> {
     return res;
   }
 
-  static int _checkedMulI64(int lhs, int rhs) {
+  static Int64 _checkedMulI64(Int64 lhs, Int64 rhs) {
     if (lhs == 0 || rhs == 0) {
-      return 0;
+      return Int64.ZERO;
     }
     final res = lhs * rhs;
     if ((res < 0) != ((lhs < 0) != (rhs < 0))) {
@@ -112,8 +113,8 @@ final class Evalutator implements ExprVisitor<CedarValue> {
     return res;
   }
 
-  static int _checkedNegI64(int a) {
-    if (a == -9223372036854775808) {
+  static Int64 _checkedNegI64(Int64 a) {
+    if (a == Int64.MIN_VALUE) {
       throw OverflowException(
         'Overflow while attempting to negate `$a`',
       );
@@ -122,7 +123,7 @@ final class Evalutator implements ExprVisitor<CedarValue> {
   }
 
   @override
-  CedarValue visitAnd(CedarExprAnd and) {
+  Value visitAnd(ExprAnd and) {
     final lhs = and.left.accept(this).expectBool();
     if (!lhs.value) {
       return lhs;
@@ -132,35 +133,35 @@ final class Evalutator implements ExprVisitor<CedarValue> {
   }
 
   @override
-  CedarValue visitContains(CedarExprContains contains) {
+  Value visitContains(ExprContains contains) {
     final lhs = contains.left.accept(this).expectSet();
     final rhs = contains.right.accept(this);
-    return CedarValue.bool(lhs.elements.contains(rhs));
+    return Value.bool(lhs.elements.contains(rhs));
   }
 
   @override
-  CedarValue visitContainsAll(CedarExprContainsAll containsAll) {
+  Value visitContainsAll(ExprContainsAll containsAll) {
     final lhs = containsAll.left.accept(this).expectSet();
     final rhs = containsAll.right.accept(this).expectSet();
-    return CedarValue.bool(rhs.elements.every(lhs.elements.contains));
+    return Value.bool(rhs.elements.every(lhs.elements.contains));
   }
 
   @override
-  CedarValue visitContainsAny(CedarExprContainsAny containsAny) {
+  Value visitContainsAny(ExprContainsAny containsAny) {
     final lhs = containsAny.left.accept(this).expectSet();
     final rhs = containsAny.right.accept(this).expectSet();
-    return CedarValue.bool(rhs.elements.any(lhs.elements.contains));
+    return Value.bool(rhs.elements.any(lhs.elements.contains));
   }
 
   @override
-  CedarValue visitEquals(CedarExprEquals equals) {
+  Value visitEquals(ExprEquals equals) {
     final lhs = equals.left.accept(this);
     final rhs = equals.right.accept(this);
-    return CedarValue.bool(lhs == rhs);
+    return Value.bool(lhs == rhs);
   }
 
   @override
-  CedarValue visitFunctionCall(CedarExprFunctionCall extensionCall) {
+  Value visitExtensionCall(ExprExtensionCall extensionCall) {
     if (extensions[extensionCall.fn] case final extension?) {
       if (extension.numArgs != extensionCall.args.length) {
         throw ArityException(
@@ -175,14 +176,14 @@ final class Evalutator implements ExprVisitor<CedarValue> {
   }
 
   @override
-  CedarValue visitGetAttribute(CedarExprGetAttribute getAttribute) {
+  Value visitGetAttribute(ExprGetAttribute getAttribute) {
     final value = getAttribute.left.accept(this);
-    final Map<String, CedarValue> attrs;
+    final Map<String, Value> attrs;
     final String type;
     switch (value) {
-      case CedarEntityValue(:final entityId):
+      case EntityValue(uid: final entityId):
         type = '`$entityId`';
-        if (entityId == const CedarEntityId.unknown()) {
+        if (entityId == const EntityUid.unknown()) {
           throw const UnspecifiedEntityException();
         }
         final entity = context.entities[entityId];
@@ -190,7 +191,7 @@ final class Evalutator implements ExprVisitor<CedarValue> {
           throw EntityNotFoundException(entityId);
         }
         attrs = entity.attributes;
-      case CedarRecord(:final attributes):
+      case RecordValue(:final attributes):
         type = 'record';
         attrs = attributes;
       default:
@@ -204,41 +205,40 @@ final class Evalutator implements ExprVisitor<CedarValue> {
   }
 
   @override
-  CedarValue visitGreaterThan(CedarExprGreaterThan greaterThan) {
+  Value visitGreaterThan(ExprGreaterThan greaterThan) {
     final lhs = greaterThan.left.accept(this).expectLong();
     final rhs = greaterThan.right.accept(this).expectLong();
-    return CedarValue.bool(lhs.value > rhs.value);
+    return Value.bool(lhs.value > rhs.value);
   }
 
   @override
-  CedarValue visitGreaterThanOrEquals(
-      CedarExprGreaterThanOrEquals greaterThanOrEquals) {
+  Value visitGreaterThanOrEquals(ExprGreaterThanOrEquals greaterThanOrEquals) {
     final lhs = greaterThanOrEquals.left.accept(this).expectLong();
     final rhs = greaterThanOrEquals.right.accept(this).expectLong();
-    return CedarValue.bool(lhs.value >= rhs.value);
+    return Value.bool(lhs.value >= rhs.value);
   }
 
   @override
-  CedarValue visitHasAttribute(CedarExprHasAttribute hasAttribute) {
+  Value visitHasAttribute(ExprHasAttribute hasAttribute) {
     final value = hasAttribute.left.accept(this);
-    final Map<String, CedarValue> attrs;
+    final Map<String, Value> attrs;
     switch (value) {
-      case CedarEntityValue(:final entityId):
+      case EntityValue(uid: final entityId):
         final entity = context.entities[entityId];
         if (entity == null) {
-          return CedarValue.bool(false);
+          return Value.bool(false);
         }
         attrs = entity.attributes;
-      case CedarRecord(:final attributes):
+      case RecordValue(:final attributes):
         attrs = attributes;
       default:
         throw TypeException('Expected entity or record, got $value');
     }
-    return CedarValue.bool(attrs.containsKey(hasAttribute.attr));
+    return Value.bool(attrs.containsKey(hasAttribute.attr));
   }
 
   @override
-  CedarValue visitIfThenElse(CedarExprIfThenElse ifThenElse) {
+  Value visitIfThenElse(ExprIfThenElse ifThenElse) {
     final cond = ifThenElse.cond.accept(this).expectBool();
     if (cond.value) {
       return ifThenElse.then.accept(this);
@@ -247,13 +247,13 @@ final class Evalutator implements ExprVisitor<CedarValue> {
   }
 
   @override
-  CedarValue visitIn(CedarExprIn in_) {
+  Value visitIn(ExprIn in_) {
     final lhs = in_.left.accept(this).expectEntityId();
     final rhs = in_.right.accept(this);
-    final query = <CedarEntityId>{};
+    final query = <EntityUid>{};
 
-    bool entityIn(CedarEntityId entity) {
-      final checked = <CedarEntityId>{};
+    bool entityIn(EntityUid entity) {
+      final checked = <EntityUid>{};
       final toCheck = [entity];
       while (toCheck.isNotEmpty) {
         final candidate = toCheck.removeLast();
@@ -273,77 +273,77 @@ final class Evalutator implements ExprVisitor<CedarValue> {
     }
 
     switch (rhs) {
-      case CedarEntityValue(:final entityId):
+      case EntityValue(uid: final entityId):
         query.add(entityId);
-      case CedarSet(elements: final entities):
+      case SetValue(elements: final entities):
         query.addAll(entities.map((e) => e.expectEntityId()));
       default:
         throw TypeException('Expected entity or set, got $rhs');
     }
 
-    return CedarValue.bool(entityIn(lhs));
+    return Value.bool(entityIn(lhs));
   }
 
   @override
-  CedarValue visitIs(CedarExprIs is_) {
+  Value visitIs(ExprIs is_) {
     if (is_.inExpr case final inExpr?) {
-      final lhs = CedarExpr.is_(left: is_.left, entityType: is_.entityType);
-      final rhs = CedarExpr.in_(left: is_.left, right: inExpr);
-      final expr = CedarExpr.and(left: lhs, right: rhs);
+      final lhs = Expr.is_(left: is_.left, entityType: is_.entityType);
+      final rhs = Expr.in_(left: is_.left, right: inExpr);
+      final expr = Expr.and(left: lhs, right: rhs);
       return expr.accept(this);
     }
     final lhs = is_.left.accept(this).expectEntityId();
-    return CedarValue.bool(lhs.type == is_.entityType);
+    return Value.bool(lhs.type == is_.entityType);
   }
 
   @override
-  CedarValue visitLessThan(CedarExprLessThan lessThan) {
+  Value visitLessThan(ExprLessThan lessThan) {
     final lhs = lessThan.left.accept(this).expectLong();
     final rhs = lessThan.right.accept(this).expectLong();
-    return CedarValue.bool(lhs.value < rhs.value);
+    return Value.bool(lhs.value < rhs.value);
   }
 
   @override
-  CedarValue visitLessThanOrEquals(CedarExprLessThanOrEquals lessThanOrEquals) {
+  Value visitLessThanOrEquals(ExprLessThanOrEquals lessThanOrEquals) {
     final lhs = lessThanOrEquals.left.accept(this).expectLong();
     final rhs = lessThanOrEquals.right.accept(this).expectLong();
-    return CedarValue.bool(lhs.value <= rhs.value);
+    return Value.bool(lhs.value <= rhs.value);
   }
 
   @override
-  CedarValue visitLike(CedarExprLike like) {
+  Value visitLike(ExprLike like) {
     final value = like.left.accept(this).expectString();
-    return CedarValue.bool(like.pattern.match(value.value));
+    return Value.bool(like.pattern.match(value.value));
   }
 
   @override
-  CedarValue visitMinus(CedarExprMinus minus) {
-    final lhs = minus.left.accept(this).expectLong();
-    final rhs = minus.right.accept(this).expectLong();
-    return CedarValue.long(_checkedSubI64(lhs.value, rhs.value));
+  Value visitSubt(ExprSubt subt) {
+    final lhs = subt.left.accept(this).expectLong();
+    final rhs = subt.right.accept(this).expectLong();
+    return Value.long(_checkedSubI64(lhs.value, rhs.value));
   }
 
   @override
-  CedarValue visitNegate(CedarExprNegate negate) {
+  Value visitNegate(ExprNegate negate) {
     final arg = negate.arg.accept(this).expectLong();
-    return CedarValue.long(_checkedNegI64(arg.value));
+    return Value.long(_checkedNegI64(arg.value));
   }
 
   @override
-  CedarValue visitNot(CedarExprNot not) {
+  Value visitNot(ExprNot not) {
     final inner = not.arg.accept(this).expectBool();
     return ~inner;
   }
 
   @override
-  CedarValue visitNotEquals(CedarExprNotEquals notEquals) {
+  Value visitNotEquals(ExprNotEquals notEquals) {
     final lhs = notEquals.left.accept(this);
     final rhs = notEquals.right.accept(this);
-    return CedarValue.bool(lhs != rhs);
+    return Value.bool(lhs != rhs);
   }
 
   @override
-  CedarValue visitOr(CedarExprOr or) {
+  Value visitOr(ExprOr or) {
     final lhs = or.left.accept(this).expectBool();
     if (lhs.value) {
       return lhs;
@@ -353,56 +353,56 @@ final class Evalutator implements ExprVisitor<CedarValue> {
   }
 
   @override
-  CedarValue visitPlus(CedarExprPlus plus) {
-    final lhs = plus.left.accept(this).expectLong();
-    final rhs = plus.right.accept(this).expectLong();
-    return CedarValue.long(_checkedAddI64(lhs.value, rhs.value));
+  Value visitAdd(ExprAdd add) {
+    final lhs = add.left.accept(this).expectLong();
+    final rhs = add.right.accept(this).expectLong();
+    return Value.long(_checkedAddI64(lhs.value, rhs.value));
   }
 
   @override
-  CedarValue visitRecord(CedarExprRecord record) {
-    final elements = <String, CedarValue>{};
+  Value visitRecord(ExprRecord record) {
+    final elements = <String, Value>{};
     for (final entry in record.attributes.entries) {
       final value = entry.value.accept(this);
       elements[entry.key] = value;
     }
-    return CedarValue.record(elements);
+    return Value.record(elements);
   }
 
   @override
-  CedarValue visitSet(CedarExprSet set) {
+  Value visitSet(ExprSet set) {
     final elements = set.expressions.map((e) => e.accept(this)).toList();
-    return CedarValue.set(elements);
+    return Value.set(elements);
   }
 
   @override
-  CedarValue visitSlot(CedarExprSlot slot) {
+  Value visitSlot(ExprSlot slot) {
     throw UnsupportedError('Templates cannot be evaluated');
   }
 
   @override
-  CedarValue visitTimes(CedarExprTimes times) {
-    final lhs = times.left.accept(this).expectLong();
-    final rhs = times.right.accept(this).expectLong();
-    return CedarValue.long(_checkedMulI64(lhs.value, rhs.value));
+  Value visitMult(ExprMult mult) {
+    final lhs = mult.left.accept(this).expectLong();
+    final rhs = mult.right.accept(this).expectLong();
+    return Value.long(_checkedMulI64(lhs.value, rhs.value));
   }
 
   @override
-  CedarValue visitUnknown(CedarExprUnknown unknown) {
+  Value visitUnknown(ExprUnknown unknown) {
     throw UnsupportedError('Unknown expression: $unknown');
   }
 
   @override
-  CedarValue visitValue(CedarExprValue value) {
+  Value visitValue(ExprValue value) {
     return value.value;
   }
 
   @override
-  CedarValue visitVariable(CedarExprVariable variable) {
+  Value visitVariable(ExprVariable variable) {
     return switch (variable.variable) {
-      CedarVariable.principal => CedarEntityValue(entityId: context.principal),
-      CedarVariable.action => CedarEntityValue(entityId: context.action),
-      CedarVariable.resource => CedarEntityValue(entityId: context.resource),
+      CedarVariable.principal => EntityValue(uid: context.principal),
+      CedarVariable.action => EntityValue(uid: context.action),
+      CedarVariable.resource => EntityValue(uid: context.resource),
       CedarVariable.context => context.context,
     };
   }

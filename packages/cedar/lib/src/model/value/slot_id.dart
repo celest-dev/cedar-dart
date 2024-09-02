@@ -1,18 +1,18 @@
-part of 'cedar_value.dart';
+part of '../value.dart';
 
-enum CedarSlotId implements CedarComponent {
+enum SlotId implements Component {
   principal,
   resource;
 
-  factory CedarSlotId.fromJson(String json) {
-    return CedarSlotId.values.firstWhere(
+  factory SlotId.fromJson(String json) {
+    return SlotId.values.firstWhere(
       (e) => e.toJson() == json,
       orElse: () =>
           throw ArgumentError.value(json, 'json', 'Invalid Cedar slot ID'),
     );
   }
   @override
-  CedarExpr toExpr() => CedarExpr.slot(this);
+  Expr toExpr() => Expr.slot(this);
 
   String toJson() => switch (this) {
         principal => '?principal',

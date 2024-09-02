@@ -18,8 +18,8 @@ enum CedarLogLevel {
 final class CedarEngine implements CedarAuthorizer, Finalizable {
   factory CedarEngine({
     required CedarSchema schema,
-    List<CedarEntity>? entities,
-    CedarPolicySet? policySet,
+    List<Entity>? entities,
+    PolicySet? policySet,
     CedarLogLevel logLevel = CedarLogLevel.off,
     @visibleForTesting bool validate = true,
   }) {
@@ -73,10 +73,10 @@ final class CedarEngine implements CedarAuthorizer, Finalizable {
   final Pointer<CedarStore> _ref;
 
   @override
-  CedarAuthorizationResponse isAuthorized(
-    CedarAuthorizationRequest request, {
-    List<CedarEntity>? entities,
-    CedarPolicySet? policies,
+  AuthorizationResponse isAuthorized(
+    AuthorizationRequest request, {
+    List<Entity>? entities,
+    PolicySet? policies,
   }) {
     if (_closed) {
       throw StateError('Cedar engine is closed');
@@ -138,10 +138,10 @@ final class CedarEngine implements CedarAuthorizer, Finalizable {
           :final errors_json,
           :final errors_json_len,
         ) =>
-          CedarAuthorizationResponse(
+          AuthorizationResponse(
             decision: switch (is_authorized) {
-              true => CedarAuthorizationDecision.allow,
-              false => CedarAuthorizationDecision.deny,
+              true => Decision.allow,
+              false => Decision.deny,
             },
             reasons: reasons_json == nullptr
                 ? const []
@@ -160,7 +160,7 @@ final class CedarEngine implements CedarAuthorizer, Finalizable {
                           .toDartString(length: errors_json_len),
                     ) as List;
                     return json.cast<Map>().map(
-                        (it) => CedarAuthorizationError.fromJson(it.cast()));
+                        (it) => AuthorizationException.fromJson(it.cast()));
                   }(),
           ),
       };

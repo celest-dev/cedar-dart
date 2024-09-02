@@ -1,5 +1,4 @@
 import 'package:cedar/ast.dart';
-import 'package:cedar/cedar.dart';
 import 'package:cedar/src/eval/evalutator.dart';
 import 'package:cedar/src/eval/extensions.dart';
 
@@ -13,7 +12,7 @@ final class CedarFunctionIp implements CedarFunction {
   bool get isMethod => false;
 
   @override
-  CedarValue evaluate(Evalutator evaluator, List<CedarExpr> args) {
+  Value evaluate(Evalutator evaluator, List<Expr> args) {
     throw UnsupportedError('IP methods not supported on web');
   }
 }
@@ -28,7 +27,7 @@ final class CedarFunctionIsIpv4 implements CedarFunction {
   bool get isMethod => true;
 
   @override
-  CedarValue evaluate(Evalutator evaluator, List<CedarExpr> args) {
+  Value evaluate(Evalutator evaluator, List<Expr> args) {
     throw UnsupportedError('IP methods not supported on web');
   }
 }
@@ -43,7 +42,7 @@ final class CedarFunctionIsIpv6 implements CedarFunction {
   bool get isMethod => true;
 
   @override
-  CedarValue evaluate(Evalutator evaluator, List<CedarExpr> args) {
+  Value evaluate(Evalutator evaluator, List<Expr> args) {
     throw UnsupportedError('IP methods not supported on web');
   }
 }
@@ -58,7 +57,7 @@ final class CedarFunctionIsLoopback implements CedarFunction {
   bool get isMethod => true;
 
   @override
-  CedarValue evaluate(Evalutator evaluator, List<CedarExpr> args) {
+  Value evaluate(Evalutator evaluator, List<Expr> args) {
     throw UnsupportedError('IP methods not supported on web');
   }
 }
@@ -73,7 +72,7 @@ final class CedarFunctionIsMulticast implements CedarFunction {
   bool get isMethod => true;
 
   @override
-  CedarValue evaluate(Evalutator evaluator, List<CedarExpr> args) {
+  Value evaluate(Evalutator evaluator, List<Expr> args) {
     throw UnsupportedError('IP methods not supported on web');
   }
 }
@@ -88,7 +87,7 @@ final class CedarFunctionIsInRange implements CedarFunction {
   bool get isMethod => true;
 
   @override
-  CedarValue evaluate(Evalutator evaluator, List<CedarExpr> args) {
+  Value evaluate(Evalutator evaluator, List<Expr> args) {
     throw UnsupportedError('IP methods not supported on web');
   }
 }

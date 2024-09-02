@@ -1,56 +1,37 @@
-part of 'cedar_value.dart';
+part of 'value.dart';
 
-final class CedarEntityValue extends CedarValue {
-  const CedarEntityValue({required this.entityId});
+/// Represents an entity type name. Consists of a namespace and the type name.
+extension type const EntityTypeName(String _type) implements String {}
 
-  factory CedarEntityValue.fromJson(Map<String, Object?> json) {
-    switch (json) {
-      case {'__entity': {'type': final String type, 'id': final String id}} ||
-            {'type': final String type, 'id': final String id}:
-        return CedarEntityValue(entityId: CedarEntityId(type, id));
-      default:
-        throw FormatException('Invalid entity value JSON: $json');
-    }
-  }
+/// Identifier portion of the [EntityUid] type.
+///
+/// All strings are valid [EntityId]s, and can be constructed either using
+/// [EntityId.new] or by casting a [String] to [EntityId].
+extension type const EntityId(String _id) implements String {}
 
-  final CedarEntityId entityId;
+/// Unique ID for an entity, such as `User::"alice"`.
+final class EntityUid implements Component {
+  const EntityUid(this.type, this.id);
+  const EntityUid.of(String type, String id)
+      : type = type as EntityTypeName,
+        id = id as EntityId;
 
-  @override
-  Map<String, Object?> toJson() => {
-        '__entity': entityId.toJson(),
-      };
-
-  @override
-  String toString() => entityId.toString();
-
-  @override
-  operator ==(Object other) =>
-      identical(this, other) ||
-      other is CedarEntityValue && entityId == other.entityId;
-
-  @override
-  int get hashCode => Object.hash(CedarEntityValue, entityId);
-}
-
-final class CedarEntityId implements CedarComponent {
-  const CedarEntityId(this.type, this.id);
-
-  factory CedarEntityId.fromJson(Map<String, Object?> json) {
+  factory EntityUid.fromJson(Map<String, Object?> json) {
     switch (json) {
       case {'type': final String type, 'id': final String id} ||
             {'__entity': {'type': final String type, 'id': final String id}}:
-        return CedarEntityId(type, id);
+        return EntityUid(EntityTypeName(type), EntityId(id));
       default:
         throw FormatException('Invalid entity ID JSON: $json');
     }
   }
 
-  const CedarEntityId.unknown()
-      : type = '',
-        id = '';
+  const EntityUid.unknown()
+      : type = const EntityTypeName(''),
+        id = const EntityId('');
 
-  final String type;
-  final String id;
+  final EntityTypeName type;
+  final EntityId id;
 
   /// Returns a normalized version of this entity ID.
   ///
@@ -59,7 +40,7 @@ final class CedarEntityId implements CedarComponent {
   ///
   /// See Cedar [RFC 9](https://github.com/cedar-policy/rfcs/blob/main/text/0009-disallow-whitespace-in-entityuid.md)
   /// for more information.
-  CedarEntityId get normalized => CedarEntityId(
+  EntityUid get normalized => EntityUid(
         type,
         String.fromCharCodes(
           id.runes.expand((char) {
@@ -78,11 +59,11 @@ final class CedarEntityId implements CedarComponent {
               _ => [char],
             };
           }),
-        ),
+        ) as EntityId,
       );
 
   @override
-  CedarExpr toExpr() => CedarExpr.value(CedarEntityValue(entityId: this));
+  Expr toExpr() => Expr.value(Value.entity(uid: this));
 
   @override
   String toString() => '$type::"$id"';
@@ -95,7 +76,7 @@ final class CedarEntityId implements CedarComponent {
   @override
   operator ==(Object other) =>
       identical(this, other) ||
-      other is CedarEntityId && type == other.type && id == other.id;
+      other is EntityUid && type == other.type && id == other.id;
 
   @override
   int get hashCode => Object.hash(type, id);
