@@ -2,10 +2,11 @@ import 'package:cedar/ast.dart';
 import 'package:cedar/cedar.dart';
 import 'package:cedar/src/eval/extensions.dart';
 import 'package:cedar/src/parser/tokenizer.dart';
+import 'package:fixnum/fixnum.dart';
 
-typedef _BinaryExprBuilder = CedarExpr Function({
-  required CedarExpr left,
-  required CedarExpr right,
+typedef _BinaryExprBuilder = Expr Function({
+  required Expr left,
+  required Expr right,
 });
 
 final class Parser {
@@ -63,7 +64,7 @@ final class Parser {
     throw StateError(_current.span.message(message));
   }
 
-  CedarPolicy readPolicy() {
+  Policy readPolicy() {
     final annotations = readAnnotations();
     final effect = readEffect();
     expect('(');
@@ -75,7 +76,7 @@ final class Parser {
     expect(')');
     final conditions = readConditions();
     expect(';');
-    return CedarPolicy(
+    return Policy(
       annotations: annotations,
       effect: effect,
       principal: principal,
@@ -106,73 +107,73 @@ final class Parser {
     annotations[name] = value.stringValue;
   }
 
-  CedarEffect readEffect() {
+  Effect readEffect() {
     final effect = advance().text;
     if (effect == 'permit') {
-      return CedarEffect.permit;
+      return Effect.permit;
     } else if (effect == 'forbid') {
-      return CedarEffect.forbid;
+      return Effect.forbid;
     }
     error('Unexpected effect: "$effect". Expected permit or forbid');
   }
 
-  CedarPrincipalScope readPrincipalScope() {
+  PrincipalConstraint readPrincipalScope() {
     expect('principal');
     switch (peek()?.text) {
       case '==':
         advance();
         final entity = readComponent();
-        return CedarPrincipalEquals(entity);
+        return PrincipalEquals(entity);
       case 'is':
         advance();
         final path = readPath();
         if (peek()?.text == 'in') {
           advance();
           final set = readComponent();
-          return CedarPrincipalIsIn(path, set);
+          return PrincipalIsIn(path, set);
         }
-        return CedarPrincipalIs(path);
+        return PrincipalIs(path);
       case 'in':
         advance();
         final set = readComponent();
-        return CedarPrincipalIn(set);
+        return PrincipalIn(set);
       default:
-        return const CedarPrincipalAll();
+        return const PrincipalAll();
     }
   }
 
-  CedarComponent readComponent() {
+  Component readComponent() {
     switch (advance()) {
       case Token(type: TokenType.ident, text: final type):
-        return _prereadEntityId(type);
+        return EntityValue(uid: _prereadEntityId(type));
       case Token(type: TokenType.slot, text: final slotId):
-        return CedarSlotId.fromJson(slotId);
+        return SlotId.fromJson(slotId);
       default:
         error('Expected entity identifier or slot');
     }
   }
 
-  CedarEntityId readEntity() {
+  EntityUid readEntity() {
     final ident = advance();
     return _prereadEntityId(ident.text);
   }
 
-  CedarEntityId _prereadEntityId(String type) {
+  EntityUid _prereadEntityId(String type) {
     for (;;) {
       expect('::');
       switch (advance()) {
         case Token(type: TokenType.ident, text: final part):
           type = '$type::$part';
         case Token(type: TokenType.string, stringValue: final id):
-          return CedarEntityId(type, id);
+          return EntityUid.of(type, id);
         default:
           error('Unexpected token');
       }
     }
   }
 
-  List<CedarEntityId> readEntityList() {
-    final entities = <CedarEntityId>[];
+  List<EntityUid> readEntityList() {
+    final entities = <EntityUid>[];
     expect('[');
     if (peek()?.text == ']') {
       advance();
@@ -189,7 +190,7 @@ final class Parser {
     }
   }
 
-  CedarExpr _readEntityOrExtensionCall(String prefix) {
+  Expr _readEntityOrExtensionCall(String prefix) {
     for (;;) {
       switch (advance().text) {
         case '::':
@@ -197,8 +198,8 @@ final class Parser {
             case Token(type: TokenType.ident, :final text):
               prefix = '$prefix::$text';
             case Token(type: TokenType.string, stringValue: final id):
-              return CedarExpr.value(
-                CedarValue.entity(entityId: CedarEntityId(prefix, id)),
+              return Expr.value(
+                Value.entity(uid: EntityUid.of(prefix, id)),
               );
             default:
               error('Unexpected token');
@@ -212,7 +213,7 @@ final class Parser {
             error('`$prefix` is a method, not a function');
           }
           final args = _expressions(')');
-          return CedarExpr.funcCall(fn: prefix, args: args);
+          return Expr.funcCall(fn: prefix, args: args);
         default:
           error('Unexpected token');
       }
@@ -232,67 +233,67 @@ final class Parser {
     }
   }
 
-  CedarActionScope readActionScope() {
+  ActionConstraint readActionScope() {
     expect('action');
     switch (peek()?.text) {
       case '==':
         advance();
         final action = readEntity();
-        return CedarActionEquals(action);
+        return ActionEquals(action);
       case 'in':
         advance();
         if (peek()?.text == '[') {
           final entities = readEntityList();
-          return CedarActionInSet(entities);
+          return ActionInSet(entities);
         }
         final set = readEntity();
-        return CedarActionIn(set);
+        return ActionIn(set);
       default:
-        return const CedarActionAll();
+        return const ActionAll();
     }
   }
 
-  CedarResourceScope readResourceScope() {
+  ResourceConstraint readResourceScope() {
     expect('resource');
     switch (peek()?.text) {
       case '==':
         advance();
         final entity = readComponent();
-        return CedarResourceEquals(entity);
+        return ResourceEquals(entity);
       case 'is':
         advance();
         final path = readPath();
         if (peek()?.text == 'in') {
           advance();
           final set = readComponent();
-          return CedarResourceIsIn(path, set);
+          return ResourceIsIn(path, set);
         }
-        return CedarResourceIs(path);
+        return ResourceIs(path);
       case 'in':
         advance();
         final set = readComponent();
-        return CedarResourceIn(set);
+        return ResourceIn(set);
       default:
-        return const CedarResourceAll();
+        return const ResourceAll();
     }
   }
 
-  List<CedarCondition> readConditions() {
-    final conditions = <CedarCondition>[];
+  List<Condition> readConditions() {
+    final conditions = <Condition>[];
     for (;;) {
       switch (peek()?.text) {
         case 'when':
           advance();
           final body = readCondition();
-          conditions.add(CedarCondition(
-            kind: CedarConditionKind.when,
+          conditions.add(Condition(
+            kind: ConditionKind.when,
             body: body,
           ));
         case 'unless':
           advance();
           final body = readCondition();
-          conditions.add(CedarCondition(
-            kind: CedarConditionKind.unless,
+          conditions.add(Condition(
+            kind: ConditionKind.unless,
             body: body,
           ));
         default:
@@ -301,14 +302,14 @@ final class Parser {
     }
   }
 
-  CedarExpr readCondition() {
+  Expr readCondition() {
     expect('{');
     final expr = readExpression();
     expect('}');
     return expr;
   }
 
-  CedarExpr readExpression() {
+  Expr readExpression() {
     if (peek()?.text == 'if') {
       advance();
 
@@ -318,35 +319,35 @@ final class Parser {
       expect('else');
       final otherwise = readExpression();
 
-      return CedarExpr.ifThenElse(cond: cond, then: then, else$: otherwise);
+      return Expr.ifThenElse(cond: cond, then: then, else$: otherwise);
     }
 
     return _readOr();
   }
 
-  CedarExpr _readOr() {
+  Expr _readOr() {
     var lhs = _readAnd();
     while (peek()?.text == '||') {
       advance();
       final rhs = _readAnd();
-      lhs = CedarExpr.or(left: lhs, right: rhs);
+      lhs = Expr.or(left: lhs, right: rhs);
     }
     return lhs;
   }
 
-  CedarExpr _readAnd() {
+  Expr _readAnd() {
     var lhs = _readRelation();
 
     while (peek()?.text == '&&') {
       advance();
       final rhs = _readRelation();
-      lhs = CedarExpr.and(left: lhs, right: rhs);
+      lhs = Expr.and(left: lhs, right: rhs);
     }
 
     return lhs;
   }
 
-  CedarExpr _readHas(CedarExpr lhs) {
+  Expr _readHas(Expr lhs) {
     switch (advance()) {
       case Token(type: TokenType.ident, text: final attr):
         return lhs.has(attr);
@@ -357,7 +358,7 @@ final class Parser {
     }
   }
 
-  CedarExpr _readLike(CedarExpr lhs) {
+  Expr _readLike(Expr lhs) {
     var patternRaw = expectString().text;
     if (patternRaw.startsWith('"')) {
       patternRaw = patternRaw.substring(1, patternRaw.length - 1);
@@ -366,7 +367,7 @@ final class Parser {
     return lhs.like(pattern);
   }
 
-  CedarExpr _readIs(CedarExpr lhs) {
+  Expr _readIs(Expr lhs) {
     final entityType = readPath();
     if (peek()?.text == 'in') {
       advance();
@@ -376,7 +377,7 @@ final class Parser {
     return lhs.is_(entityType);
   }
 
-  CedarExpr _readRelation() {
+  Expr _readRelation() {
     final lhs = _readAdd();
 
     switch (peek()?.text) {
@@ -393,13 +394,13 @@ final class Parser {
 
     // RELOP
     final _BinaryExprBuilder? builder = switch (peek()?.text) {
-      '==' => CedarExpr.equals,
-      '!=' => CedarExpr.notEquals,
-      '<' => CedarExpr.lessThan,
-      '<=' => CedarExpr.lessThanOrEquals,
-      '>' => CedarExpr.greaterThan,
-      '>=' => CedarExpr.greaterThanOrEquals,
-      'in' => CedarExpr.in_,
+      '==' => Expr.equals,
+      '!=' => Expr.notEquals,
+      '<' => Expr.lessThan,
+      '<=' => Expr.lessThanOrEquals,
+      '>' => Expr.greaterThan,
+      '>=' => Expr.greaterThanOrEquals,
+      'in' => Expr.in_,
       _ => null,
     };
     if (builder == null) {
@@ -411,12 +412,12 @@ final class Parser {
     return builder(left: lhs, right: rhs);
   }
 
-  CedarExpr _readAdd() {
+  Expr _readAdd() {
     var lhs = _readMult();
     for (;;) {
       final _BinaryExprBuilder? builder = switch (peek()?.text) {
-        '+' => CedarExpr.plus,
-        '-' => CedarExpr.minus,
+        '+' => Expr.plus,
+        '-' => Expr.minus,
         _ => null,
       };
       if (builder == null) {
@@ -428,17 +429,17 @@ final class Parser {
     }
   }
 
-  CedarExpr _readMult() {
+  Expr _readMult() {
     var lhs = _readUnary();
     while (peek()?.text == '*') {
       advance();
       final rhs = _readUnary();
-      lhs = CedarExpr.times(left: lhs, right: rhs);
+      lhs = Expr.times(left: lhs, right: rhs);
     }
     return lhs;
   }
 
-  CedarExpr _readUnary() {
+  Expr _readUnary() {
     final ops = <bool>[];
     for (;;) {
       final operation = peek();
@@ -449,26 +450,26 @@ final class Parser {
       ops.add(operation?.text == '-');
     }
 
-    CedarExpr result;
+    Expr result;
 
     // Special case for max negative long
     final token = peek();
     if (ops.isNotEmpty && ops.last && token?.type == TokenType.int) {
       advance();
-      final value = int.parse('-${token!.text}');
-      result = CedarExpr.value(CedarValue.long(value));
+      final value = -Int64.parseInt(token!.text);
+      result = Expr.value(Value.long(value));
       ops.removeLast();
     } else {
       result = _readMember();
     }
 
     for (var i = ops.length - 1; i >= 0; i--) {
-      result = ops[i] ? CedarExpr.negate(result) : CedarExpr.not(result);
+      result = ops[i] ? Expr.negate(result) : Expr.not(result);
     }
     return result;
   }
 
-  CedarExpr _readMember() {
+  Expr _readMember() {
     var result = _readPrimary();
     for (;;) {
       if (_readAccess(result) case final access?) {
@@ -479,24 +480,24 @@ final class Parser {
     }
   }
 
-  CedarExpr _readPrimary() {
+  Expr _readPrimary() {
     switch (advance()) {
       case Token(type: TokenType.int, :final intValue):
-        return CedarExpr.value(CedarValue.long(intValue));
+        return Expr.value(Value.long(intValue));
       case Token(type: TokenType.string, :final stringValue):
-        return CedarExpr.value(CedarValue.string(stringValue));
+        return Expr.value(Value.string(stringValue));
       case Token(text: 'true'):
-        return CedarExpr.value(CedarValue.bool(true));
+        return Expr.value(Value.bool(true));
       case Token(text: 'false'):
-        return CedarExpr.value(CedarValue.bool(false));
+        return Expr.value(Value.bool(false));
       case Token(text: 'principal'):
-        return CedarExpr.variable(CedarVariable.principal);
+        return Expr.variable(CedarVariable.principal);
       case Token(text: 'action'):
-        return CedarExpr.variable(CedarVariable.action);
+        return Expr.variable(CedarVariable.action);
       case Token(text: 'resource'):
-        return CedarExpr.variable(CedarVariable.resource);
+        return Expr.variable(CedarVariable.resource);
       case Token(text: 'context'):
-        return CedarExpr.variable(CedarVariable.context);
+        return Expr.variable(CedarVariable.context);
       case Token(type: TokenType.ident, text: final ident):
         return _readEntityOrExtensionCall(ident);
       case Token(text: '('):
@@ -505,21 +506,21 @@ final class Parser {
         return expr;
       case Token(text: '['):
         final elements = _expressions(']');
-        return CedarExpr.set(elements);
+        return Expr.set(elements);
       case Token(text: '{'):
-        return CedarExpr.record(_readRecord());
+        return Expr.record(_readRecord());
       default:
         error('Invalid primary expression');
     }
   }
 
-  CedarExpr? _readAccess(CedarExpr lhs) {
+  Expr? _readAccess(Expr lhs) {
     switch (peek()?.text) {
       case '.':
         advance();
         final ident = expectIdent().text;
         if (peek()?.text != '(') {
-          return CedarExpr.getAttribute(left: lhs, attr: ident);
+          return Expr.getAttribute(left: lhs, attr: ident);
         }
         advance();
         final methodName = ident;
@@ -527,11 +528,11 @@ final class Parser {
         final _BinaryExprBuilder builder;
         switch (methodName) {
           case 'contains':
-            builder = CedarExpr.contains;
+            builder = Expr.contains;
           case 'containsAll':
-            builder = CedarExpr.containsAll;
+            builder = Expr.containsAll;
           case 'containsAny':
-            builder = CedarExpr.containsAny;
+            builder = Expr.containsAny;
           default:
             // Although the Cedar grammar says that any name can be provided here, the reference implementation
             // actually checks at parse time whether the name corresponds to a known extension method.
@@ -542,7 +543,7 @@ final class Parser {
             if (!extension.isMethod) {
               error('`$methodName` is a function, not a method');
             }
-            return CedarExpr.funcCall(fn: methodName, args: args);
+            return Expr.funcCall(fn: methodName, args: args);
         }
         if (args.length != 1) {
           error('Expected exactly one argument to $methodName');
@@ -552,14 +553,14 @@ final class Parser {
         advance();
         final attr = expectString().stringValue;
         expect(']');
-        return CedarExpr.getAttribute(left: lhs, attr: attr);
+        return Expr.getAttribute(left: lhs, attr: attr);
       default:
         return null;
     }
   }
 
-  List<CedarExpr> _expressions(String endOfListMarker) {
-    final expressions = <CedarExpr>[];
+  List<Expr> _expressions(String endOfListMarker) {
+    final expressions = <Expr>[];
     while (peek()?.text != endOfListMarker) {
       expressions.add(readExpression());
       if (peek()?.text == endOfListMarker) {
@@ -571,8 +572,8 @@ final class Parser {
     return expressions;
   }
 
-  Map<String, CedarExpr> _readRecord() {
-    final pairs = <String, CedarExpr>{};
+  Map<String, Expr> _readRecord() {
+    final pairs = <String, Expr>{};
     for (;;) {
       if (peek()?.text == '}') {
         advance();
@@ -586,7 +587,7 @@ final class Parser {
     }
   }
 
-  (String, CedarExpr) _readRecordEntry() {
+  (String, Expr) _readRecordEntry() {
     final key = switch (advance()) {
       Token(type: TokenType.ident, text: final key) => key,
       Token(type: TokenType.string, stringValue: final key) => key,

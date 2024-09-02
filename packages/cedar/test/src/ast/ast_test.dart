@@ -5,9 +5,9 @@ import 'package:test/test.dart';
 
 void main() {
   test('examples', () {
-    final johnny = CedarEntityId('User', 'johnny');
-    final sow = CedarEntityId('Action', 'sow');
-    final cast = CedarEntityId('Action', 'cast');
+    final johnny = EntityUid.of('User', 'johnny');
+    final sow = EntityUid.of('Action', 'sow');
+    final cast = EntityUid.of('Action', 'cast');
 
     // @example("one")
     // permit (

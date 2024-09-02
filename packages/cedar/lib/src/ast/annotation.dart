@@ -25,12 +25,12 @@ final class Annotations with IterableMixin<Annotation> {
     });
   }
 
-  CedarPolicy permit() {
-    return CedarPolicy(effect: CedarEffect.permit, annotations: this);
+  Policy permit() {
+    return Policy(effect: Effect.permit, annotations: this);
   }
 
-  CedarPolicy forbid() {
-    return CedarPolicy(effect: CedarEffect.forbid, annotations: this);
+  Policy forbid() {
+    return Policy(effect: Effect.forbid, annotations: this);
   }
 
   Iterable<Annotation> get iterable sync* {
