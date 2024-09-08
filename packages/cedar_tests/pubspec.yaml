@@ -6,8 +6,7 @@ environment:
   sdk: ^3.3.0
 
 dependencies:
-  cedar:
-    path: ../cedar
+  cedar: ^0.2.0
   json_annotation: ^4.9.0
   test: ^1.24.0
 
