@@ -1,3 +1,6 @@
+import 'package:built_collection/built_collection.dart';
+import 'package:built_value/built_value.dart';
+import 'package:built_value/serializer.dart';
 import 'package:cedar/cedar.dart';
 import 'package:cedar/src/eval/evalutator.dart';
 import 'package:cedar/src/parser/parser.dart';
@@ -5,13 +8,27 @@ import 'package:cedar/src/parser/tokenizer.dart';
 import 'package:cedar/src/util/pretty_json.dart';
 import 'package:collection/collection.dart';
 
+part 'policy_set.g.dart';
+
 /// A collection of Cedar policies.
-final class PolicySet implements CedarAuthorizer {
-  const PolicySet({
-    this.policies = const {},
-    this.templates = const {},
-    this.templateLinks = const [],
-  });
+abstract class PolicySet
+    implements CedarAuthorizer, Built<PolicySet, PolicySetBuilder> {
+  factory PolicySet({
+    Map<String, Policy> policies = const {},
+    Map<String, Policy> templates = const {},
+    List<TemplateLink> templateLinks = const [],
+  }) {
+    return _$PolicySet._(
+      policies: policies.build(),
+      templates: templates.build(),
+      templateLinks: templateLinks.build(),
+    );
+  }
+
+  const PolicySet._();
+
+  factory PolicySet.build([void Function(PolicySetBuilder) updates]) =
+      _$PolicySet;
 
   factory PolicySet.fromJson(Map<String, Object?> json) {
     return PolicySet(
@@ -44,25 +61,24 @@ final class PolicySet implements CedarAuthorizer {
       final policyOrTemplate = parser.readPolicy();
       var id = policyOrTemplate.annotations?['id'];
       if (policyOrTemplate.isTemplate) {
-        templates[id ?? 'template$tmplIndex'] = policyOrTemplate;
-        tmplIndex++;
+        templates[id ?? 'template${tmplIndex++}'] = policyOrTemplate;
       } else {
-        policies[id ?? 'policy$polIndex'] = policyOrTemplate;
-        polIndex++;
+        policies[id ?? 'policy${polIndex++}'] = policyOrTemplate;
       }
     }
     return PolicySet(policies: policies, templates: templates);
   }
 
-  final Map<String, Policy> policies;
-  final Map<String, Policy> templates;
-  final List<TemplateLink> templateLinks;
+  BuiltMap<String, Policy> get policies;
+  BuiltMap<String, Policy> get templates;
+  BuiltList<TemplateLink> get templateLinks;
 
   Map<String, Object?> toJson() => {
         'staticPolicies':
-            policies.map((key, value) => MapEntry(key, value.toJson())),
-        'templates':
-            templates.map((key, value) => MapEntry(key, value.toJson())),
+            policies.map((key, value) => MapEntry(key, value.toJson())).toMap(),
+        'templates': templates
+            .map((key, value) => MapEntry(key, value.toJson()))
+            .toMap(),
         'templateLinks': templateLinks.map((link) => link.toJson()).toList(),
       };
 
@@ -116,6 +132,8 @@ final class PolicySet implements CedarAuthorizer {
       errors: diagnostics.isEmpty ? null : AuthorizationErrors(diagnostics),
     );
   }
+
+  static Serializer<PolicySet> get serializer => _$policySetSerializer;
 }
 
 final class TemplateLink {

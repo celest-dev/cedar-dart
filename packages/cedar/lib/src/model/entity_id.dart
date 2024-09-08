@@ -26,6 +26,23 @@ final class EntityUid implements Component {
     }
   }
 
+  factory EntityUid.parse(String uid) {
+    final parts = uid.split('::');
+    if (parts.length < 2) {
+      throw FormatException('Invalid entity ID: $uid');
+    }
+    final idPart = parts.last;
+    if (idPart.isEmpty ||
+        idPart[0] != '"' ||
+        idPart[idPart.length - 1] != '"') {
+      throw FormatException('Invalid entity ID: $uid');
+    }
+    return EntityUid(
+      EntityTypeName(parts.sublist(0, parts.length - 1).join('::')),
+      EntityId(idPart.substring(1, idPart.length - 1)),
+    );
+  }
+
   const EntityUid.unknown()
       : type = const EntityTypeName(''),
         id = const EntityId('');
