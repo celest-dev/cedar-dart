@@ -1,3 +1,7 @@
+## 0.2.1
+
+- feat: Add Protobuf types
+
 ## 0.2.0
 
 - feat: Add Dart evaluation
