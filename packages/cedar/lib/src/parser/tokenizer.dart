@@ -75,10 +75,6 @@ final class Tokenizer {
 
   final _SpanScanner _scanner;
 
-  SourceSpan span(int start, [int? end]) {
-    return _scanner.spanFromPosition(start, end);
-  }
-
   List<Token> tokenize() {
     final tokens = <Token>[];
     for (;;) {
