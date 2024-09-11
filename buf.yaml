@@ -1,7 +1,7 @@
 version: v2
 modules:
   - path: proto
-  - path: third_party
+    name: buf.build/celest-dev/cedar
 breaking:
   use:
     - PACKAGE
@@ -9,5 +9,5 @@ lint:
   use:
     - MINIMAL
   ignore:
-    - third_party
+    - proto/dart_options
   disallow_comment_ignores: true
