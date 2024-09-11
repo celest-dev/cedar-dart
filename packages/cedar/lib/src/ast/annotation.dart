@@ -1,12 +1,18 @@
 import 'dart:collection';
 
 import 'package:cedar/ast.dart';
+import 'package:cedar/src/proto/cedar/v3/policy.pb.dart' as pb;
+import 'package:collection/collection.dart';
 
 final class Annotations with IterableMixin<Annotation> {
   Annotations(this.annotations);
 
   factory Annotations.fromJson(Map<String, Object?> json) {
     return Annotations(json.cast());
+  }
+
+  factory Annotations.fromProto(pb.Annotations annotations) {
+    return Annotations(annotations.annotations);
   }
 
   final Map<String, String> annotations;
@@ -43,6 +49,19 @@ final class Annotations with IterableMixin<Annotation> {
   Iterator<Annotation> get iterator => iterable.iterator;
 
   Map<String, String> toJson() => annotations;
+
+  pb.Annotations toProto() {
+    return pb.Annotations(annotations: annotations);
+  }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Annotations &&
+          const MapEquality().equals(annotations, other.annotations);
+
+  @override
+  int get hashCode => const MapEquality().hash(annotations);
 }
 
 Annotations annotation(String key, String value) {

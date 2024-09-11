@@ -1,4 +1,5 @@
 import 'package:cedar/cedar.dart';
+import 'package:cedar/src/proto/cedar/v3/entity.pb.dart' as pb;
 import 'package:collection/collection.dart';
 
 /// Dart representation of a Cedar [entity](https://docs.cedarpolicy.com/policies/syntax-entity.html).
@@ -21,6 +22,16 @@ final class Entity {
             .map((key, value) => MapEntry(key, Value.fromJson(value))),
       );
 
+  factory Entity.fromProto(pb.Entity proto) {
+    return Entity(
+      uid: EntityUid.fromProto(proto.uid),
+      parents: proto.parents.map((e) => EntityUid.fromProto(e)).toList(),
+      attributes: proto.attributes.map(
+        (key, value) => MapEntry(key, Value.fromProto(value)),
+      ),
+    );
+  }
+
   final EntityUid uid;
   final List<EntityUid> parents;
   final Map<String, Value> attributes;
@@ -30,6 +41,15 @@ final class Entity {
         'parents': parents.map((e) => e.toJson()).toList(),
         'attrs': attributes.map((key, value) => MapEntry(key, value.toJson())),
       };
+
+  pb.Entity toProto() {
+    return pb.Entity(
+      uid: uid.toProto(),
+      parents: parents.map((e) => e.toProto()).toList(),
+      attributes:
+          attributes.map((key, value) => MapEntry(key, value.toProto())),
+    );
+  }
 
   @override
   bool operator ==(Object other) =>

@@ -18,10 +18,17 @@ final class LongValue extends Value {
     );
   }
 
+  factory LongValue.fromProto(pb.Int64Value longValue) {
+    return LongValue(longValue.value);
+  }
+
   final Int64 value;
 
   @override
   int toJson() => value.toInt();
+
+  @override
+  pb.Value toProto() => pb.Value(long: pb.Int64Value(value: value));
 
   @override
   bool operator ==(Object other) =>
