@@ -1,3 +1,7 @@
+## 0.2.2
+
+- chore: Lower dependency constraints
+
 ## 0.2.1
 
 - feat: Add Protobuf types
