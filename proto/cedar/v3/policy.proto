@@ -4,7 +4,7 @@ package cedar.v3;
 
 import "cedar/v3/entity_uid.proto";
 import "cedar/v3/expr.proto";
-import "dart/dart_options.proto";
+import "dart_options/dart_options.proto";
 
 option go_package = "cedar/v3;cedarpb";
 
