@@ -22,6 +22,13 @@ final class ExtensionCall extends Value {
     throw FormatException('Invalid Cedar extension call: $json');
   }
 
+  factory ExtensionCall.fromProto(pb.ExtensionCall extensionCall) {
+    return ExtensionCall(
+      fn: extensionCall.fn,
+      arg: Value.fromProto(extensionCall.arg),
+    );
+  }
+
   final String fn;
   final Value arg;
 
@@ -30,6 +37,14 @@ final class ExtensionCall extends Value {
         'fn': fn,
         'arg': arg.toJson(),
       };
+
+  @override
+  pb.Value toProto() => pb.Value(
+        extensionCall: pb.ExtensionCall(
+          fn: fn,
+          arg: arg.toProto(),
+        ),
+      );
 
   @override
   bool operator ==(Object other) =>

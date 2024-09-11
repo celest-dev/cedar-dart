@@ -12,11 +12,11 @@ void main() {
           :queries,
         ) in cedarCorpusTests.values) {
       group(name, () {
-        late final CedarAuthorizer cedar;
+        late final PolicySet policySet;
         late final Map<EntityUid, Entity> entities;
 
         setUpAll(() {
-          cedar = PolicySet.parse(policiesCedar);
+          policySet = PolicySet.parse(policiesCedar);
           entities = Map.fromEntries(
             entitiesJson.map((json) {
               final entity = Entity.fromJson(
@@ -25,6 +25,13 @@ void main() {
               return MapEntry(entity.uid, entity);
             }),
           );
+        });
+
+        test('can interop policies with proto', () {
+          final policySetProto = policySet.toProto();
+          final policySetFromProto = PolicySet.fromProto(policySetProto);
+          expect(policySet, equals(policySetFromProto), skip: 'TODO');
+          expect(policySetProto, equals(policySetFromProto.toProto()));
         });
 
         test('can parse schema', () {
@@ -37,12 +44,21 @@ void main() {
               .map((entity) => Entity.fromJson(entity as Map<String, Object?>))
               .toList();
           expect(entities.map((e) => e.toJson()), equals(entitiesJson));
+
+          final entitiesProto = entities.map((e) => e.toProto()).toList();
+          final entitiesFromProto =
+              entitiesProto.map((proto) => Entity.fromProto(proto)).toList();
+          expect(entities, equals(entitiesFromProto));
+          expect(
+            entitiesProto,
+            equals(entitiesFromProto.map((e) => e.toProto())),
+          );
         });
 
         for (final query in queries) {
           test(query.description, () {
             try {
-              final response = cedar.isAuthorized(
+              final response = policySet.isAuthorized(
                 AuthorizationRequest(
                   entities: entities,
                   principal: query.principal,

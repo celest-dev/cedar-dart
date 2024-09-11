@@ -7,10 +7,17 @@ final class StringValue extends Value {
     return StringValue(json);
   }
 
+  factory StringValue.fromProto(pb.StringValue stringValue) {
+    return StringValue(stringValue.value);
+  }
+
   final String value;
 
   @override
   String toJson() => value;
+
+  @override
+  pb.Value toProto() => pb.Value(string: pb.StringValue(value: value));
 
   @override
   bool operator ==(Object other) =>

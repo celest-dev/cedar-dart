@@ -1,3 +1,5 @@
+import 'package:cedar/src/proto/cedar/v3/policy.pb.dart' as pb;
+
 final class Position {
   const Position({
     this.filename,
@@ -25,6 +27,15 @@ final class Position {
     );
   }
 
+  factory Position.fromProto(pb.Position position) {
+    return Position(
+      filename: position.hasFilename() ? Uri.parse(position.filename) : null,
+      offset: position.offset,
+      line: position.line,
+      column: position.column,
+    );
+  }
+
   final Uri? filename;
   final int offset;
   final int line;
@@ -36,6 +47,13 @@ final class Position {
         'line': line,
         'column': column,
       };
+
+  pb.Position toProto() => pb.Position(
+        filename: filename?.toString(),
+        offset: offset,
+        line: line,
+        column: column,
+      );
 
   @override
   bool operator ==(Object other) =>

@@ -1,0 +1,42 @@
+syntax = "proto3";
+
+package cedar.v3;
+
+import "google/protobuf/wrappers.proto";
+import "cedar/v3/entity_uid.proto";
+
+option go_package = "cedar/v3;cedarpb";
+
+message Value {
+  oneof value {
+    google.protobuf.StringValue string = 1;
+    google.protobuf.Int64Value long = 2;
+    google.protobuf.BoolValue bool = 3;
+    SetValue set = 4;
+    RecordValue record = 5;
+    ExtensionCall extension_call = 6;
+    EntityValue entity = 7;
+    DecimalValue decimal = 8;
+  }
+}
+
+message SetValue {
+  repeated Value elements = 1;
+}
+
+message RecordValue {
+  map<string, Value> attributes = 1;
+}
+
+message ExtensionCall {
+  string fn = 1;
+  Value arg = 2;
+}
+
+message EntityValue {
+  EntityUid uid = 1;
+}
+
+message DecimalValue {
+  string value = 1;
+}

@@ -213,7 +213,7 @@ final class Parser {
             error('`$prefix` is a method, not a function');
           }
           final args = _expressions(')');
-          return Expr.funcCall(fn: prefix, args: args);
+          return Expr.extensionCall(fn: prefix, args: args);
         default:
           error('Unexpected token');
       }
@@ -319,7 +319,7 @@ final class Parser {
       expect('else');
       final otherwise = readExpression();
 
-      return Expr.ifThenElse(cond: cond, then: then, else$: otherwise);
+      return Expr.ifThenElse(cond: cond, then: then, otherwise: otherwise);
     }
 
     return _readOr();
@@ -416,8 +416,8 @@ final class Parser {
     var lhs = _readMult();
     for (;;) {
       final _BinaryExprBuilder? builder = switch (peek()?.text) {
-        '+' => Expr.plus,
-        '-' => Expr.minus,
+        '+' => Expr.add,
+        '-' => Expr.subtract,
         _ => null,
       };
       if (builder == null) {
@@ -434,7 +434,7 @@ final class Parser {
     while (peek()?.text == '*') {
       advance();
       final rhs = _readUnary();
-      lhs = Expr.times(left: lhs, right: rhs);
+      lhs = Expr.multiply(left: lhs, right: rhs);
     }
     return lhs;
   }
@@ -543,7 +543,7 @@ final class Parser {
             if (!extension.isMethod) {
               error('`$methodName` is a function, not a method');
             }
-            return Expr.funcCall(fn: methodName, args: args);
+            return Expr.extensionCall(fn: methodName, args: args);
         }
         if (args.length != 1) {
           error('Expected exactly one argument to $methodName');

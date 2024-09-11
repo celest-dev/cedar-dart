@@ -83,7 +83,7 @@ extension Logical on Expr {
     return ExprIfThenElse(
       cond: condition,
       then: thenCedarExpr,
-      else$: elseCedarExpr,
+      otherwise: elseCedarExpr,
     );
   }
 }
@@ -98,7 +98,7 @@ Expr ifThenElse(
     ExprIfThenElse(
       cond: condition,
       then: thenCedarExpr,
-      else$: elseCedarExpr,
+      otherwise: elseCedarExpr,
     );
 
 extension Arithmetic on Expr {

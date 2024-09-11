@@ -1,4 +1,8 @@
 import 'package:cedar/ast.dart';
+import 'package:cedar/src/proto/cedar/v3/entity_uid.pb.dart' as pb;
+import 'package:cedar/src/proto/cedar/v3/expr.pb.dart' as pb;
+import 'package:cedar/src/proto/cedar/v3/value.pb.dart' as pb;
+import 'package:cedar/src/proto/google/protobuf/wrappers.pb.dart' as pb;
 import 'package:cedar/src/util/pretty_json.dart';
 import 'package:collection/collection.dart';
 import 'package:decimal/decimal.dart';
@@ -33,6 +37,21 @@ sealed class Value {
     };
   }
 
+  factory Value.fromProto(pb.Value value) {
+    return switch (value.whichValue()) {
+      pb.Value_Value.entity => EntityValue.fromProto(value.entity),
+      pb.Value_Value.extensionCall =>
+        ExtensionCall.fromProto(value.extensionCall),
+      pb.Value_Value.bool_3 => BoolValue.fromProto(value.bool_3),
+      pb.Value_Value.long => LongValue.fromProto(value.long),
+      pb.Value_Value.string => StringValue.fromProto(value.string),
+      pb.Value_Value.set => SetValue.fromProto(value.set),
+      pb.Value_Value.record => RecordValue.fromProto(value.record),
+      pb.Value_Value.decimal => DecimalValue.fromProto(value.decimal),
+      final unknown => throw FormatException('Invalid Cedar value: $unknown'),
+    };
+  }
+
   const factory Value.entity({
     required EntityUid uid,
   }) = EntityValue;
@@ -55,6 +74,7 @@ sealed class Value {
   const factory Value.record(Map<String, Value> attributes) = RecordValue;
 
   Object? toJson();
+  pb.Value toProto();
 
   @override
   String toString() => prettyJson(toJson());

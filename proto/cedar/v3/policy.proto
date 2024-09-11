@@ -1,0 +1,159 @@
+syntax = "proto3";
+
+package cedar.v3;
+
+import "cedar/v3/entity_uid.proto";
+import "cedar/v3/expr.proto";
+import "dart/dart_options.proto";
+
+option go_package = "cedar/v3;cedarpb";
+
+enum Effect {
+  EFFECT_UNSPECIFIED = 0;
+  EFFECT_PERMIT = 1;
+  EFFECT_FORBID = 2;
+}
+
+enum ConditionKind {
+  CONDITION_KIND_UNSPECIFIED = 0;
+  CONDITION_KIND_WHEN = 1;
+  CONDITION_KIND_UNLESS = 2;
+}
+
+message PolicySet {
+  map<string, Policy> policies = 1;
+  map<string, Policy> templates = 2;
+  repeated TemplateLink template_links = 3;
+}
+
+message Policy {
+  optional string id = 1;
+  Effect effect = 2;
+  PrincipalConstraint principal = 3;
+  ActionConstraint action = 4;
+  ResourceConstraint resource = 5;
+  repeated Condition conditions = 6;
+  Annotations annotations = 7;
+  Position position = 8;
+}
+
+message Annotations {
+  map<string, string> annotations = 1;
+}
+
+message Position {
+  optional string filename = 1;
+  uint32 offset = 2;
+  uint32 line = 3;
+  uint32 column = 4;
+}
+
+message PrincipalConstraint {
+  oneof constraint {
+    PrincipalAll all = 1;
+    PrincipalEquals equals = 2;
+    PrincipalIn in = 3 [(dart_options.dart_name) = "in_"];
+    PrincipalIsIn is_in = 4;
+    PrincipalIs is = 5;
+  }
+}
+
+message PrincipalAll {}
+
+message PrincipalEquals {
+  oneof component {
+    SlotId slot = 1;
+    EntityUid entity = 2;
+  }
+}
+
+message PrincipalIn {
+  oneof component {
+    SlotId slot = 1;
+    EntityUid entity = 2;
+  }
+}
+
+message PrincipalIsIn {
+  string entity_type = 1;
+  oneof in {
+    SlotId slot = 2;
+    EntityUid entity = 3;
+  }
+}
+
+message PrincipalIs {
+  string entity_type = 1;
+}
+
+message ActionConstraint {
+  oneof constraint {
+    ActionAll all = 1;
+    ActionEquals equals = 2;
+    ActionIn in = 3 [(dart_options.dart_name) = "in_"];
+    ActionInSet in_set = 4;
+  }
+}
+
+message ActionAll {}
+
+message ActionEquals {
+  EntityUid entity = 1;
+}
+
+message ActionIn {
+  EntityUid entity = 1;
+}
+
+message ActionInSet {
+  repeated EntityUid entities = 1;
+}
+
+message ResourceConstraint {
+  oneof constraint {
+    ResourceAll all = 1;
+    ResourceEquals equals = 2;
+    ResourceIn in = 3 [(dart_options.dart_name) = "in_"];
+    ResourceIsIn is_in = 4;
+    ResourceIs is = 5;
+  }
+}
+
+message ResourceAll {}
+
+message ResourceEquals {
+  oneof component {
+    SlotId slot = 1;
+    EntityUid entity = 2;
+  }
+}
+
+message ResourceIn {
+  oneof component {
+    SlotId slot = 1;
+    EntityUid entity = 2;
+  }
+}
+
+message ResourceIsIn {
+  string entity_type = 1;
+  oneof in {
+    SlotId slot = 2;
+    EntityUid entity = 3;
+  }
+}
+
+message ResourceIs {
+  string entity_type = 1;
+}
+
+message Condition {
+  ConditionKind kind = 1;
+  Expr body = 2;
+}
+
+message TemplateLink {
+  string template_id = 1;
+  string new_id = 2;
+  map<string, EntityUid> values = 3;
+}

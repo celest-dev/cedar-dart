@@ -13,6 +13,10 @@ final class EntityValue extends Value implements Component {
     }
   }
 
+  factory EntityValue.fromProto(pb.EntityValue entityValue) {
+    return EntityValue(uid: EntityUid.fromProto(entityValue.uid));
+  }
+
   final EntityUid uid;
 
   @override
@@ -22,6 +26,9 @@ final class EntityValue extends Value implements Component {
   Map<String, Object?> toJson() => {
         '__entity': uid.toJson(),
       };
+
+  @override
+  pb.Value toProto() => pb.Value(entity: pb.EntityValue(uid: uid.toProto()));
 
   @override
   String toString() => uid.toString();

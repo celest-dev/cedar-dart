@@ -1,1 +1,7 @@
 include: package:lints/recommended.yaml
+
+analyzer:
+  exclude:
+    - lib/src/proto/**/*.pb.dart
+    - lib/src/proto/**/*.pbenum.dart
+    - lib/src/proto/**/*.pbjson.dart
