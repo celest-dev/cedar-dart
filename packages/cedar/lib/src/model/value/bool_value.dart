@@ -7,6 +7,10 @@ final class BoolValue extends Value {
     return BoolValue(json);
   }
 
+  factory BoolValue.fromProto(pb.BoolValue boolValue) {
+    return BoolValue(boolValue.value);
+  }
+
   final bool value;
 
   operator ~() => BoolValue(!value);
@@ -16,6 +20,9 @@ final class BoolValue extends Value {
 
   @override
   bool toJson() => value;
+
+  @override
+  pb.Value toProto() => pb.Value(bool_3: pb.BoolValue(value: value));
 
   @override
   bool operator ==(Object other) =>

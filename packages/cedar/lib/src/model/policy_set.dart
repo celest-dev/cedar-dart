@@ -5,6 +5,7 @@ import 'package:cedar/cedar.dart';
 import 'package:cedar/src/eval/evalutator.dart';
 import 'package:cedar/src/parser/parser.dart';
 import 'package:cedar/src/parser/tokenizer.dart';
+import 'package:cedar/src/proto/cedar/v3/policy.pb.dart' as pb;
 import 'package:cedar/src/util/pretty_json.dart';
 import 'package:collection/collection.dart';
 
@@ -51,6 +52,20 @@ abstract class PolicySet
     );
   }
 
+  factory PolicySet.fromProto(pb.PolicySet proto) {
+    return PolicySet(
+      policies: proto.policies.map(
+        (id, policy) => MapEntry(id, Policy.fromProto(policy)),
+      ),
+      templates: proto.templates.map(
+        (id, template) => MapEntry(id, Policy.fromProto(template)),
+      ),
+      templateLinks: proto.templateLinks
+          .map((link) => TemplateLink.fromProto(link))
+          .toList(),
+    );
+  }
+
   factory PolicySet.parse(String cedar) {
     final tokens = Tokenizer(cedar).tokenize();
     final parser = Parser(tokens);
@@ -81,6 +96,17 @@ abstract class PolicySet
             .toMap(),
         'templateLinks': templateLinks.map((link) => link.toJson()).toList(),
       };
+
+  pb.PolicySet toProto() {
+    return pb.PolicySet(
+      policies:
+          policies.map((id, policy) => MapEntry(id, policy.toProto())).toMap(),
+      templates: templates
+          .map((id, template) => MapEntry(id, template.toProto()))
+          .toMap(),
+      templateLinks: templateLinks.map((link) => link.toProto()).toList(),
+    );
+  }
 
   @override
   AuthorizationResponse isAuthorized(AuthorizationRequest request) {
@@ -143,16 +169,6 @@ final class TemplateLink {
     required this.values,
   });
 
-  final String templateId;
-  final String newId;
-  final Map<SlotId, EntityUid> values;
-
-  Map<String, Object?> toJson() => {
-        'templateId': templateId,
-        'newId': newId,
-        'values': values.map((k, v) => MapEntry(k.toJson(), v.toString())),
-      };
-
   factory TemplateLink.fromJson(Map<String, Object?> json) {
     return TemplateLink(
       templateId: json['templateId'] as String,
@@ -163,6 +179,37 @@ final class TemplateLink {
           EntityUid.fromJson(v as Map<String, Object?>),
         ),
       ),
+    );
+  }
+
+  factory TemplateLink.fromProto(pb.TemplateLink proto) {
+    return TemplateLink(
+      templateId: proto.templateId,
+      newId: proto.newId,
+      values: proto.values.map(
+        (k, v) => MapEntry(
+          SlotId.fromJson(k),
+          EntityUid.fromProto(v),
+        ),
+      ),
+    );
+  }
+
+  final String templateId;
+  final String newId;
+  final Map<SlotId, EntityUid> values;
+
+  Map<String, Object?> toJson() => {
+        'templateId': templateId,
+        'newId': newId,
+        'values': values.map((k, v) => MapEntry(k.toJson(), v.toString())),
+      };
+
+  pb.TemplateLink toProto() {
+    return pb.TemplateLink(
+      templateId: templateId,
+      newId: newId,
+      values: values.map((k, v) => MapEntry(k.toJson(), v.toProto())),
     );
   }
 

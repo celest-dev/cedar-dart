@@ -26,6 +26,13 @@ final class EntityUid implements Component {
     }
   }
 
+  factory EntityUid.fromProto(pb.EntityUid entityUid) {
+    return EntityUid(
+      EntityTypeName(entityUid.type),
+      EntityId(entityUid.id),
+    );
+  }
+
   factory EntityUid.parse(String uid) {
     final parts = uid.split('::');
     if (parts.length < 2) {
@@ -81,6 +88,11 @@ final class EntityUid implements Component {
 
   @override
   Expr toExpr() => Expr.value(Value.entity(uid: this));
+
+  pb.EntityUid toProto() => pb.EntityUid(
+        type: type,
+        id: id,
+      );
 
   @override
   String toString() => '$type::"$id"';

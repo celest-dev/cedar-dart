@@ -9,12 +9,29 @@ final class RecordValue extends Value {
     });
   }
 
+  factory RecordValue.fromProto(pb.RecordValue recordValue) {
+    return RecordValue({
+      for (final entry in recordValue.attributes.entries)
+        entry.key: Value.fromProto(entry.value)
+    });
+  }
+
   final Map<String, Value> attributes;
 
   @override
   Map<String, Object?> toJson() => {
         for (final entry in attributes.entries) entry.key: entry.value.toJson(),
       };
+
+  @override
+  pb.Value toProto() => pb.Value(
+        record: pb.RecordValue(
+          attributes: {
+            for (final entry in attributes.entries)
+              entry.key: entry.value.toProto()
+          },
+        ),
+      );
 
   @override
   bool operator ==(Object other) =>

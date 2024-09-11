@@ -9,12 +9,27 @@ final class SetValue extends Value {
     ]);
   }
 
+  factory SetValue.fromProto(pb.SetValue setValue) {
+    return SetValue([
+      for (final element in setValue.elements) Value.fromProto(element),
+    ]);
+  }
+
   final List<Value> elements;
 
   @override
   List<Object?> toJson() => [
         for (final element in elements) element.toJson(),
       ];
+
+  @override
+  pb.Value toProto() => pb.Value(
+        set: pb.SetValue(
+          elements: [
+            for (final element in elements) element.toProto(),
+          ],
+        ),
+      );
 
   @override
   bool operator ==(Object other) =>

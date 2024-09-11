@@ -9,6 +9,8 @@ library;
 import 'package:cedar/ast.dart';
 import 'package:cedar/src/parser/parser.dart';
 import 'package:cedar/src/parser/tokenizer.dart';
+import 'package:cedar/src/proto/cedar/v3/policy.pb.dart' as pb;
+import 'package:collection/collection.dart';
 
 enum Effect {
   permit,
@@ -18,7 +20,20 @@ enum Effect {
     return Effect.values.byName(json);
   }
 
+  factory Effect.fromProto(pb.Effect proto) {
+    return switch (proto) {
+      pb.Effect.EFFECT_PERMIT => Effect.permit,
+      pb.Effect.EFFECT_FORBID => Effect.forbid,
+      _ => throw FormatException('Invalid Cedar effect: ${proto.name}'),
+    };
+  }
+
   String toJson() => name;
+
+  pb.Effect toProto() => switch (this) {
+        permit => pb.Effect.EFFECT_PERMIT,
+        forbid => pb.Effect.EFFECT_FORBID,
+      };
 }
 
 enum ConditionKind {
@@ -29,7 +44,20 @@ enum ConditionKind {
     return ConditionKind.values.byName(json);
   }
 
+  factory ConditionKind.fromProto(pb.ConditionKind proto) {
+    return switch (proto) {
+      pb.ConditionKind.CONDITION_KIND_WHEN => ConditionKind.when,
+      pb.ConditionKind.CONDITION_KIND_UNLESS => ConditionKind.unless,
+      _ => throw FormatException('Invalid Cedar condition kind: ${proto.name}'),
+    };
+  }
+
   String toJson() => name;
+
+  pb.ConditionKind toProto() => switch (this) {
+        ConditionKind.when => pb.ConditionKind.CONDITION_KIND_WHEN,
+        unless => pb.ConditionKind.CONDITION_KIND_UNLESS,
+      };
 }
 
 final class Policy {
@@ -64,6 +92,26 @@ final class Policy {
       position: json['position'] == null
           ? null
           : Position.fromJson(json['position'] as Map<String, Object?>),
+    );
+  }
+
+  factory Policy.fromProto(pb.Policy proto) {
+    return Policy(
+      effect: Effect.fromProto(proto.effect),
+      principal: proto.hasPrincipal()
+          ? PrincipalConstraint.fromProto(proto.principal)
+          : const PrincipalAll(),
+      action: proto.hasAction()
+          ? ActionConstraint.fromProto(proto.action)
+          : const ActionAll(),
+      resource: proto.hasResource()
+          ? ResourceConstraint.fromProto(proto.resource)
+          : const ResourceAll(),
+      conditions: proto.conditions.map(Condition.fromProto).toList(),
+      annotations: proto.hasAnnotations()
+          ? Annotations.fromProto(proto.annotations)
+          : null,
+      position: proto.hasPosition() ? Position.fromProto(proto.position) : null,
     );
   }
 
@@ -158,6 +206,18 @@ final class Policy {
         if (position case final position?) 'position': position.toJson(),
       };
 
+  pb.Policy toProto() {
+    return pb.Policy(
+      effect: effect.toProto(),
+      principal: principal.toProto(),
+      action: action.toProto(),
+      resource: resource.toProto(),
+      conditions: conditions.map((c) => c.toProto()).toList(),
+      annotations: annotations?.toProto(),
+      position: position?.toProto(),
+    );
+  }
+
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -166,20 +226,28 @@ final class Policy {
           principal == other.principal &&
           action == other.action &&
           resource == other.resource &&
-          conditions == other.conditions &&
+          const ListEquality<Condition>()
+              .equals(conditions, other.conditions) &&
           annotations == other.annotations &&
           position == other.position;
 
   @override
-  int get hashCode => Object.hash(
+  int get hashCode => Object.hashAll([
         effect,
         principal,
         action,
         resource,
-        conditions,
+        ...conditions,
         annotations,
         position,
-      );
+      ]);
+
+  @override
+  String toString() {
+    return 'Policy(effect: $effect, principal: $principal, action: $action, '
+        'resource: $resource, conditions: $conditions, annotations: $annotations, '
+        'position: $position)';
+  }
 }
 
 final class PolicyBuilder {
@@ -236,6 +304,16 @@ final class Condition {
     required this.body,
   });
 
+  factory Condition.fromJson(Map<String, Object?> json) => Condition(
+        kind: ConditionKind.fromJson(json['kind'] as String),
+        body: Expr.fromJson(json['body'] as Map<String, Object?>),
+      );
+
+  factory Condition.fromProto(pb.Condition proto) => Condition(
+        kind: ConditionKind.fromProto(proto.kind),
+        body: Expr.fromProto(proto.body),
+      );
+
   final ConditionKind kind;
   final Expr body;
 
@@ -244,9 +322,9 @@ final class Condition {
         'body': body.toJson(),
       };
 
-  factory Condition.fromJson(Map<String, Object?> json) => Condition(
-        kind: ConditionKind.fromJson(json['kind'] as String),
-        body: Expr.fromJson(json['body'] as Map<String, Object?>),
+  pb.Condition toProto() => pb.Condition(
+        kind: kind.toProto(),
+        body: body.toProto(),
       );
 
   @override

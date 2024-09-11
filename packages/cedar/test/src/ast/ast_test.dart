@@ -1,5 +1,4 @@
 import 'package:cedar/ast.dart';
-import 'package:cedar/cedar.dart';
 import 'package:cedar/src/ast.dart' as ast;
 import 'package:test/test.dart';
 

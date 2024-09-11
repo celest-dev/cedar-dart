@@ -243,7 +243,7 @@ final class Evalutator implements ExprVisitor<Value> {
     if (cond.value) {
       return ifThenElse.then.accept(this);
     }
-    return ifThenElse.else$.accept(this);
+    return ifThenElse.otherwise.accept(this);
   }
 
   @override
