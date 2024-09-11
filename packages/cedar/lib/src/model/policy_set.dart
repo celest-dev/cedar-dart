@@ -108,6 +108,17 @@ abstract class PolicySet
     );
   }
 
+  PolicySet merge(PolicySet? other) {
+    if (other == null) {
+      return this;
+    }
+    return rebuild((b) {
+      b.policies.addEntries(other.policies.entries);
+      b.templates.addEntries(other.templates.entries);
+      b.templateLinks.addAll(other.templateLinks);
+    });
+  }
+
   @override
   AuthorizationResponse isAuthorized(AuthorizationRequest request) {
     final context = EvaluationContext(
