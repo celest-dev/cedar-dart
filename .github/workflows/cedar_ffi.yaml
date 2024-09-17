@@ -1,10 +1,6 @@
 name: cedar_ffi
 on:
   pull_request:
-    paths:
-      - ".github/workflows/cedar_ffi.yaml"
-      - "packages/cedar/**"
-      - "packages/cedar_ffi/**"
 
 # Prevent duplicate runs due to Graphite
 # https://graphite.dev/docs/troubleshooting#why-are-my-actions-running-twice
