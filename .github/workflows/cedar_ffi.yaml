@@ -37,7 +37,7 @@ jobs:
       - name: Setup Dart
         uses: dart-lang/setup-dart@0a8a0fc875eb934c15d08629302413c671d3f672 # main
       - name: Setup Rust
-        uses: actions-rust-lang/setup-rust-toolchain@4d1965c9142484e48d40c19de54b5cba84953a06 # 1.10.0
+        uses: actions-rust-lang/setup-rust-toolchain@11df97af8e8102fd60b60a77dfbf58d40cd843b8 # 1.10.1
       - name: Create override
         run: |
           cat <<EOF > pubspec_overrides.yaml
