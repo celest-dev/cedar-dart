@@ -26,6 +26,6 @@ dev_dependencies:
     path: ../cedar_tests
   ffigen: ^14.0.0
   json_serializable: ^6.8.0
-  lints: ^4.0.0
+  lints: ">=4.0.0 <6.0.0"
   path: ^1.9.0
   test: ^1.25.5
