@@ -162,9 +162,13 @@ abstract class PolicySet
       }
     }
 
-    final reasons = permitted ? permitReasons : forbidReasons;
+    final decision = permitted && !forbidden ? Decision.allow : Decision.deny;
+    final reasons = switch (decision) {
+      Decision.allow => permitReasons,
+      Decision.deny => forbidReasons,
+    };
     return AuthorizationResponse(
-      decision: permitted && !forbidden ? Decision.allow : Decision.deny,
+      decision: decision,
       reasons: reasons.isEmpty ? null : reasons,
       errors: diagnostics.isEmpty ? null : AuthorizationErrors(diagnostics),
     );

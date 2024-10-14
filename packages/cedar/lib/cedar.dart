@@ -17,7 +17,6 @@ library;
 export 'src/authorization/authorization_request.dart';
 export 'src/authorization/authorization_response.dart';
 export 'src/authorization/authorizer.dart';
-export 'src/model/entity.dart';
 export 'src/model/errors.dart';
 export 'src/model/policy.dart';
 export 'src/model/policy_constraint.dart';
