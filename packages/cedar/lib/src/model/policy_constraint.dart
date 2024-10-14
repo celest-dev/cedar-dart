@@ -212,10 +212,11 @@ abstract mixin class PolicyConstraintAll implements PolicyConstraint {
   const PolicyConstraintAll();
 
   @override
-  Expr toVariableExpr(CedarVariable variable) => true_();
+  Expr toVariableExpr(CedarVariable variable) =>
+      const ExprValue(Value.bool(true));
 
   @override
-  Map<String, Object?> toJson() => {
+  Map<String, Object?> toJson() => const {
         'op': 'All',
       };
 
@@ -226,6 +227,9 @@ abstract mixin class PolicyConstraintAll implements PolicyConstraint {
 
   @override
   int get hashCode => (PolicyConstraintAll).hashCode;
+
+  @override
+  String toString() => 'All';
 }
 
 abstract mixin class PolicyConstraintEquals implements PolicyConstraint {
@@ -240,10 +244,10 @@ abstract mixin class PolicyConstraintEquals implements PolicyConstraint {
   @override
   Map<String, Object?> toJson() => switch (entity) {
         final SlotId slotId => {'op': '==', 'slot': slotId.toJson()},
-        final EntityUid uid || EntityValue(:final uid) => {
-            'op': '==',
-            'entity': uid.toJson()
-          },
+        final EntityUid uid ||
+        EntityValue(:final uid) ||
+        Entity(:final uid) =>
+          {'op': '==', 'entity': uid.toJson()},
       };
 
   @override
@@ -253,6 +257,9 @@ abstract mixin class PolicyConstraintEquals implements PolicyConstraint {
 
   @override
   int get hashCode => Object.hash(PolicyConstraintEquals, entity);
+
+  @override
+  String toString() => 'Equals($entity)';
 }
 
 abstract mixin class PolicyConstraintIn implements PolicyConstraint {
@@ -267,10 +274,10 @@ abstract mixin class PolicyConstraintIn implements PolicyConstraint {
   @override
   Map<String, Object?> toJson() => switch (entity) {
         final SlotId slotId => {'op': 'in', 'slot': slotId.toJson()},
-        final EntityUid uid || EntityValue(:final uid) => {
-            'op': 'in',
-            'entity': uid.toJson()
-          },
+        final EntityUid uid ||
+        EntityValue(:final uid) ||
+        Entity(:final uid) =>
+          {'op': 'in', 'entity': uid.toJson()},
       };
 
   @override
@@ -280,6 +287,9 @@ abstract mixin class PolicyConstraintIn implements PolicyConstraint {
 
   @override
   int get hashCode => Object.hash(PolicyConstraintIn, entity);
+
+  @override
+  String toString() => 'In($entity)';
 }
 
 abstract mixin class PolicyConstraintIs implements PolicyConstraint {
@@ -304,6 +314,9 @@ abstract mixin class PolicyConstraintIs implements PolicyConstraint {
 
   @override
   int get hashCode => Object.hash(PolicyConstraintIs, entityType);
+
+  @override
+  String toString() => 'Is($entityType)';
 }
 
 abstract mixin class PolicyConstraintIsIn implements PolicyConstraint {
@@ -322,9 +335,10 @@ abstract mixin class PolicyConstraintIsIn implements PolicyConstraint {
         'entity_type': entityType,
         'in': switch (entity) {
           final SlotId slotId => {'slot': slotId.toJson()},
-          final EntityUid uid || EntityValue(:final uid) => {
-              'entity': uid.toJson()
-            },
+          final EntityUid uid ||
+          EntityValue(:final uid) ||
+          Entity(:final uid) =>
+            {'entity': uid.toJson()},
         }
       };
 
@@ -337,6 +351,9 @@ abstract mixin class PolicyConstraintIsIn implements PolicyConstraint {
 
   @override
   int get hashCode => Object.hash(PolicyConstraintIsIn, entityType, entity);
+
+  @override
+  String toString() => 'IsIn($entityType, $entity)';
 }
 
 abstract mixin class PolicyConstraintInSet implements PolicyConstraint {
@@ -345,8 +362,8 @@ abstract mixin class PolicyConstraintInSet implements PolicyConstraint {
   List<EntityUid> get entities;
 
   @override
-  Expr toVariableExpr(CedarVariable variable) =>
-      ExprVariable(variable).in_(set(entities.map((e) => e.toExpr()).toList()));
+  Expr toVariableExpr(CedarVariable variable) => ExprVariable(variable)
+      .in_(ExprSet(entities.map((e) => e.toExpr()).toList()));
 
   @override
   Map<String, Object?> toJson() => {
@@ -362,6 +379,9 @@ abstract mixin class PolicyConstraintInSet implements PolicyConstraint {
 
   @override
   int get hashCode => Object.hashAll([PolicyConstraintInSet, ...entities]);
+
+  @override
+  String toString() => 'In($entities)';
 }
 
 final class PrincipalAll extends PrincipalConstraint with PolicyConstraintAll {
@@ -400,7 +420,8 @@ final class PrincipalEquals extends PrincipalConstraint
         equals: switch (entity) {
           final SlotId slot => pb.PrincipalEquals(slot: slot.toProto()),
           final EntityUid uid ||
-          EntityValue(:final uid) =>
+          EntityValue(:final uid) ||
+          Entity(:final uid) =>
             pb.PrincipalEquals(entity: uid.toProto()),
         },
       );
@@ -431,7 +452,8 @@ final class PrincipalIn extends PrincipalConstraint with PolicyConstraintIn {
         in_: switch (entity) {
           final SlotId slot => pb.PrincipalIn(slot: slot.toProto()),
           final EntityUid uid ||
-          EntityValue(:final uid) =>
+          EntityValue(:final uid) ||
+          Entity(:final uid) =>
             pb.PrincipalIn(entity: uid.toProto()),
         },
       );
@@ -485,7 +507,10 @@ final class PrincipalIsIn extends PrincipalConstraint
               entityType: entityType,
               slot: slot.toProto(),
             ),
-          final EntityUid uid || EntityValue(:final uid) => pb.PrincipalIsIn(
+          final EntityUid uid ||
+          EntityValue(:final uid) ||
+          Entity(:final uid) =>
+            pb.PrincipalIsIn(
               entityType: entityType,
               entity: uid.toProto(),
             ),
@@ -587,7 +612,8 @@ final class ResourceEquals extends ResourceConstraint
         equals: switch (entity) {
           final SlotId slot => pb.ResourceEquals(slot: slot.toProto()),
           final EntityUid uid ||
-          EntityValue(:final uid) =>
+          EntityValue(:final uid) ||
+          Entity(:final uid) =>
             pb.ResourceEquals(entity: uid.toProto()),
         },
       );
@@ -618,7 +644,8 @@ final class ResourceIn extends ResourceConstraint with PolicyConstraintIn {
         in_: switch (entity) {
           final SlotId slot => pb.ResourceIn(slot: slot.toProto()),
           final EntityUid uid ||
-          EntityValue(:final uid) =>
+          EntityValue(:final uid) ||
+          Entity(:final uid) =>
             pb.ResourceIn(entity: uid.toProto()),
         },
       );
@@ -671,7 +698,10 @@ final class ResourceIsIn extends ResourceConstraint with PolicyConstraintIsIn {
               entityType: entityType,
               slot: slot.toProto(),
             ),
-          final EntityUid uid || EntityValue(:final uid) => pb.ResourceIsIn(
+          final EntityUid uid ||
+          EntityValue(:final uid) ||
+          Entity(:final uid) =>
+            pb.ResourceIsIn(
               entityType: entityType,
               entity: uid.toProto(),
             ),
