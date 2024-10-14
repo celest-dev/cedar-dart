@@ -1,3 +1,7 @@
+## 0.2.3
+
+- chore: Public interface cleanup
+
 ## 0.2.2
 
 - chore: Lower dependency constraints

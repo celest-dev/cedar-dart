@@ -1,11 +1,9 @@
-import 'package:cedar/cedar.dart';
-import 'package:cedar/src/proto/cedar/v3/entity.pb.dart' as pb;
-import 'package:collection/collection.dart';
+part of 'value.dart';
 
 /// Dart representation of a Cedar [entity](https://docs.cedarpolicy.com/policies/syntax-entity.html).
 ///
 /// Conforms to the entity [JSON format](https://docs.cedarpolicy.com/auth/entities-syntax.html#entities).
-final class Entity {
+final class Entity implements Component {
   const Entity({
     required this.uid,
     this.parents = const [],
@@ -65,4 +63,11 @@ final class Entity {
         ...parents,
         ...attributes.entries,
       ]);
+
+  @override
+  String toString() =>
+      'Entity(uid: $uid, parents: $parents, attributes: $attributes)';
+
+  @override
+  Expr toExpr() => uid.toExpr();
 }

@@ -1,4 +1,5 @@
 import 'package:cedar/ast.dart';
+import 'package:cedar/src/proto/cedar/v3/entity.pb.dart' as pb;
 import 'package:cedar/src/proto/cedar/v3/entity_uid.pb.dart' as pb;
 import 'package:cedar/src/proto/cedar/v3/expr.pb.dart' as pb;
 import 'package:cedar/src/proto/cedar/v3/value.pb.dart' as pb;
@@ -8,6 +9,7 @@ import 'package:collection/collection.dart';
 import 'package:decimal/decimal.dart';
 import 'package:fixnum/fixnum.dart';
 
+part 'entity.dart';
 part 'entity_id.dart';
 part 'value/bool_value.dart';
 part 'value/decimal_value.dart';
@@ -82,4 +84,17 @@ sealed class Value {
 
 sealed class Component {
   Expr toExpr();
+}
+
+extension ComponentUid on Component {
+  /// Returns the unique identifier for this component.
+  ///
+  /// Throws a [StateError] if this is a [SlotId].
+  EntityUid get uid => switch (this) {
+        final EntityUid uid ||
+        EntityValue(:final uid) ||
+        Entity(:final uid) =>
+          uid,
+        SlotId() => throw StateError('Slot IDs do not have UIDs'),
+      };
 }

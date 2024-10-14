@@ -134,6 +134,10 @@ final class Policy {
   final Annotations? annotations;
   final Position? position;
 
+  String? get id {
+    return annotations?.annotations['id'];
+  }
+
   bool get isTemplate {
     final visitor = _IsTemplateVisitor();
     principal.toExpr().accept(visitor);
