@@ -24,7 +24,7 @@ dev_dependencies:
   built_value_generator: ^8.9.2
   cedar_tests:
     path: ../cedar_tests
-  ffigen: ^14.0.0
+  ffigen: ">=14.0.0 <16.0.0"
   json_serializable: ^6.8.0
   lints: ">=4.0.0 <6.0.0"
   path: ^1.9.0
