@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:native_assets_cli/native_assets_cli.dart';
+import 'package:native_assets_cli/code_assets.dart';
 
 const packageName = 'cedar_ffi';
 
@@ -16,61 +16,44 @@ final IOSink buildLogs = () {
 
 void main(List<String> args) async {
   try {
-    await build(args, (config, output) async {
-      buildLogs.writeln(config.toString());
+    await build(args, (input, output) async {
+      buildLogs.writeln(input.json);
 
       output.addDependencies([
-        config.packageRoot.resolve('build.dart'),
-        config.packageRoot.resolve('src/'),
+        input.packageRoot.resolve('build.dart'),
+        input.packageRoot.resolve('src/'),
       ]);
 
       // Build the Rust code in `src/` to `target/`.
       //
       // Since we're in a workspace, this will default to the repo root which we
       // don't want.
-      final cargoOutput = config.packageRoot.resolve('target/');
+      final cargoOutput = input.packageRoot.resolve('target/');
       await runProcess(
         'cargo',
         ['build', '--release'],
         environment: {
           'CARGO_TARGET_DIR': cargoOutput.toFilePath(),
         },
-        workingDirectory: config.packageRoot.resolve('src').toFilePath(),
+        workingDirectory: input.packageRoot.resolve('src').toFilePath(),
       );
 
-      final binaryName = config.targetOS.dylibFileName(packageName);
+      final CodeConfig(:targetOS, :targetArchitecture) = input.config.code;
+      final binaryName = targetOS.dylibFileName(packageName);
       final binaryOut = cargoOutput.resolve('release/$binaryName');
       if (!File.fromUri(binaryOut).existsSync()) {
         throw Exception('$binaryOut does not exist');
       }
-      if (config.targetOS == OS.windows) {
-        // Workaround for https://github.com/dart-lang/sdk/issues/55207
-        //
-        // Bundle a second asset which can resolve symbols from a previously
-        // loaded DLL. This allows having a fallback mechanism, since you
-        // cannot add duplicate assets.
-        //
-        // This only matters in release mode, but since `config.buildMode` is
-        // always set to `release` in Dart, it's no good.
-        final loadedAsset = NativeCodeAsset(
-          package: packageName,
-          name: 'src/ffi/cedar_bindings.loaded.ffi.dart',
-          linkMode: LookupInProcess(),
-          os: config.targetOS,
-          architecture: config.targetArchitecture,
-        );
-        output.addAsset(loadedAsset);
-      }
-      final nativeAsset = NativeCodeAsset(
+      final nativeAsset = CodeAsset(
         package: packageName,
-        name: 'src/ffi/cedar_bindings.bundled.ffi.dart',
+        name: 'src/ffi/cedar_bindings.ffi.dart',
         linkMode: DynamicLoadingBundled(),
-        os: config.targetOS,
-        architecture: config.targetArchitecture,
+        os: targetOS,
+        architecture: targetArchitecture,
         file: binaryOut,
       );
       buildLogs.writeln('Compiled asset: ${nativeAsset.toString()}');
-      output.addAsset(nativeAsset);
+      output.assets.code.add(nativeAsset);
     });
   } finally {
     await buildLogs.flush();

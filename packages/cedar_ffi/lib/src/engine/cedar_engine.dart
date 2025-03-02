@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:ffi';
 
 import 'package:cedar/cedar.dart';
-import 'package:cedar_ffi/src/ffi/cedar_bindings.dart';
+import 'package:cedar_ffi/src/ffi/cedar_bindings.ffi.dart' as bindings;
 import 'package:ffi/ffi.dart';
 import 'package:meta/meta.dart';
 
@@ -24,7 +24,7 @@ final class CedarEngine implements CedarAuthorizer, Finalizable {
     @visibleForTesting bool validate = true,
   }) {
     final storeRef = using((arena) {
-      final config = arena<CCedarConfig>();
+      final config = arena<bindings.CCedarConfig>();
       config.ref
         ..schema_json =
             jsonEncode(schema.toJson()).toNativeUtf8(allocator: arena).cast()
@@ -61,16 +61,16 @@ final class CedarEngine implements CedarAuthorizer, Finalizable {
   }
 
   CedarEngine._({
-    required Pointer<CedarStore> ref,
+    required Pointer<bindings.CedarStore> ref,
   }) : _ref = ref;
 
-  static final Finalizer<Pointer<CedarStore>> _finalizer = Finalizer(
+  static final Finalizer<Pointer<bindings.CedarStore>> _finalizer = Finalizer(
     bindings.cedar_deinit,
   );
 
   var _closed = false;
 
-  final Pointer<CedarStore> _ref;
+  final Pointer<bindings.CedarStore> _ref;
 
   @override
   AuthorizationResponse isAuthorized(
@@ -82,7 +82,7 @@ final class CedarEngine implements CedarAuthorizer, Finalizable {
       throw StateError('Cedar engine is closed');
     }
     return using((arena) {
-      final query = arena<CCedarQuery>();
+      final query = arena<bindings.CCedarQuery>();
       query.ref
         ..principal_str = switch (request.principal) {
           final principal? => principal.normalized
@@ -122,7 +122,7 @@ final class CedarEngine implements CedarAuthorizer, Finalizable {
         };
       final cDecision = bindings.cedar_is_authorized(_ref, query);
       return switch (cDecision) {
-        CAuthorizationDecision(
+        bindings.CAuthorizationDecision(
           :final completion_error,
           :final completion_error_len
         )
@@ -131,7 +131,7 @@ final class CedarEngine implements CedarAuthorizer, Finalizable {
             'Error performing authorization: '
             '${completion_error.cast<Utf8>().toDartString(length: completion_error_len)}',
           ),
-        CAuthorizationDecision(
+        bindings.CAuthorizationDecision(
           :final is_authorized,
           :final reasons_json,
           :final reasons_json_len,
