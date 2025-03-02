@@ -1,5 +1,5 @@
-name: CedarFfiSymbols
-description: C bindings to the Cedar policy engine (symbols-only)
+name: CedarFfiBundled
+description: C bindings to the Cedar policy engine (bundled native asset)
 ffi-native:
 language: c
 headers:
@@ -11,10 +11,7 @@ compiler-opts:
   # Ignore warnings about availability macro
   - "-Wno-availability"
 output:
-  bindings: "lib/src/ffi/cedar_bindings.symbols.ffi.dart"
-  symbol-file:
-    output: 'package:cedar_ffi/src/ffi/symbols.yaml'
-    import-path: 'package:cedar_ffi/src/ffi/cedar_bindings.symbols.ffi.dart'
+  bindings: "lib/src/ffi/cedar_bindings.ffi.dart"
 comments:
   style: any
   length: full
@@ -25,3 +22,10 @@ structs:
     - "CedarStore"
     - "CInitResult"
     - "CAuthorizationDecision"
+functions:
+  include:
+    - "cedar_.*"
+  leaf:
+    # All C APIs are leaf functions (e.g. they do not call into Dart)
+    include:
+      - ".*"
