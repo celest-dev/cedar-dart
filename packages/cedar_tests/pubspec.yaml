@@ -3,16 +3,13 @@ description: Shared testing code for Cedar Dart packages.
 publish_to: none
 
 environment:
-  sdk: ^3.3.0
+  sdk: ^3.6.0
+resolution: workspace
 
 dependencies:
   cedar: ^0.2.0
   json_annotation: ^4.9.0
   test: ^1.24.0
-
-dependency_overrides:
-  cedar:
-    path: ../cedar
 
 dev_dependencies:
   lints: ^5.0.0

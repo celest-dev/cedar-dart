@@ -1,3 +1,8 @@
+## 0.2.1-wip
+
+- Require Dart 3.6 (workspace support)
+- chore: Update dependencies
+
 ## 0.2.0
 
 - chore: Update dependencies
