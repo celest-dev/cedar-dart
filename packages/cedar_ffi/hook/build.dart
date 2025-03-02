@@ -19,10 +19,7 @@ void main(List<String> args) async {
     await build(args, (input, output) async {
       buildLogs.writeln(input.json);
 
-      output.addDependencies([
-        input.packageRoot.resolve('build.dart'),
-        input.packageRoot.resolve('src/'),
-      ]);
+      output.addDependency(input.packageRoot.resolve('src/'));
 
       // Build the Rust code in `src/` to `target/`.
       //
