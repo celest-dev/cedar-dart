@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:cedar_tests/src/corpus.dart';
 import 'package:path/path.dart' as p;
 
-const cedarVersion = '3.3';
+const cedarVersion = '3.4';
 
 Future<void> main() async {
   final tempDir = await Directory.systemTemp.createTemp('cedar_');
