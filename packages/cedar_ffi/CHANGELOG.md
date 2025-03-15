@@ -1,7 +1,8 @@
-## 0.2.1-wip
+## 0.2.1
 
-- Require Dart 3.6 (workspace support)
+- Require Dart 3.5 (workspace support)
 - chore: Update dependencies
+- chore: Update `cedar` to `3.4`
 
 ## 0.2.0
 

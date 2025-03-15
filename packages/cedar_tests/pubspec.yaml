@@ -3,7 +3,7 @@ description: Shared testing code for Cedar Dart packages.
 publish_to: none
 
 environment:
-  sdk: ^3.6.0
+  sdk: ^3.5.0
 resolution: workspace
 
 dependencies:
