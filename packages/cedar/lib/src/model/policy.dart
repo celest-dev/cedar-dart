@@ -338,6 +338,11 @@ final class Condition {
 
   @override
   int get hashCode => Object.hash(kind, body);
+
+  @override
+  String toString() {
+    return 'Condition(kind: ${kind.name}, body: $body)';
+  }
 }
 
 final class _IsTemplateVisitor extends DefaultExprVisitor<void> {

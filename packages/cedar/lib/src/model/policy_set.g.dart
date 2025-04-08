@@ -180,9 +180,10 @@ class PolicySetBuilder implements Builder<PolicySet, PolicySetBuilder> {
     try {
       _$result = _$v ??
           new _$PolicySet._(
-              policies: policies.build(),
-              templates: templates.build(),
-              templateLinks: templateLinks.build());
+            policies: policies.build(),
+            templates: templates.build(),
+            templateLinks: templateLinks.build(),
+          );
     } catch (_) {
       late String _$failedField;
       try {

@@ -6,6 +6,7 @@ import 'package:path/path.dart' as p;
 
 const cedarVersion = '3.4';
 
+// TODO: Update to pull from https://github.com/cedar-policy/cedar-integration-tests/tree/main
 Future<void> main() async {
   final tempDir = await Directory.systemTemp.createTemp('cedar_');
   final res = await Process.run(

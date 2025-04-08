@@ -1,3 +1,7 @@
+## 0.2.5
+
+- fix: JSON decoding of `is` expressions
+
 ## 0.2.4
 
 - Require Dart 3.5 (workspace support)
