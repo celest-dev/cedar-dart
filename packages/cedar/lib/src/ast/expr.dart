@@ -417,6 +417,9 @@ final class ExprExtensionCall extends Expr {
 
   @override
   int get hashCode => Object.hash(fn, args);
+
+  @override
+  String toString() => '$fn(${args.join(', ')})';
 }
 
 final class ExprValue extends Expr {
@@ -454,6 +457,9 @@ final class ExprValue extends Expr {
 
   @override
   int get hashCode => Object.hash(op, value);
+
+  @override
+  String toString() => value.toString();
 }
 
 final class ExprVariable extends Expr {
@@ -496,6 +502,9 @@ final class ExprVariable extends Expr {
 
   @override
   int get hashCode => Object.hash(op, variable);
+
+  @override
+  String toString() => variable.name;
 }
 
 final class ExprSlot extends Expr {
@@ -537,6 +546,9 @@ final class ExprSlot extends Expr {
 
   @override
   int get hashCode => Object.hash(op, slotId);
+
+  @override
+  String toString() => slotId.toString();
 }
 
 final class ExprUnknown extends Expr {
@@ -580,6 +592,9 @@ final class ExprUnknown extends Expr {
 
   @override
   int get hashCode => Object.hash(op, name);
+
+  @override
+  String toString() => 'Unknown($name)';
 }
 
 final class ExprNot extends Expr {
@@ -625,6 +640,9 @@ final class ExprNot extends Expr {
 
   @override
   int get hashCode => Object.hash(op, arg);
+
+  @override
+  String toString() => '!$arg';
 }
 
 final class ExprNegate extends Expr {
@@ -670,6 +688,9 @@ final class ExprNegate extends Expr {
 
   @override
   int get hashCode => Object.hash(op, arg);
+
+  @override
+  String toString() => '-$arg';
 }
 
 sealed class CedarBinaryExpr extends Expr {
@@ -737,6 +758,9 @@ final class ExprEquals extends CedarBinaryExpr {
   @override
   R acceptWithArg<R, A>(ExprVisitorWithArg<R, A> visitor, A arg) =>
       visitor.visitEquals(this, arg);
+
+  @override
+  String toString() => '($left == $right)';
 }
 
 final class ExprNotEquals extends CedarBinaryExpr {
@@ -776,6 +800,9 @@ final class ExprNotEquals extends CedarBinaryExpr {
   @override
   R acceptWithArg<R, A>(ExprVisitorWithArg<R, A> visitor, A arg) =>
       visitor.visitNotEquals(this, arg);
+
+  @override
+  String toString() => '($left != $right)';
 }
 
 final class ExprIn extends CedarBinaryExpr {
@@ -815,6 +842,9 @@ final class ExprIn extends CedarBinaryExpr {
   @override
   R acceptWithArg<R, A>(ExprVisitorWithArg<R, A> visitor, A arg) =>
       visitor.visitIn(this, arg);
+
+  @override
+  String toString() => '($left in $right)';
 }
 
 final class ExprLessThan extends CedarBinaryExpr {
@@ -854,6 +884,9 @@ final class ExprLessThan extends CedarBinaryExpr {
   @override
   R acceptWithArg<R, A>(ExprVisitorWithArg<R, A> visitor, A arg) =>
       visitor.visitLessThan(this, arg);
+
+  @override
+  String toString() => '($left < $right)';
 }
 
 final class ExprLessThanOrEquals extends CedarBinaryExpr {
@@ -893,6 +926,9 @@ final class ExprLessThanOrEquals extends CedarBinaryExpr {
   @override
   R acceptWithArg<R, A>(ExprVisitorWithArg<R, A> visitor, A arg) =>
       visitor.visitLessThanOrEquals(this, arg);
+
+  @override
+  String toString() => '($left <= $right)';
 }
 
 final class ExprGreaterThan extends CedarBinaryExpr {
@@ -932,6 +968,9 @@ final class ExprGreaterThan extends CedarBinaryExpr {
   @override
   R acceptWithArg<R, A>(ExprVisitorWithArg<R, A> visitor, A arg) =>
       visitor.visitGreaterThan(this, arg);
+
+  @override
+  String toString() => '($left > $right)';
 }
 
 final class ExprGreaterThanOrEquals extends CedarBinaryExpr {
@@ -971,6 +1010,9 @@ final class ExprGreaterThanOrEquals extends CedarBinaryExpr {
   @override
   R acceptWithArg<R, A>(ExprVisitorWithArg<R, A> visitor, A arg) =>
       visitor.visitGreaterThanOrEquals(this, arg);
+
+  @override
+  String toString() => '($left >= $right)';
 }
 
 final class ExprAnd extends CedarBinaryExpr {
@@ -1010,6 +1052,9 @@ final class ExprAnd extends CedarBinaryExpr {
   @override
   R acceptWithArg<R, A>(ExprVisitorWithArg<R, A> visitor, A arg) =>
       visitor.visitAnd(this, arg);
+
+  @override
+  String toString() => '($left && $right)';
 }
 
 final class ExprOr extends CedarBinaryExpr {
@@ -1049,6 +1094,9 @@ final class ExprOr extends CedarBinaryExpr {
   @override
   R acceptWithArg<R, A>(ExprVisitorWithArg<R, A> visitor, A arg) =>
       visitor.visitOr(this, arg);
+
+  @override
+  String toString() => '($left || $right)';
 }
 
 final class ExprAdd extends CedarBinaryExpr {
@@ -1088,6 +1136,9 @@ final class ExprAdd extends CedarBinaryExpr {
   @override
   R acceptWithArg<R, A>(ExprVisitorWithArg<R, A> visitor, A arg) =>
       visitor.visitAdd(this, arg);
+
+  @override
+  String toString() => '($left + $right)';
 }
 
 final class ExprSubt extends CedarBinaryExpr {
@@ -1127,6 +1178,9 @@ final class ExprSubt extends CedarBinaryExpr {
   @override
   R acceptWithArg<R, A>(ExprVisitorWithArg<R, A> visitor, A arg) =>
       visitor.visitSubt(this, arg);
+
+  @override
+  String toString() => '($left - $right)';
 }
 
 final class ExprMult extends CedarBinaryExpr {
@@ -1166,6 +1220,9 @@ final class ExprMult extends CedarBinaryExpr {
   @override
   R acceptWithArg<R, A>(ExprVisitorWithArg<R, A> visitor, A arg) =>
       visitor.visitMult(this, arg);
+
+  @override
+  String toString() => '($left * $right)';
 }
 
 final class ExprContains extends CedarBinaryExpr {
@@ -1205,6 +1262,9 @@ final class ExprContains extends CedarBinaryExpr {
   @override
   R acceptWithArg<R, A>(ExprVisitorWithArg<R, A> visitor, A arg) =>
       visitor.visitContains(this, arg);
+
+  @override
+  String toString() => '($left contains $right)';
 }
 
 final class ExprContainsAll extends CedarBinaryExpr {
@@ -1244,6 +1304,9 @@ final class ExprContainsAll extends CedarBinaryExpr {
   @override
   R acceptWithArg<R, A>(ExprVisitorWithArg<R, A> visitor, A arg) =>
       visitor.visitContainsAll(this, arg);
+
+  @override
+  String toString() => '($left containsAll $right)';
 }
 
 final class ExprContainsAny extends CedarBinaryExpr {
@@ -1283,6 +1346,9 @@ final class ExprContainsAny extends CedarBinaryExpr {
   @override
   R acceptWithArg<R, A>(ExprVisitorWithArg<R, A> visitor, A arg) =>
       visitor.visitContainsAny(this, arg);
+
+  @override
+  String toString() => '($left containsAny $right)';
 }
 
 sealed class CedarStringExpr extends Expr {
@@ -1349,6 +1415,9 @@ final class ExprGetAttribute extends CedarStringExpr {
 
   @override
   int get hashCode => Object.hash(op, left, attr);
+
+  @override
+  String toString() => '$left.$attr';
 }
 
 final class ExprHasAttribute extends CedarStringExpr {
@@ -1408,6 +1477,9 @@ final class ExprHasAttribute extends CedarStringExpr {
 
   @override
   int get hashCode => Object.hash(op, left, attr);
+
+  @override
+  String toString() => '$left has $attr';
 }
 
 final class ExprLike extends Expr {
@@ -1464,6 +1536,9 @@ final class ExprLike extends Expr {
 
   @override
   int get hashCode => Object.hash(op, left, pattern);
+
+  @override
+  String toString() => '$left like $pattern';
 }
 
 final class ExprIs extends Expr {
@@ -1476,7 +1551,7 @@ final class ExprIs extends Expr {
   factory ExprIs.fromJson(Map<String, Object?> json) {
     return ExprIs(
       left: Expr.fromJson(json['left'] as Map<String, Object?>),
-      entityType: ['entity_type'] as String,
+      entityType: json['entity_type'] as String,
       inExpr: json['in'] != null
           ? Expr.fromJson(json['in'] as Map<String, Object?>)
           : null,
@@ -1531,6 +1606,10 @@ final class ExprIs extends Expr {
 
   @override
   int get hashCode => Object.hash(op, left, entityType, inExpr);
+
+  @override
+  String toString() =>
+      '$left is $entityType${inExpr != null ? ' in $inExpr' : ''}';
 }
 
 final class ExprIfThenElse extends Expr {
@@ -1596,6 +1675,9 @@ final class ExprIfThenElse extends Expr {
 
   @override
   int get hashCode => Object.hash(op, cond, then, otherwise);
+
+  @override
+  String toString() => 'if $cond then $then else $otherwise';
 }
 
 final class ExprSet extends Expr {
@@ -1647,6 +1729,9 @@ final class ExprSet extends Expr {
 
   @override
   int get hashCode => Object.hashAllUnordered(expressions);
+
+  @override
+  String toString() => '{${expressions.join(', ')}}';
 }
 
 final class ExprRecord extends Expr {
@@ -1701,4 +1786,8 @@ final class ExprRecord extends Expr {
 
   @override
   int get hashCode => const MapEquality().hash(attributes);
+
+  @override
+  String toString() =>
+      '{${attributes.entries.map((e) => '${e.key}: ${e.value}').join(', ')}}';
 }
