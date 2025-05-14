@@ -19,7 +19,7 @@ updates:
   
   ## RUST ##
   - package-ecosystem: "cargo"
-    directory: "/"
+    directory: "packages/cedar_ffi/src"
     schedule:
       interval: "weekly"
     groups:

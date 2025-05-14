@@ -4,29 +4,19 @@ version: 0.2.1
 repository: https://github.com/celest-dev/cedar-dart/tree/main/packages/cedar_ffi
 
 environment:
-  sdk: ^3.5.0
-resolution: workspace
+  sdk: ^3.8.0-278.2.beta
 
 dependencies:
-  built_collection: ^5.1.1
-  built_value: ^8.8.0
   cedar: ^0.2.0
-  cli_config: ^0.2.0
-  collection: ^1.18.0
   ffi: ^2.1.0
-  json_annotation: ^4.9.0
-  logging: ^1.2.0
   meta: ^1.10.0
-  native_assets_cli: ^0.11.0
-  native_toolchain_c: ^0.8.0
+  native_assets_cli: ^0.16.0
+  native_toolchain_c: ^0.13.0
 
 dev_dependencies:
-  build_runner: ^2.4.10
-  built_value_generator: ^8.9.2
   cedar_tests:
     path: ../cedar_tests
   ffigen: ^18.0.0
-  json_serializable: ^6.8.0
   lints: ^5.0.0
   path: ^1.9.0
-  test: ^1.25.5
+  test: ^1.26.0
