@@ -17,4 +17,4 @@ simple_logger = "5.0"
 
 [build-dependencies]
 build-target = "0.4"
-cbindgen = "0.26"
+cbindgen = "0.28"
