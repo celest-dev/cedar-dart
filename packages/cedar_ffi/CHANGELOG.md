@@ -1,3 +1,8 @@
+## NEXT
+
+- chore: Update native assets dependencies
+- chore: Remove unused dependencies
+
 ## 0.2.1
 
 - Require Dart 3.5 (workspace support)

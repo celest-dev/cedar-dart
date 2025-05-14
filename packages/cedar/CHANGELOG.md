@@ -1,3 +1,9 @@
+## 0.2.6
+
+- chore: Bump Dart SDK constraint to `^3.7.0`
+- chore: Remove unused dependencies
+- chore: Update `protobuf` dependency to `^4.0.0`
+
 ## 0.2.5
 
 - fix: JSON decoding of `is` expressions
