@@ -4,14 +4,17 @@ version: 1.0.0
 publish_to: none
 
 environment:
-  sdk: ^3.5.0
-resolution: workspace
+  sdk: ^3.7.0
 
 dependencies:
   cedar:
     path: ../../cedar
   cedar_ffi:
     path: ../
+
+dependency_overrides: 
+  cedar:
+    path: ../../cedar
 
 dev_dependencies:
   lints: ^5.0.0

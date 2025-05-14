@@ -24,7 +24,7 @@ jobs:
       matrix:
         os:
           - ubuntu-latest
-          - macos-14
+          - macos-latest
           - windows-latest
     runs-on: ${{ matrix.os }}
     # TODO(dnys1): Speed up Rust builds
@@ -35,16 +35,14 @@ jobs:
         with:
           submodules: true
       - name: Setup Dart
-        uses: dart-lang/setup-dart@e51d8e571e22473a2ddebf0ef8a2123f0ab2c02c # main
+        uses: dart-lang/setup-dart@e51d8e571e22473a2ddebf0ef8a2123f0ab2c02c # 1.7.1
         with:
-          # Remove when released to stable: https://github.com/dart-lang/native/pull/1921
-          sdk: main
+          # Native assets is only enabled on dev/main channels for now.
+          sdk: dev
       - name: Setup Rust
         uses: actions-rust-lang/setup-rust-toolchain@9399c7bb15d4c7d47b27263d024f0a4978346ba4 # 1.11.0
       - name: Get Packages
         run: dart pub get
       - name: Test
-        # TODO: https://github.com/dart-lang/sdk/issues/60489
-        # run: dart --enable-experiment=native-assets test --fail-fast
-        run: dart --enable-experiment=native-assets run bin/example.dart
-        working-directory: packages/cedar_ffi/example
+        run: dart --enable-experiment=native-assets test --fail-fast
+        working-directory: packages/cedar_ffi

@@ -1,9 +1,7 @@
 name: _
 publish_to: none
 environment:
-  sdk: ^3.5.0
+  sdk: ^3.7.0
 workspace:
   - packages/cedar
-  - packages/cedar_ffi
-  - packages/cedar_ffi/example
   - packages/cedar_tests
