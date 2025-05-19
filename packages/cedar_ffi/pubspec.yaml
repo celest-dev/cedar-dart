@@ -16,7 +16,7 @@ dependencies:
 dev_dependencies:
   cedar_tests:
     path: ../cedar_tests
-  ffigen: ^18.0.0
+  ffigen: ">=18.0.0 <20.0.0"
   lints: ">=5.0.0 <7.0.0"
   path: ^1.9.0
   test: ^1.26.0
