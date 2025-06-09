@@ -126,9 +126,9 @@ checksum = "5c8214115b7bf84099f1309324e63141d4c5d7cc26862f97a0a857dbefe165bd"
 
 [[package]]
 name = "build-target"
-version = "0.4.0"
+version = "0.7.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "832133bbabbbaa9fbdba793456a2827627a7d2b8fb96032fa1e7666d7895832b"
+checksum = "1055a02f38cfe1e1c9a388669c7104875c9bc5a4270c6037f468e4193d17bc96"
 
 [[package]]
 name = "bumpalo"
