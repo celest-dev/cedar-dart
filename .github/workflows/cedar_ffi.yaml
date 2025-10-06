@@ -40,7 +40,7 @@ jobs:
           # Native assets is only enabled on dev/main channels for now.
           sdk: dev
       - name: Setup Rust
-        uses: actions-rust-lang/setup-rust-toolchain@ab6845274e2ff01cd4462007e1a9d9df1ab49f42 # 1.14.0
+        uses: actions-rust-lang/setup-rust-toolchain@1780873c7b576612439a134613cc4cc74ce5538c # 1.15.2
       - name: Get Packages
         run: dart pub get
       - name: Test
