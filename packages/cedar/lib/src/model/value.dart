@@ -12,7 +12,9 @@ import 'package:fixnum/fixnum.dart';
 part 'entity.dart';
 part 'entity_id.dart';
 part 'value/bool_value.dart';
+part 'value/datetime_value.dart';
 part 'value/decimal_value.dart';
+part 'value/duration_value.dart';
 part 'value/entity_value.dart';
 part 'value/extension_call.dart';
 part 'value/long_value.dart';
@@ -28,7 +30,8 @@ sealed class Value {
     return switch (json) {
       <String, Object?>{'__entity': _} ||
       <String, Object?>{'type': _, 'id': _} => EntityValue.fromJson(json),
-      <String, Object?>{'__extn': _} => ExtensionCall.fromJson(json),
+      <String, Object?>{'__extn': final Map<String, Object?> extn} =>
+        _valueFromExtensionJson(extn),
       final bool json => BoolValue.fromJson(json),
       final num json => LongValue.fromJson(json.toInt()),
       final String json => StringValue.fromJson(json),
@@ -41,7 +44,7 @@ sealed class Value {
   factory Value.fromProto(pb.Value value) {
     return switch (value.whichValue()) {
       pb.Value_Value.entity => EntityValue.fromProto(value.entity),
-      pb.Value_Value.extensionCall => ExtensionCall.fromProto(
+      pb.Value_Value.extensionCall => _valueFromExtensionProto(
         value.extensionCall,
       ),
       pb.Value_Value.bool_3 => BoolValue.fromProto(value.bool_3),
@@ -71,11 +74,61 @@ sealed class Value {
 
   const factory Value.record(Map<String, Value> attributes) = RecordValue;
 
+  const factory Value.datetime(Int64 milliseconds) = DatetimeValue;
+
+  const factory Value.duration(Int64 milliseconds) = DurationValue;
+
   Object? toJson();
   pb.Value toProto();
 
   @override
   String toString() => prettyJson(toJson());
+}
+
+Value _valueFromExtensionJson(Map<String, Object?> extn) {
+  final fn = extn['fn'];
+  final arg = extn['arg'];
+  if (fn is! String) {
+    throw FormatException('Invalid Cedar extension call: $extn');
+  }
+  switch (fn) {
+    case 'datetime':
+      if (arg is! String) {
+        throw FormatException('Invalid datetime argument: $arg');
+      }
+      return DatetimeValue.parse(arg);
+    case 'duration':
+      if (arg is! String) {
+        throw FormatException('Invalid duration argument: $arg');
+      }
+      return DurationValue.parse(arg);
+    default:
+      return ExtensionCall(fn: fn, arg: Value.fromJson(arg));
+  }
+}
+
+Value _valueFromExtensionProto(pb.ExtensionCall extensionCall) {
+  final fn = extensionCall.fn;
+  switch (fn) {
+    case 'datetime':
+      final arg = Value.fromProto(extensionCall.arg);
+      if (arg is! StringValue) {
+        throw FormatException(
+          'Invalid datetime argument: ${extensionCall.arg}',
+        );
+      }
+      return DatetimeValue.parse(arg.value);
+    case 'duration':
+      final arg = Value.fromProto(extensionCall.arg);
+      if (arg is! StringValue) {
+        throw FormatException(
+          'Invalid duration argument: ${extensionCall.arg}',
+        );
+      }
+      return DurationValue.parse(arg.value);
+    default:
+      return ExtensionCall.fromProto(extensionCall);
+  }
 }
 
 sealed class Component {

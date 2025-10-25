@@ -36,6 +36,10 @@ sealed class CedarType {
         return CedarIpAddressType(required: json['required'] as bool?);
       case {'type': 'Extension', 'name': 'decimal'}:
         return CedarDecimalType(required: json['required'] as bool?);
+      case {'type': 'Extension', 'name': 'datetime'}:
+        return CedarDatetimeType(required: json['required'] as bool?);
+      case {'type': 'Extension', 'name': 'duration'}:
+        return CedarDurationType(required: json['required'] as bool?);
       case {'type': final String type}:
         if (json.keys.length > 1) {
           throw ArgumentError.value(json, 'json', 'Invalid Cedar type');
@@ -66,6 +70,10 @@ sealed class CedarType {
   const factory CedarType.ipAddress({bool required}) = CedarIpAddressType;
 
   const factory CedarType.decimal({bool required}) = CedarDecimalType;
+
+  const factory CedarType.datetime({bool required}) = CedarDatetimeType;
+
+  const factory CedarType.duration({bool required}) = CedarDurationType;
 
   const factory CedarType.reference({required String type}) =
       CedarTypeReference;
@@ -119,6 +127,12 @@ sealed class CedarTypeDefinition implements CedarType {
       CedarIpAddressType;
 
   const factory CedarTypeDefinition.decimal({bool required}) = CedarDecimalType;
+
+  const factory CedarTypeDefinition.datetime({bool required}) =
+      CedarDatetimeType;
+
+  const factory CedarTypeDefinition.duration({bool required}) =
+      CedarDurationType;
 }
 
 final class CedarBooleanType extends CedarTypeDefinition {
@@ -219,5 +233,27 @@ final class CedarDecimalType extends CedarTypeDefinition {
     'type': 'Extension',
     if (required != null) 'required': required,
     'name': 'decimal',
+  };
+}
+
+final class CedarDatetimeType extends CedarTypeDefinition {
+  const CedarDatetimeType({super.required});
+
+  @override
+  Map<String, Object?> toJson() => {
+    'type': 'Extension',
+    if (required != null) 'required': required,
+    'name': 'datetime',
+  };
+}
+
+final class CedarDurationType extends CedarTypeDefinition {
+  const CedarDurationType({super.required});
+
+  @override
+  Map<String, Object?> toJson() => {
+    'type': 'Extension',
+    if (required != null) 'required': required,
+    'name': 'duration',
   };
 }

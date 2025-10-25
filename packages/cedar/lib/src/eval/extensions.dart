@@ -16,6 +16,17 @@ abstract interface class CedarFunction {
 const Map<String, CedarFunction> extensions = {
   'ip': CedarFunctionIp(),
   'decimal': CedarFunctionDecimal(),
+  'datetime': CedarFunctionDatetime(),
+  'duration': CedarFunctionDuration(),
+  'offset': CedarFunctionOffset(),
+  'durationSince': CedarFunctionDurationSince(),
+  'toDate': CedarFunctionToDate(),
+  'toTime': CedarFunctionToTime(),
+  'toMilliseconds': CedarFunctionToMilliseconds(),
+  'toSeconds': CedarFunctionToSeconds(),
+  'toMinutes': CedarFunctionToMinutes(),
+  'toHours': CedarFunctionToHours(),
+  'toDays': CedarFunctionToDays(),
   'lessThan': CedarFunctionLessThan(),
   'lessThanOrEqual': CedarFunctionLessThanOrEqual(),
   'greaterThan': CedarFunctionGreaterThan(),
@@ -41,6 +52,184 @@ final class CedarFunctionDecimal implements CedarFunction {
     final literal = args[0].accept(evaluator).expectString();
     final decimal = Decimal.parse(literal.value);
     return DecimalValue(decimal);
+  }
+}
+
+final class CedarFunctionDatetime implements CedarFunction {
+  const CedarFunctionDatetime();
+
+  @override
+  int get numArgs => 1;
+
+  @override
+  bool get isMethod => false;
+
+  @override
+  Value evaluate(Evalutator evaluator, List<Expr> args) {
+    final literal = args[0].accept(evaluator).expectString();
+    return DatetimeValue.parse(literal.value);
+  }
+}
+
+final class CedarFunctionDuration implements CedarFunction {
+  const CedarFunctionDuration();
+
+  @override
+  int get numArgs => 1;
+
+  @override
+  bool get isMethod => false;
+
+  @override
+  Value evaluate(Evalutator evaluator, List<Expr> args) {
+    final literal = args[0].accept(evaluator).expectString();
+    return DurationValue.parse(literal.value);
+  }
+}
+
+final class CedarFunctionOffset implements CedarFunction {
+  const CedarFunctionOffset();
+
+  @override
+  int get numArgs => 2;
+
+  @override
+  bool get isMethod => true;
+
+  @override
+  Value evaluate(Evalutator evaluator, List<Expr> args) {
+    final datetime = args[0].accept(evaluator).expectDatetime();
+    final duration = args[1].accept(evaluator).expectDuration();
+    return datetime.offset(duration);
+  }
+}
+
+final class CedarFunctionDurationSince implements CedarFunction {
+  const CedarFunctionDurationSince();
+
+  @override
+  int get numArgs => 2;
+
+  @override
+  bool get isMethod => true;
+
+  @override
+  Value evaluate(Evalutator evaluator, List<Expr> args) {
+    final lhs = args[0].accept(evaluator).expectDatetime();
+    final rhs = args[1].accept(evaluator).expectDatetime();
+    return lhs.durationSince(rhs);
+  }
+}
+
+final class CedarFunctionToDate implements CedarFunction {
+  const CedarFunctionToDate();
+
+  @override
+  int get numArgs => 1;
+
+  @override
+  bool get isMethod => true;
+
+  @override
+  Value evaluate(Evalutator evaluator, List<Expr> args) {
+    final datetime = args[0].accept(evaluator).expectDatetime();
+    return datetime.toDate();
+  }
+}
+
+final class CedarFunctionToTime implements CedarFunction {
+  const CedarFunctionToTime();
+
+  @override
+  int get numArgs => 1;
+
+  @override
+  bool get isMethod => true;
+
+  @override
+  Value evaluate(Evalutator evaluator, List<Expr> args) {
+    final datetime = args[0].accept(evaluator).expectDatetime();
+    return datetime.toTime();
+  }
+}
+
+final class CedarFunctionToMilliseconds implements CedarFunction {
+  const CedarFunctionToMilliseconds();
+
+  @override
+  int get numArgs => 1;
+
+  @override
+  bool get isMethod => true;
+
+  @override
+  Value evaluate(Evalutator evaluator, List<Expr> args) {
+    final duration = args[0].accept(evaluator).expectDuration();
+    return Value.long(duration.toMilliseconds());
+  }
+}
+
+final class CedarFunctionToSeconds implements CedarFunction {
+  const CedarFunctionToSeconds();
+
+  @override
+  int get numArgs => 1;
+
+  @override
+  bool get isMethod => true;
+
+  @override
+  Value evaluate(Evalutator evaluator, List<Expr> args) {
+    final duration = args[0].accept(evaluator).expectDuration();
+    return Value.long(duration.toSeconds());
+  }
+}
+
+final class CedarFunctionToMinutes implements CedarFunction {
+  const CedarFunctionToMinutes();
+
+  @override
+  int get numArgs => 1;
+
+  @override
+  bool get isMethod => true;
+
+  @override
+  Value evaluate(Evalutator evaluator, List<Expr> args) {
+    final duration = args[0].accept(evaluator).expectDuration();
+    return Value.long(duration.toMinutes());
+  }
+}
+
+final class CedarFunctionToHours implements CedarFunction {
+  const CedarFunctionToHours();
+
+  @override
+  int get numArgs => 1;
+
+  @override
+  bool get isMethod => true;
+
+  @override
+  Value evaluate(Evalutator evaluator, List<Expr> args) {
+    final duration = args[0].accept(evaluator).expectDuration();
+    return Value.long(duration.toHours());
+  }
+}
+
+final class CedarFunctionToDays implements CedarFunction {
+  const CedarFunctionToDays();
+
+  @override
+  int get numArgs => 1;
+
+  @override
+  bool get isMethod => true;
+
+  @override
+  Value evaluate(Evalutator evaluator, List<Expr> args) {
+    final duration = args[0].accept(evaluator).expectDuration();
+    return Value.long(duration.toDays());
   }
 }
 

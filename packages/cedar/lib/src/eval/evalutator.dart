@@ -52,6 +52,20 @@ extension ExpectCedarValue on Value {
     }
     throw TypeException('Expected a decimal, got $runtimeType');
   }
+
+  DatetimeValue expectDatetime() {
+    if (this case final DatetimeValue datetime) {
+      return datetime;
+    }
+    throw TypeException('Expected a datetime, got $runtimeType');
+  }
+
+  DurationValue expectDuration() {
+    if (this case final DurationValue duration) {
+      return duration;
+    }
+    throw TypeException('Expected a duration, got $runtimeType');
+  }
 }
 
 final class EvaluationContext {
@@ -118,6 +132,24 @@ final class Evalutator implements ExprVisitor<Value> {
       throw OverflowException('Overflow while attempting to negate `$a`');
     }
     return -a;
+  }
+
+  bool _compare(Value lhs, Value rhs, bool Function(Int64, Int64) comparator) {
+    return switch ((lhs, rhs)) {
+      (LongValue(value: final left), LongValue(value: final right)) =>
+        comparator(left, right),
+      (
+        DatetimeValue(milliseconds: final left),
+        DatetimeValue(milliseconds: final right),
+      ) =>
+        comparator(left, right),
+      (
+        DurationValue(milliseconds: final left),
+        DurationValue(milliseconds: final right),
+      ) =>
+        comparator(left, right),
+      _ => throw TypeException('Expected comparable values, got $lhs and $rhs'),
+    };
   }
 
   @override
@@ -204,16 +236,16 @@ final class Evalutator implements ExprVisitor<Value> {
 
   @override
   Value visitGreaterThan(ExprGreaterThan greaterThan) {
-    final lhs = greaterThan.left.accept(this).expectLong();
-    final rhs = greaterThan.right.accept(this).expectLong();
-    return Value.bool(lhs.value > rhs.value);
+    final lhs = greaterThan.left.accept(this);
+    final rhs = greaterThan.right.accept(this);
+    return Value.bool(_compare(lhs, rhs, (a, b) => a > b));
   }
 
   @override
   Value visitGreaterThanOrEquals(ExprGreaterThanOrEquals greaterThanOrEquals) {
-    final lhs = greaterThanOrEquals.left.accept(this).expectLong();
-    final rhs = greaterThanOrEquals.right.accept(this).expectLong();
-    return Value.bool(lhs.value >= rhs.value);
+    final lhs = greaterThanOrEquals.left.accept(this);
+    final rhs = greaterThanOrEquals.right.accept(this);
+    return Value.bool(_compare(lhs, rhs, (a, b) => a >= b));
   }
 
   @override
@@ -296,16 +328,16 @@ final class Evalutator implements ExprVisitor<Value> {
 
   @override
   Value visitLessThan(ExprLessThan lessThan) {
-    final lhs = lessThan.left.accept(this).expectLong();
-    final rhs = lessThan.right.accept(this).expectLong();
-    return Value.bool(lhs.value < rhs.value);
+    final lhs = lessThan.left.accept(this);
+    final rhs = lessThan.right.accept(this);
+    return Value.bool(_compare(lhs, rhs, (a, b) => a < b));
   }
 
   @override
   Value visitLessThanOrEquals(ExprLessThanOrEquals lessThanOrEquals) {
-    final lhs = lessThanOrEquals.left.accept(this).expectLong();
-    final rhs = lessThanOrEquals.right.accept(this).expectLong();
-    return Value.bool(lhs.value <= rhs.value);
+    final lhs = lessThanOrEquals.left.accept(this);
+    final rhs = lessThanOrEquals.right.accept(this);
+    return Value.bool(_compare(lhs, rhs, (a, b) => a <= b));
   }
 
   @override
