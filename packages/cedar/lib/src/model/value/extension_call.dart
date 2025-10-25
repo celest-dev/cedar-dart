@@ -1,23 +1,13 @@
 part of '../value.dart';
 
 final class ExtensionCall extends Value {
-  const ExtensionCall({
-    required this.fn,
-    required this.arg,
-  });
+  const ExtensionCall({required this.fn, required this.arg});
 
   factory ExtensionCall.fromJson(Map<String, Object?> json) {
-    if (json
-        case {
-          '__extn': {
-            'fn': final String fn,
-            'arg': final Object? arg,
-          }
-        }) {
-      return ExtensionCall(
-        fn: fn,
-        arg: Value.fromJson(arg),
-      );
+    if (json case {
+      '__extn': {'fn': final String fn, 'arg': final Object? arg},
+    }) {
+      return ExtensionCall(fn: fn, arg: Value.fromJson(arg));
     }
     throw FormatException('Invalid Cedar extension call: $json');
   }
@@ -34,17 +24,13 @@ final class ExtensionCall extends Value {
 
   @override
   Map<String, Object?> toJson() => {
-        'fn': fn,
-        'arg': arg.toJson(),
-      };
+    '__extn': {'fn': fn, 'arg': arg.toJson()},
+  };
 
   @override
   pb.Value toProto() => pb.Value(
-        extensionCall: pb.ExtensionCall(
-          fn: fn,
-          arg: arg.toProto(),
-        ),
-      );
+    extensionCall: pb.ExtensionCall(fn: fn, arg: arg.toProto()),
+  );
 
   @override
   bool operator ==(Object other) =>

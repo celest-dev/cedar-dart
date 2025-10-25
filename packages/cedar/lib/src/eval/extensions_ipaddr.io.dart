@@ -1,108 +1,105 @@
 import 'dart:io' show InternetAddress, InternetAddressType;
 
-import 'package:cedar/ast.dart';
-import 'package:cedar/src/eval/evalutator.dart';
-import 'package:cedar/src/eval/extensions.dart';
+({List<int> bytes, int prefixLength, bool isIpv4}) parseIpLiteral(
+  String literal,
+) {
+  final trimmed = literal.trim();
+  if (trimmed.isEmpty) {
+    throw ArgumentError.value(literal, 'literal', 'IP literal cannot be empty');
+  }
 
-final class CedarFunctionIp implements CedarFunction {
-  const CedarFunctionIp();
+  if (_containsEmbeddedIpv4Notation(trimmed)) {
+    throw ArgumentError.value(
+      literal,
+      'literal',
+      'IPv4 addresses embedded in IPv6 are not supported',
+    );
+  }
 
-  @override
-  int get numArgs => 1;
+  final slashIndex = trimmed.indexOf('/');
+  final addressPart = slashIndex == -1
+      ? trimmed
+      : trimmed.substring(0, slashIndex);
+  final prefixPartRaw = slashIndex == -1
+      ? null
+      : trimmed.substring(slashIndex + 1);
+  final prefixPart = prefixPartRaw?.trim();
 
-  @override
-  bool get isMethod => false;
+  final parsedAddress = InternetAddress.tryParse(addressPart);
+  if (parsedAddress == null) {
+    throw ArgumentError.value(literal, 'literal', 'Invalid IP address');
+  }
 
-  @override
-  Value evaluate(Evalutator evaluator, List<Expr> args) {
-    final literal = args[0].accept(evaluator).expectString();
-    final ip = InternetAddress.tryParse(literal.value);
-    if (ip == null) {
-      throw ArgumentError.value(literal.value, 'literal', 'Invalid IP address');
+  final bytes = List<int>.from(parsedAddress.rawAddress);
+  final bitLength = bytes.length * 8;
+  final isIpv4 = parsedAddress.type == InternetAddressType.IPv4;
+  final prefixLength = prefixPart == null
+      ? bitLength
+      : _parsePrefix(
+          literal: literal,
+          prefix: prefixPart,
+          maxPrefix: bitLength,
+          isIpv4: isIpv4,
+        );
+
+  if (prefixLength > bitLength) {
+    throw ArgumentError.value(literal, 'literal', 'CIDR prefix out of range');
+  }
+
+  return (bytes: bytes, prefixLength: prefixLength, isIpv4: isIpv4);
+}
+
+bool _containsEmbeddedIpv4Notation(String value) {
+  return _containsAtLeast(value, ':', 2) && _containsAtLeast(value, '.', 2);
+}
+
+bool _containsAtLeast(String value, String char, int threshold) {
+  var count = 0;
+  final codeUnit = char.codeUnitAt(0);
+  for (var i = 0; i < value.length; i++) {
+    if (value.codeUnitAt(i) == codeUnit) {
+      count++;
+      if (count >= threshold) {
+        return true;
+      }
     }
-    return StringValue(ip.toString());
   }
+  return false;
 }
 
-final class CedarFunctionIsIpv4 implements CedarFunction {
-  const CedarFunctionIsIpv4();
-
-  @override
-  int get numArgs => 1;
-
-  @override
-  bool get isMethod => true;
-
-  @override
-  Value evaluate(Evalutator evaluator, List<Expr> args) {
-    final literal = args[0].accept(evaluator).expectString();
-    final ip = InternetAddress.tryParse(literal.value);
-    return BoolValue(ip != null && ip.type == InternetAddressType.IPv4);
+int _parsePrefix({
+  required String literal,
+  required String prefix,
+  required int maxPrefix,
+  required bool isIpv4,
+}) {
+  if (prefix.isEmpty) {
+    throw ArgumentError.value(literal, 'literal', 'Invalid CIDR prefix length');
   }
+
+  final trimmed = prefix;
+  if (trimmed.length > (isIpv4 ? 2 : 3)) {
+    throw ArgumentError.value(literal, 'literal', 'Invalid CIDR prefix length');
+  }
+
+  if (!_isAllDigits(trimmed) ||
+      (trimmed.length > 1 && trimmed.startsWith('0'))) {
+    throw ArgumentError.value(literal, 'literal', 'Invalid CIDR prefix length');
+  }
+
+  final parsed = int.parse(trimmed);
+  if (parsed < 0 || parsed > maxPrefix) {
+    throw ArgumentError.value(literal, 'literal', 'CIDR prefix out of range');
+  }
+  return parsed;
 }
 
-final class CedarFunctionIsIpv6 implements CedarFunction {
-  const CedarFunctionIsIpv6();
-
-  @override
-  int get numArgs => 1;
-
-  @override
-  bool get isMethod => true;
-
-  @override
-  Value evaluate(Evalutator evaluator, List<Expr> args) {
-    final literal = args[0].accept(evaluator).expectString();
-    final ip = InternetAddress.tryParse(literal.value);
-    return BoolValue(ip != null && ip.type == InternetAddressType.IPv6);
+bool _isAllDigits(String value) {
+  for (var i = 0; i < value.length; i++) {
+    final code = value.codeUnitAt(i);
+    if (code < 0x30 || code > 0x39) {
+      return false;
+    }
   }
-}
-
-final class CedarFunctionIsLoopback implements CedarFunction {
-  const CedarFunctionIsLoopback();
-
-  @override
-  int get numArgs => 1;
-
-  @override
-  bool get isMethod => true;
-
-  @override
-  Value evaluate(Evalutator evaluator, List<Expr> args) {
-    final literal = args[0].accept(evaluator).expectString();
-    final ip = InternetAddress.tryParse(literal.value);
-    return BoolValue(ip != null && ip.isLoopback);
-  }
-}
-
-final class CedarFunctionIsMulticast implements CedarFunction {
-  const CedarFunctionIsMulticast();
-
-  @override
-  int get numArgs => 1;
-
-  @override
-  bool get isMethod => true;
-
-  @override
-  Value evaluate(Evalutator evaluator, List<Expr> args) {
-    final literal = args[0].accept(evaluator).expectString();
-    final ip = InternetAddress.tryParse(literal.value);
-    return BoolValue(ip != null && ip.isMulticast);
-  }
-}
-
-final class CedarFunctionIsInRange implements CedarFunction {
-  const CedarFunctionIsInRange();
-
-  @override
-  int get numArgs => 2;
-
-  @override
-  bool get isMethod => true;
-
-  @override
-  Value evaluate(Evalutator evaluator, List<Expr> args) {
-    throw UnimplementedError('isInRange not implemented');
-  }
+  return true;
 }
