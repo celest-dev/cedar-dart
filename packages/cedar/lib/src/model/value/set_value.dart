@@ -4,9 +4,7 @@ final class SetValue extends Value {
   const SetValue(this.elements);
 
   factory SetValue.fromJson(List<Object?> json) {
-    return SetValue([
-      for (final element in json) Value.fromJson(element),
-    ]);
+    return SetValue([for (final element in json) Value.fromJson(element)]);
   }
 
   factory SetValue.fromProto(pb.SetValue setValue) {
@@ -18,18 +16,14 @@ final class SetValue extends Value {
   final List<Value> elements;
 
   @override
-  List<Object?> toJson() => [
-        for (final element in elements) element.toJson(),
-      ];
+  List<Object?> toJson() => [for (final element in elements) element.toJson()];
 
   @override
   pb.Value toProto() => pb.Value(
-        set: pb.SetValue(
-          elements: [
-            for (final element in elements) element.toProto(),
-          ],
-        ),
-      );
+    set: pb.SetValue(
+      elements: [for (final element in elements) element.toProto()],
+    ),
+  );
 
   @override
   bool operator ==(Object other) =>

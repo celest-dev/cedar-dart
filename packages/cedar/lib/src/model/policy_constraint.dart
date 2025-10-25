@@ -12,7 +12,8 @@ sealed class PolicyConstraint {
         ActionConstraint.fromJson(action),
       {'resource': final Map<String, Object?> resource} =>
         ResourceConstraint.fromJson(resource),
-      _ => throw ArgumentError.value(
+      _ =>
+        throw ArgumentError.value(
           json,
           'json',
           'Invalid Cedar policy scope. Expected principal, action, or resource.',
@@ -32,38 +33,36 @@ sealed class PrincipalConstraint implements PolicyConstraint {
   factory PrincipalConstraint.fromJson(Map<String, Object?> json) {
     return switch (json) {
       {'op': 'All'} => const PrincipalAll(),
-      {'op': '==', 'slot': final String slotId} =>
-        PrincipalEquals(SlotId.fromJson(slotId)),
+      {'op': '==', 'slot': final String slotId} => PrincipalEquals(
+        SlotId.fromJson(slotId),
+      ),
       {'op': '==', 'entity': final Map<String, Object?> entityJson} =>
-        PrincipalEquals(EntityValue(
-          uid: EntityUid.fromJson(entityJson),
-        )),
-      {'op': 'in', 'slot': final String slotId} =>
-        PrincipalIn(SlotId.fromJson(slotId)),
+        PrincipalEquals(EntityValue(uid: EntityUid.fromJson(entityJson))),
+      {'op': 'in', 'slot': final String slotId} => PrincipalIn(
+        SlotId.fromJson(slotId),
+      ),
       {'op': 'in', 'entity': final Map<String, Object?> entityJson} =>
-        PrincipalIn(EntityValue(
-          uid: EntityUid.fromJson(entityJson),
-        )),
+        PrincipalIn(EntityValue(uid: EntityUid.fromJson(entityJson))),
       {
         'op': 'is',
         'entity_type': final String entityType,
-        'in': {'slot': final String slotId}
+        'in': {'slot': final String slotId},
       } =>
         PrincipalIsIn(entityType, SlotId.fromJson(slotId)),
       {
         'op': 'is',
         'entity_type': final String entityType,
-        'in': {'entity': final Map<String, Object?> entityJson}
+        'in': {'entity': final Map<String, Object?> entityJson},
       } =>
         PrincipalIsIn(
           entityType,
-          EntityValue(
-            uid: EntityUid.fromJson(entityJson),
-          ),
+          EntityValue(uid: EntityUid.fromJson(entityJson)),
         ),
-      {'op': 'is', 'entity_type': final String entityType} =>
-        PrincipalIs(entityType),
-      _ => throw ArgumentError.value(
+      {'op': 'is', 'entity_type': final String entityType} => PrincipalIs(
+        entityType,
+      ),
+      _ =>
+        throw ArgumentError.value(
           json,
           'json',
           'Invalid Cedar principal scope. Expected op in [All, ==, in, is].',
@@ -74,14 +73,18 @@ sealed class PrincipalConstraint implements PolicyConstraint {
   factory PrincipalConstraint.fromProto(pb.PrincipalConstraint proto) {
     return switch (proto.whichConstraint()) {
       pb.PrincipalConstraint_Constraint.all => const PrincipalAll(),
-      pb.PrincipalConstraint_Constraint.equals =>
-        PrincipalEquals.fromProto(proto.equals),
+      pb.PrincipalConstraint_Constraint.equals => PrincipalEquals.fromProto(
+        proto.equals,
+      ),
       pb.PrincipalConstraint_Constraint.in_ => PrincipalIn.fromProto(proto.in_),
-      pb.PrincipalConstraint_Constraint.is_5 =>
-        PrincipalIs.fromProto(proto.is_5),
-      pb.PrincipalConstraint_Constraint.isIn =>
-        PrincipalIsIn.fromProto(proto.isIn),
-      final unknown => throw ArgumentError.value(
+      pb.PrincipalConstraint_Constraint.is_5 => PrincipalIs.fromProto(
+        proto.is_5,
+      ),
+      pb.PrincipalConstraint_Constraint.isIn => PrincipalIsIn.fromProto(
+        proto.isIn,
+      ),
+      final unknown =>
+        throw ArgumentError.value(
           unknown,
           'constraint',
           'Unknown Cedar principal constraint.',
@@ -103,14 +106,16 @@ sealed class ActionConstraint implements PolicyConstraint {
       {'op': 'All'} => const ActionAll(),
       {'op': '==', 'entity': final Map<String, Object?> entityJson} =>
         ActionEquals(EntityUid.fromJson(entityJson)),
-      {'op': 'in', 'entity': final Map<String, Object?> entityJson} =>
-        ActionIn(EntityUid.fromJson(entityJson)),
+      {'op': 'in', 'entity': final Map<String, Object?> entityJson} => ActionIn(
+        EntityUid.fromJson(entityJson),
+      ),
       {'op': 'in', 'entities': final List<Object?> entities} => ActionInSet(
-          entities
-              .map((o) => EntityUid.fromJson(o as Map<String, Object?>))
-              .toList(),
-        ),
-      _ => throw ArgumentError.value(
+        entities
+            .map((o) => EntityUid.fromJson(o as Map<String, Object?>))
+            .toList(),
+      ),
+      _ =>
+        throw ArgumentError.value(
           json,
           'json',
           'Invalid Cedar action scope. Expected op in [All, ==, in].',
@@ -121,12 +126,15 @@ sealed class ActionConstraint implements PolicyConstraint {
   factory ActionConstraint.fromProto(pb.ActionConstraint proto) {
     return switch (proto.whichConstraint()) {
       pb.ActionConstraint_Constraint.all => const ActionAll(),
-      pb.ActionConstraint_Constraint.equals =>
-        ActionEquals.fromProto(proto.equals),
+      pb.ActionConstraint_Constraint.equals => ActionEquals.fromProto(
+        proto.equals,
+      ),
       pb.ActionConstraint_Constraint.in_ => ActionIn.fromProto(proto.in_),
-      pb.ActionConstraint_Constraint.inSet =>
-        ActionInSet(proto.inSet.entities.map(EntityUid.fromProto).toList()),
-      final unknown => throw ArgumentError.value(
+      pb.ActionConstraint_Constraint.inSet => ActionInSet(
+        proto.inSet.entities.map(EntityUid.fromProto).toList(),
+      ),
+      final unknown =>
+        throw ArgumentError.value(
           unknown,
           'constraint',
           'Unknown Cedar action constraint.',
@@ -146,38 +154,36 @@ sealed class ResourceConstraint implements PolicyConstraint {
   factory ResourceConstraint.fromJson(Map<String, Object?> json) {
     return switch (json) {
       {'op': 'All'} => const ResourceAll(),
-      {'op': '==', 'slot': final String slotId} =>
-        ResourceEquals(SlotId.fromJson(slotId)),
+      {'op': '==', 'slot': final String slotId} => ResourceEquals(
+        SlotId.fromJson(slotId),
+      ),
       {'op': '==', 'entity': final Map<String, Object?> entityJson} =>
-        ResourceEquals(EntityValue(
-          uid: EntityUid.fromJson(entityJson),
-        )),
-      {'op': 'in', 'slot': final String slotId} =>
-        ResourceIn(SlotId.fromJson(slotId)),
+        ResourceEquals(EntityValue(uid: EntityUid.fromJson(entityJson))),
+      {'op': 'in', 'slot': final String slotId} => ResourceIn(
+        SlotId.fromJson(slotId),
+      ),
       {'op': 'in', 'entity': final Map<String, Object?> entityJson} =>
-        ResourceIn(EntityValue(
-          uid: EntityUid.fromJson(entityJson),
-        )),
+        ResourceIn(EntityValue(uid: EntityUid.fromJson(entityJson))),
       {
         'op': 'is',
         'entity_type': final String entityType,
-        'in': {'slot': final String slotId}
+        'in': {'slot': final String slotId},
       } =>
         ResourceIsIn(entityType, SlotId.fromJson(slotId)),
       {
         'op': 'is',
         'entity_type': final String entityType,
-        'in': {'entity': final Map<String, Object?> entityJson}
+        'in': {'entity': final Map<String, Object?> entityJson},
       } =>
         ResourceIsIn(
           entityType,
-          EntityValue(
-            uid: EntityUid.fromJson(entityJson),
-          ),
+          EntityValue(uid: EntityUid.fromJson(entityJson)),
         ),
-      {'op': 'is', 'entity_type': final String entityType} =>
-        ResourceIs(entityType),
-      _ => throw ArgumentError.value(
+      {'op': 'is', 'entity_type': final String entityType} => ResourceIs(
+        entityType,
+      ),
+      _ =>
+        throw ArgumentError.value(
           json,
           'json',
           'Invalid Cedar resource scope. Expected op in [All, ==, in, is].',
@@ -188,13 +194,16 @@ sealed class ResourceConstraint implements PolicyConstraint {
   factory ResourceConstraint.fromProto(pb.ResourceConstraint proto) {
     return switch (proto.whichConstraint()) {
       pb.ResourceConstraint_Constraint.all => const ResourceAll(),
-      pb.ResourceConstraint_Constraint.equals =>
-        ResourceEquals.fromProto(proto.equals),
+      pb.ResourceConstraint_Constraint.equals => ResourceEquals.fromProto(
+        proto.equals,
+      ),
       pb.ResourceConstraint_Constraint.in_ => ResourceIn.fromProto(proto.in_),
       pb.ResourceConstraint_Constraint.is_5 => ResourceIs.fromProto(proto.is_5),
-      pb.ResourceConstraint_Constraint.isIn =>
-        ResourceIsIn.fromProto(proto.isIn),
-      final unknown => throw ArgumentError.value(
+      pb.ResourceConstraint_Constraint.isIn => ResourceIsIn.fromProto(
+        proto.isIn,
+      ),
+      final unknown =>
+        throw ArgumentError.value(
           unknown,
           'constraint',
           'Unknown Cedar resource constraint.',
@@ -216,9 +225,7 @@ abstract mixin class PolicyConstraintAll implements PolicyConstraint {
       const ExprValue(Value.bool(true));
 
   @override
-  Map<String, Object?> toJson() => const {
-        'op': 'All',
-      };
+  Map<String, Object?> toJson() => const {'op': 'All'};
 
   @override
   bool operator ==(Object other) {
@@ -243,12 +250,11 @@ abstract mixin class PolicyConstraintEquals implements PolicyConstraint {
 
   @override
   Map<String, Object?> toJson() => switch (entity) {
-        final SlotId slotId => {'op': '==', 'slot': slotId.toJson()},
-        final EntityUid uid ||
-        EntityValue(:final uid) ||
-        Entity(:final uid) =>
-          {'op': '==', 'entity': uid.toJson()},
-      };
+    final SlotId slotId => {'op': '==', 'slot': slotId.toJson()},
+    final EntityUid uid ||
+    EntityValue(:final uid) ||
+    Entity(:final uid) => {'op': '==', 'entity': uid.toJson()},
+  };
 
   @override
   bool operator ==(Object other) {
@@ -273,12 +279,11 @@ abstract mixin class PolicyConstraintIn implements PolicyConstraint {
 
   @override
   Map<String, Object?> toJson() => switch (entity) {
-        final SlotId slotId => {'op': 'in', 'slot': slotId.toJson()},
-        final EntityUid uid ||
-        EntityValue(:final uid) ||
-        Entity(:final uid) =>
-          {'op': 'in', 'entity': uid.toJson()},
-      };
+    final SlotId slotId => {'op': 'in', 'slot': slotId.toJson()},
+    final EntityUid uid ||
+    EntityValue(:final uid) ||
+    Entity(:final uid) => {'op': 'in', 'entity': uid.toJson()},
+  };
 
   @override
   bool operator ==(Object other) {
@@ -302,10 +307,7 @@ abstract mixin class PolicyConstraintIs implements PolicyConstraint {
       ExprVariable(variable).is_(entityType);
 
   @override
-  Map<String, Object?> toJson() => {
-        'op': 'is',
-        'entity_type': entityType,
-      };
+  Map<String, Object?> toJson() => {'op': 'is', 'entity_type': entityType};
 
   @override
   bool operator ==(Object other) {
@@ -331,16 +333,15 @@ abstract mixin class PolicyConstraintIsIn implements PolicyConstraint {
 
   @override
   Map<String, Object?> toJson() => {
-        'op': 'is',
-        'entity_type': entityType,
-        'in': switch (entity) {
-          final SlotId slotId => {'slot': slotId.toJson()},
-          final EntityUid uid ||
-          EntityValue(:final uid) ||
-          Entity(:final uid) =>
-            {'entity': uid.toJson()},
-        }
-      };
+    'op': 'is',
+    'entity_type': entityType,
+    'in': switch (entity) {
+      final SlotId slotId => {'slot': slotId.toJson()},
+      final EntityUid uid ||
+      EntityValue(:final uid) ||
+      Entity(:final uid) => {'entity': uid.toJson()},
+    },
+  };
 
   @override
   bool operator ==(Object other) {
@@ -362,14 +363,15 @@ abstract mixin class PolicyConstraintInSet implements PolicyConstraint {
   List<EntityUid> get entities;
 
   @override
-  Expr toVariableExpr(CedarVariable variable) => ExprVariable(variable)
-      .in_(ExprSet(entities.map((e) => e.toExpr()).toList()));
+  Expr toVariableExpr(CedarVariable variable) => ExprVariable(
+    variable,
+  ).in_(ExprSet(entities.map((e) => e.toExpr()).toList()));
 
   @override
   Map<String, Object?> toJson() => {
-        'op': 'in',
-        'entities': entities.map((e) => e.toJson()).toList(),
-      };
+    'op': 'in',
+    'entities': entities.map((e) => e.toJson()).toList(),
+  };
 
   @override
   bool operator ==(Object other) {
@@ -388,9 +390,8 @@ final class PrincipalAll extends PrincipalConstraint with PolicyConstraintAll {
   const PrincipalAll();
 
   @override
-  pb.PrincipalConstraint toProto() => pb.PrincipalConstraint(
-        all: pb.PrincipalAll(),
-      );
+  pb.PrincipalConstraint toProto() =>
+      pb.PrincipalConstraint(all: pb.PrincipalAll());
 }
 
 final class PrincipalEquals extends PrincipalConstraint
@@ -398,18 +399,16 @@ final class PrincipalEquals extends PrincipalConstraint
   const PrincipalEquals(this.entity);
 
   factory PrincipalEquals.fromProto(pb.PrincipalEquals proto) {
-    return PrincipalEquals(
-      switch (proto.whichComponent()) {
-        pb.PrincipalEquals_Component.slot => SlotId.fromProto(proto.slot),
-        pb.PrincipalEquals_Component.entity =>
-          EntityUid.fromProto(proto.entity),
-        final unknown => throw ArgumentError.value(
-            unknown,
-            'entity',
-            'Unknown Cedar principal equals entity.',
-          ),
-      },
-    );
+    return PrincipalEquals(switch (proto.whichComponent()) {
+      pb.PrincipalEquals_Component.slot => SlotId.fromProto(proto.slot),
+      pb.PrincipalEquals_Component.entity => EntityUid.fromProto(proto.entity),
+      final unknown =>
+        throw ArgumentError.value(
+          unknown,
+          'entity',
+          'Unknown Cedar principal equals entity.',
+        ),
+    });
   }
 
   @override
@@ -417,31 +416,29 @@ final class PrincipalEquals extends PrincipalConstraint
 
   @override
   pb.PrincipalConstraint toProto() => pb.PrincipalConstraint(
-        equals: switch (entity) {
-          final SlotId slot => pb.PrincipalEquals(slot: slot.toProto()),
-          final EntityUid uid ||
-          EntityValue(:final uid) ||
-          Entity(:final uid) =>
-            pb.PrincipalEquals(entity: uid.toProto()),
-        },
-      );
+    equals: switch (entity) {
+      final SlotId slot => pb.PrincipalEquals(slot: slot.toProto()),
+      final EntityUid uid ||
+      EntityValue(:final uid) ||
+      Entity(:final uid) => pb.PrincipalEquals(entity: uid.toProto()),
+    },
+  );
 }
 
 final class PrincipalIn extends PrincipalConstraint with PolicyConstraintIn {
   const PrincipalIn(this.entity);
 
   factory PrincipalIn.fromProto(pb.PrincipalIn proto) {
-    return PrincipalIn(
-      switch (proto.whichComponent()) {
-        pb.PrincipalIn_Component.slot => SlotId.fromProto(proto.slot),
-        pb.PrincipalIn_Component.entity => EntityUid.fromProto(proto.entity),
-        final unknown => throw ArgumentError.value(
-            unknown,
-            'entity',
-            'Unknown Cedar principal in entity.',
-          ),
-      },
-    );
+    return PrincipalIn(switch (proto.whichComponent()) {
+      pb.PrincipalIn_Component.slot => SlotId.fromProto(proto.slot),
+      pb.PrincipalIn_Component.entity => EntityUid.fromProto(proto.entity),
+      final unknown =>
+        throw ArgumentError.value(
+          unknown,
+          'entity',
+          'Unknown Cedar principal in entity.',
+        ),
+    });
   }
 
   @override
@@ -449,14 +446,13 @@ final class PrincipalIn extends PrincipalConstraint with PolicyConstraintIn {
 
   @override
   pb.PrincipalConstraint toProto() => pb.PrincipalConstraint(
-        in_: switch (entity) {
-          final SlotId slot => pb.PrincipalIn(slot: slot.toProto()),
-          final EntityUid uid ||
-          EntityValue(:final uid) ||
-          Entity(:final uid) =>
-            pb.PrincipalIn(entity: uid.toProto()),
-        },
-      );
+    in_: switch (entity) {
+      final SlotId slot => pb.PrincipalIn(slot: slot.toProto()),
+      final EntityUid uid ||
+      EntityValue(:final uid) ||
+      Entity(:final uid) => pb.PrincipalIn(entity: uid.toProto()),
+    },
+  );
 }
 
 final class PrincipalIs extends PrincipalConstraint with PolicyConstraintIs {
@@ -470,9 +466,8 @@ final class PrincipalIs extends PrincipalConstraint with PolicyConstraintIs {
   final String entityType;
 
   @override
-  pb.PrincipalConstraint toProto() => pb.PrincipalConstraint(
-        is_5: pb.PrincipalIs(entityType: entityType),
-      );
+  pb.PrincipalConstraint toProto() =>
+      pb.PrincipalConstraint(is_5: pb.PrincipalIs(entityType: entityType));
 }
 
 final class PrincipalIsIn extends PrincipalConstraint
@@ -480,18 +475,16 @@ final class PrincipalIsIn extends PrincipalConstraint
   const PrincipalIsIn(this.entityType, this.entity);
 
   factory PrincipalIsIn.fromProto(pb.PrincipalIsIn proto) {
-    return PrincipalIsIn(
-      proto.entityType,
-      switch (proto.whichIn()) {
-        pb.PrincipalIsIn_In.slot => SlotId.fromProto(proto.slot),
-        pb.PrincipalIsIn_In.entity => EntityUid.fromProto(proto.entity),
-        final unknown => throw ArgumentError.value(
-            unknown,
-            'entity',
-            'Unknown Cedar principal is in entity.',
-          ),
-      },
-    );
+    return PrincipalIsIn(proto.entityType, switch (proto.whichIn()) {
+      pb.PrincipalIsIn_In.slot => SlotId.fromProto(proto.slot),
+      pb.PrincipalIsIn_In.entity => EntityUid.fromProto(proto.entity),
+      final unknown =>
+        throw ArgumentError.value(
+          unknown,
+          'entity',
+          'Unknown Cedar principal is in entity.',
+        ),
+    });
   }
 
   @override
@@ -502,29 +495,22 @@ final class PrincipalIsIn extends PrincipalConstraint
 
   @override
   pb.PrincipalConstraint toProto() => pb.PrincipalConstraint(
-        isIn: switch (entity) {
-          final SlotId slot => pb.PrincipalIsIn(
-              entityType: entityType,
-              slot: slot.toProto(),
-            ),
-          final EntityUid uid ||
-          EntityValue(:final uid) ||
-          Entity(:final uid) =>
-            pb.PrincipalIsIn(
-              entityType: entityType,
-              entity: uid.toProto(),
-            ),
-        },
-      );
+    isIn: switch (entity) {
+      final SlotId slot => pb.PrincipalIsIn(
+        entityType: entityType,
+        slot: slot.toProto(),
+      ),
+      final EntityUid uid || EntityValue(:final uid) || Entity(:final uid) =>
+        pb.PrincipalIsIn(entityType: entityType, entity: uid.toProto()),
+    },
+  );
 }
 
 final class ActionAll extends ActionConstraint with PolicyConstraintAll {
   const ActionAll();
 
   @override
-  pb.ActionConstraint toProto() => pb.ActionConstraint(
-        all: pb.ActionAll(),
-      );
+  pb.ActionConstraint toProto() => pb.ActionConstraint(all: pb.ActionAll());
 }
 
 final class ActionEquals extends ActionConstraint with PolicyConstraintEquals {
@@ -538,9 +524,8 @@ final class ActionEquals extends ActionConstraint with PolicyConstraintEquals {
   final EntityUid entity;
 
   @override
-  pb.ActionConstraint toProto() => pb.ActionConstraint(
-        equals: pb.ActionEquals(entity: entity.toProto()),
-      );
+  pb.ActionConstraint toProto() =>
+      pb.ActionConstraint(equals: pb.ActionEquals(entity: entity.toProto()));
 }
 
 final class ActionIn extends ActionConstraint with PolicyConstraintIn {
@@ -554,9 +539,8 @@ final class ActionIn extends ActionConstraint with PolicyConstraintIn {
   final EntityUid entity;
 
   @override
-  pb.ActionConstraint toProto() => pb.ActionConstraint(
-        in_: pb.ActionIn(entity: entity.toProto()),
-      );
+  pb.ActionConstraint toProto() =>
+      pb.ActionConstraint(in_: pb.ActionIn(entity: entity.toProto()));
 }
 
 final class ActionInSet extends ActionConstraint with PolicyConstraintInSet {
@@ -571,19 +555,16 @@ final class ActionInSet extends ActionConstraint with PolicyConstraintInSet {
 
   @override
   pb.ActionConstraint toProto() => pb.ActionConstraint(
-        inSet: pb.ActionInSet(
-          entities: entities.map((e) => e.toProto()).toList(),
-        ),
-      );
+    inSet: pb.ActionInSet(entities: entities.map((e) => e.toProto()).toList()),
+  );
 }
 
 final class ResourceAll extends ResourceConstraint with PolicyConstraintAll {
   const ResourceAll();
 
   @override
-  pb.ResourceConstraint toProto() => pb.ResourceConstraint(
-        all: pb.ResourceAll(),
-      );
+  pb.ResourceConstraint toProto() =>
+      pb.ResourceConstraint(all: pb.ResourceAll());
 }
 
 final class ResourceEquals extends ResourceConstraint
@@ -591,17 +572,16 @@ final class ResourceEquals extends ResourceConstraint
   const ResourceEquals(this.entity);
 
   factory ResourceEquals.fromProto(pb.ResourceEquals proto) {
-    return ResourceEquals(
-      switch (proto.whichComponent()) {
-        pb.ResourceEquals_Component.slot => SlotId.fromProto(proto.slot),
-        pb.ResourceEquals_Component.entity => EntityUid.fromProto(proto.entity),
-        final unknown => throw ArgumentError.value(
-            unknown,
-            'entity',
-            'Unknown Cedar resource equals entity.',
-          ),
-      },
-    );
+    return ResourceEquals(switch (proto.whichComponent()) {
+      pb.ResourceEquals_Component.slot => SlotId.fromProto(proto.slot),
+      pb.ResourceEquals_Component.entity => EntityUid.fromProto(proto.entity),
+      final unknown =>
+        throw ArgumentError.value(
+          unknown,
+          'entity',
+          'Unknown Cedar resource equals entity.',
+        ),
+    });
   }
 
   @override
@@ -609,31 +589,29 @@ final class ResourceEquals extends ResourceConstraint
 
   @override
   pb.ResourceConstraint toProto() => pb.ResourceConstraint(
-        equals: switch (entity) {
-          final SlotId slot => pb.ResourceEquals(slot: slot.toProto()),
-          final EntityUid uid ||
-          EntityValue(:final uid) ||
-          Entity(:final uid) =>
-            pb.ResourceEquals(entity: uid.toProto()),
-        },
-      );
+    equals: switch (entity) {
+      final SlotId slot => pb.ResourceEquals(slot: slot.toProto()),
+      final EntityUid uid ||
+      EntityValue(:final uid) ||
+      Entity(:final uid) => pb.ResourceEquals(entity: uid.toProto()),
+    },
+  );
 }
 
 final class ResourceIn extends ResourceConstraint with PolicyConstraintIn {
   const ResourceIn(this.entity);
 
   factory ResourceIn.fromProto(pb.ResourceIn proto) {
-    return ResourceIn(
-      switch (proto.whichComponent()) {
-        pb.ResourceIn_Component.slot => SlotId.fromProto(proto.slot),
-        pb.ResourceIn_Component.entity => EntityUid.fromProto(proto.entity),
-        final unknown => throw ArgumentError.value(
-            unknown,
-            'entity',
-            'Unknown Cedar resource in entity.',
-          ),
-      },
-    );
+    return ResourceIn(switch (proto.whichComponent()) {
+      pb.ResourceIn_Component.slot => SlotId.fromProto(proto.slot),
+      pb.ResourceIn_Component.entity => EntityUid.fromProto(proto.entity),
+      final unknown =>
+        throw ArgumentError.value(
+          unknown,
+          'entity',
+          'Unknown Cedar resource in entity.',
+        ),
+    });
   }
 
   @override
@@ -641,14 +619,13 @@ final class ResourceIn extends ResourceConstraint with PolicyConstraintIn {
 
   @override
   pb.ResourceConstraint toProto() => pb.ResourceConstraint(
-        in_: switch (entity) {
-          final SlotId slot => pb.ResourceIn(slot: slot.toProto()),
-          final EntityUid uid ||
-          EntityValue(:final uid) ||
-          Entity(:final uid) =>
-            pb.ResourceIn(entity: uid.toProto()),
-        },
-      );
+    in_: switch (entity) {
+      final SlotId slot => pb.ResourceIn(slot: slot.toProto()),
+      final EntityUid uid ||
+      EntityValue(:final uid) ||
+      Entity(:final uid) => pb.ResourceIn(entity: uid.toProto()),
+    },
+  );
 }
 
 final class ResourceIs extends ResourceConstraint with PolicyConstraintIs {
@@ -662,27 +639,24 @@ final class ResourceIs extends ResourceConstraint with PolicyConstraintIs {
   final String entityType;
 
   @override
-  pb.ResourceConstraint toProto() => pb.ResourceConstraint(
-        is_5: pb.ResourceIs(entityType: entityType),
-      );
+  pb.ResourceConstraint toProto() =>
+      pb.ResourceConstraint(is_5: pb.ResourceIs(entityType: entityType));
 }
 
 final class ResourceIsIn extends ResourceConstraint with PolicyConstraintIsIn {
   const ResourceIsIn(this.entityType, this.entity);
 
   factory ResourceIsIn.fromProto(pb.ResourceIsIn proto) {
-    return ResourceIsIn(
-      proto.entityType,
-      switch (proto.whichIn()) {
-        pb.ResourceIsIn_In.slot => SlotId.fromProto(proto.slot),
-        pb.ResourceIsIn_In.entity => EntityUid.fromProto(proto.entity),
-        final unknown => throw ArgumentError.value(
-            unknown,
-            'entity',
-            'Unknown Cedar resource is in entity.',
-          ),
-      },
-    );
+    return ResourceIsIn(proto.entityType, switch (proto.whichIn()) {
+      pb.ResourceIsIn_In.slot => SlotId.fromProto(proto.slot),
+      pb.ResourceIsIn_In.entity => EntityUid.fromProto(proto.entity),
+      final unknown =>
+        throw ArgumentError.value(
+          unknown,
+          'entity',
+          'Unknown Cedar resource is in entity.',
+        ),
+    });
   }
 
   @override
@@ -693,20 +667,15 @@ final class ResourceIsIn extends ResourceConstraint with PolicyConstraintIsIn {
 
   @override
   pb.ResourceConstraint toProto() => pb.ResourceConstraint(
-        isIn: switch (entity) {
-          final SlotId slot => pb.ResourceIsIn(
-              entityType: entityType,
-              slot: slot.toProto(),
-            ),
-          final EntityUid uid ||
-          EntityValue(:final uid) ||
-          Entity(:final uid) =>
-            pb.ResourceIsIn(
-              entityType: entityType,
-              entity: uid.toProto(),
-            ),
-        },
-      );
+    isIn: switch (entity) {
+      final SlotId slot => pb.ResourceIsIn(
+        entityType: entityType,
+        slot: slot.toProto(),
+      ),
+      final EntityUid uid || EntityValue(:final uid) || Entity(:final uid) =>
+        pb.ResourceIsIn(entityType: entityType, entity: uid.toProto()),
+    },
+  );
 }
 
 extension PolicyConstraintBuilder on Policy {
@@ -718,7 +687,8 @@ extension PolicyConstraintBuilder on Policy {
 
   Policy principalIn(EntityUid entity) {
     return rebuild(
-        (policy) => policy.principal = PrincipalIn(EntityValue(uid: entity)));
+      (policy) => policy.principal = PrincipalIn(EntityValue(uid: entity)),
+    );
   }
 
   Policy principalIs(String entityType) {
@@ -726,8 +696,13 @@ extension PolicyConstraintBuilder on Policy {
   }
 
   Policy principalIsIn(String entityType, EntityUid entity) {
-    return rebuild((policy) =>
-        policy.principal = PrincipalIsIn(entityType, EntityValue(uid: entity)));
+    return rebuild(
+      (policy) =>
+          policy.principal = PrincipalIsIn(
+            entityType,
+            EntityValue(uid: entity),
+          ),
+    );
   }
 
   Policy actionEquals(EntityUid entity) {
@@ -744,12 +719,14 @@ extension PolicyConstraintBuilder on Policy {
 
   Policy resourceEquals(EntityUid entity) {
     return rebuild(
-        (policy) => policy.resource = ResourceEquals(EntityValue(uid: entity)));
+      (policy) => policy.resource = ResourceEquals(EntityValue(uid: entity)),
+    );
   }
 
   Policy resourceIn(EntityUid entity) {
     return rebuild(
-        (policy) => policy.resource = ResourceIn(EntityValue(uid: entity)));
+      (policy) => policy.resource = ResourceIn(EntityValue(uid: entity)),
+    );
   }
 
   Policy resourceIs(String entityType) {
@@ -757,7 +734,9 @@ extension PolicyConstraintBuilder on Policy {
   }
 
   Policy resourceIsIn(String entityType, EntityUid entity) {
-    return rebuild((policy) =>
-        policy.resource = ResourceIsIn(entityType, EntityValue(uid: entity)));
+    return rebuild(
+      (policy) =>
+          policy.resource = ResourceIsIn(entityType, EntityValue(uid: entity)),
+    );
   }
 }

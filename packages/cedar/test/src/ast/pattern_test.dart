@@ -10,8 +10,10 @@ void main() {
     });
 
     test('saturate two literals', () {
-      final pattern1 =
-          CedarPattern.from(const [Literal('foo'), Literal('bar')]);
+      final pattern1 = CedarPattern.from(const [
+        Literal('foo'),
+        Literal('bar'),
+      ]);
       final pattern2 = CedarPattern.from(const [Literal('foobar')]);
       expect(pattern1, equals(pattern2));
     });
@@ -25,11 +27,9 @@ void main() {
       final pattern = CedarPattern.parse('*foo*');
       expect(
         pattern,
-        equals(CedarPattern.from(const [
-          Wildcard(),
-          Literal('foo'),
-          Wildcard(),
-        ])),
+        equals(
+          CedarPattern.from(const [Wildcard(), Literal('foo'), Wildcard()]),
+        ),
       );
       expect(pattern.toString(), '*foo*');
     });
@@ -39,13 +39,15 @@ void main() {
       final pattern = CedarPattern.parse(raw);
       expect(
         pattern,
-        equals(CedarPattern.from(const [
-          Wildcard(),
-          Literal('*foo'),
-          Wildcard(),
-          Literal('\n\t\u{FFFFF}'),
-          Wildcard(),
-        ])),
+        equals(
+          CedarPattern.from(const [
+            Wildcard(),
+            Literal('*foo'),
+            Wildcard(),
+            Literal('\n\t\u{FFFFF}'),
+            Wildcard(),
+          ]),
+        ),
       );
       expect(pattern.toString(), raw);
     });

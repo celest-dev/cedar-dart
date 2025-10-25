@@ -6,7 +6,7 @@ final class EntityValue extends Value implements Component {
   factory EntityValue.fromJson(Map<String, Object?> json) {
     switch (json) {
       case {'__entity': {'type': final String type, 'id': final String id}} ||
-            {'type': final String type, 'id': final String id}:
+          {'type': final String type, 'id': final String id}:
         return EntityValue(uid: EntityUid.of(type, id));
       default:
         throw FormatException('Invalid entity value JSON: $json');
@@ -23,9 +23,7 @@ final class EntityValue extends Value implements Component {
   Expr toExpr() => Expr.value(this);
 
   @override
-  Map<String, Object?> toJson() => {
-        '__entity': uid.toJson(),
-      };
+  Map<String, Object?> toJson() => {'__entity': uid.toJson()};
 
   @override
   pb.Value toProto() => pb.Value(entity: pb.EntityValue(uid: uid.toProto()));

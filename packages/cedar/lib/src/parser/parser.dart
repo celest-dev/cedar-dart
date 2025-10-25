@@ -4,10 +4,8 @@ import 'package:cedar/src/eval/extensions.dart';
 import 'package:cedar/src/parser/tokenizer.dart';
 import 'package:fixnum/fixnum.dart';
 
-typedef _BinaryExprBuilder = Expr Function({
-  required Expr left,
-  required Expr right,
-});
+typedef _BinaryExprBuilder =
+    Expr Function({required Expr left, required Expr right});
 
 final class Parser {
   Parser(this.tokens) : _index = 0;
@@ -198,9 +196,7 @@ final class Parser {
             case Token(type: TokenType.ident, :final text):
               prefix = '$prefix::$text';
             case Token(type: TokenType.string, stringValue: final id):
-              return Expr.value(
-                Value.entity(uid: EntityUid.of(prefix, id)),
-              );
+              return Expr.value(Value.entity(uid: EntityUid.of(prefix, id)));
             default:
               error('Unexpected token');
           }
@@ -285,17 +281,11 @@ final class Parser {
         case 'when':
           advance();
           final body = readCondition();
-          conditions.add(Condition(
-            kind: ConditionKind.when,
-            body: body,
-          ));
+          conditions.add(Condition(kind: ConditionKind.when, body: body));
         case 'unless':
           advance();
           final body = readCondition();
-          conditions.add(Condition(
-            kind: ConditionKind.unless,
-            body: body,
-          ));
+          conditions.add(Condition(kind: ConditionKind.unless, body: body));
         default:
           return conditions;
       }

@@ -24,21 +24,25 @@ permit(
         expect(template.isTemplate, true);
         expect(
           template.principal,
-          isA<PrincipalEquals>()
-              .having((it) => it.entity, 'entity', SlotId.principal),
+          isA<PrincipalEquals>().having(
+            (it) => it.entity,
+            'entity',
+            SlotId.principal,
+          ),
         );
 
-        final linkedPolicy = template.link(
-          {SlotId.principal: EntityUid.of('Test', 'test')},
-        );
+        final linkedPolicy = template.link({
+          SlotId.principal: EntityUid.of('Test', 'test'),
+        });
         expect(linkedPolicy.isTemplate, false);
         expect(
-            linkedPolicy.principal,
-            isA<PrincipalEquals>().having(
-              (it) => it.entity,
-              'entity',
-              EntityValue(uid: EntityUid.of('Test', 'test')),
-            ));
+          linkedPolicy.principal,
+          isA<PrincipalEquals>().having(
+            (it) => it.entity,
+            'entity',
+            EntityValue(uid: EntityUid.of('Test', 'test')),
+          ),
+        );
       });
 
       test('in', () {
@@ -60,21 +64,25 @@ permit(
         expect(template.isTemplate, true);
         expect(
           template.principal,
-          isA<PrincipalIn>()
-              .having((it) => it.entity, 'entity', SlotId.principal),
+          isA<PrincipalIn>().having(
+            (it) => it.entity,
+            'entity',
+            SlotId.principal,
+          ),
         );
 
-        final linkedPolicy = template.link(
-          {SlotId.principal: EntityUid.of('Test', 'test')},
-        );
+        final linkedPolicy = template.link({
+          SlotId.principal: EntityUid.of('Test', 'test'),
+        });
         expect(linkedPolicy.isTemplate, false);
         expect(
-            linkedPolicy.principal,
-            isA<PrincipalIn>().having(
-              (it) => it.entity,
-              'entity',
-              EntityValue(uid: EntityUid.of('Test', 'test')),
-            ));
+          linkedPolicy.principal,
+          isA<PrincipalIn>().having(
+            (it) => it.entity,
+            'entity',
+            EntityValue(uid: EntityUid.of('Test', 'test')),
+          ),
+        );
       });
 
       test('isIn', () {
@@ -101,9 +109,9 @@ permit(
               .having((it) => it.entity, 'entity', SlotId.principal),
         );
 
-        final linkedPolicy = template.link(
-          {SlotId.principal: EntityUid.of('Test', 'test')},
-        );
+        final linkedPolicy = template.link({
+          SlotId.principal: EntityUid.of('Test', 'test'),
+        });
         expect(linkedPolicy.isTemplate, false);
         expect(
           linkedPolicy.principal,
@@ -145,9 +153,9 @@ permit(
           ),
         );
 
-        final linkedPolicy = template.link(
-          {SlotId.resource: EntityUid.of('Test', 'test')},
-        );
+        final linkedPolicy = template.link({
+          SlotId.resource: EntityUid.of('Test', 'test'),
+        });
         expect(linkedPolicy.isTemplate, false);
         expect(
           linkedPolicy.resource,
@@ -184,9 +192,9 @@ permit(
           ),
         );
 
-        final linkedPolicy = template.link(
-          {SlotId.resource: EntityUid.of('Test', 'test')},
-        );
+        final linkedPolicy = template.link({
+          SlotId.resource: EntityUid.of('Test', 'test'),
+        });
         expect(linkedPolicy.isTemplate, false);
         expect(
           linkedPolicy.resource,
@@ -222,9 +230,9 @@ permit(
               .having((it) => it.entity, 'entity', SlotId.resource),
         );
 
-        final linkedPolicy = template.link(
-          {SlotId.resource: EntityUid.of('Test', 'test')},
-        );
+        final linkedPolicy = template.link({
+          SlotId.resource: EntityUid.of('Test', 'test'),
+        });
         expect(linkedPolicy.isTemplate, false);
         expect(
           linkedPolicy.resource,

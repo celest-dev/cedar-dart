@@ -25,10 +25,7 @@ final class Annotations with IterableMixin<Annotation> {
   }
 
   Annotations annotation(String key, String value) {
-    return Annotations({
-      ...annotations,
-      key: value,
-    });
+    return Annotations({...annotations, key: value});
   }
 
   Policy permit() {

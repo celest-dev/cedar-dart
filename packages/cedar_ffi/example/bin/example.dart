@@ -6,10 +6,12 @@ import 'package:cedar_ffi/cedar_ffi.dart';
 
 Future<void> main() async {
   final root = Platform.script.resolve('cedar/');
-  final schemaJson =
-      File.fromUri(root.resolve('example.cedarschema.json')).readAsStringSync();
-  final policiesCedar =
-      File.fromUri(root.resolve('example.cedar')).readAsStringSync();
+  final schemaJson = File.fromUri(
+    root.resolve('example.cedarschema.json'),
+  ).readAsStringSync();
+  final policiesCedar = File.fromUri(
+    root.resolve('example.cedar'),
+  ).readAsStringSync();
 
   final cedar = CedarEngine(
     schema: CedarSchema.fromJson(
@@ -18,15 +20,11 @@ Future<void> main() async {
     policySet: CedarPolicySetFfi.fromCedar(policiesCedar),
   );
 
-  final app = Entity(
-    uid: EntityUid.of('Application', 'TinyTodo'),
-  );
+  final app = Entity(uid: EntityUid.of('Application', 'TinyTodo'));
   final user = Entity(
     uid: EntityUid.of('User', 'alice'),
     parents: [app.uid],
-    attributes: {
-      'name': Value.string('Alice'),
-    },
+    attributes: {'name': Value.string('Alice')},
   );
   final canCreateTodo = cedar.isAuthorized(
     AuthorizationRequest(
@@ -39,10 +37,7 @@ Future<void> main() async {
   switch (canCreateTodo) {
     case AuthorizationResponse(decision: Decision.allow):
       print('Alice can create the todo list!');
-    case AuthorizationResponse(
-        :final errorMessages,
-        :final reasons,
-      ):
+    case AuthorizationResponse(:final errorMessages, :final reasons):
       print('Alice cannot create the todo list');
       print('Contributing policies: $reasons');
       print('Error messages: $errorMessages');

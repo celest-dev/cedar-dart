@@ -115,9 +115,7 @@ final class Evalutator implements ExprVisitor<Value> {
 
   static Int64 _checkedNegI64(Int64 a) {
     if (a == Int64.MIN_VALUE) {
-      throw OverflowException(
-        'Overflow while attempting to negate `$a`',
-      );
+      throw OverflowException('Overflow while attempting to negate `$a`');
     }
     return -a;
   }

@@ -27,8 +27,7 @@ sealed class Value {
   factory Value.fromJson(Object? json) {
     return switch (json) {
       <String, Object?>{'__entity': _} ||
-      <String, Object?>{'type': _, 'id': _} =>
-        EntityValue.fromJson(json),
+      <String, Object?>{'type': _, 'id': _} => EntityValue.fromJson(json),
       <String, Object?>{'__extn': _} => ExtensionCall.fromJson(json),
       final bool json => BoolValue.fromJson(json),
       final num json => LongValue.fromJson(json.toInt()),
@@ -42,8 +41,9 @@ sealed class Value {
   factory Value.fromProto(pb.Value value) {
     return switch (value.whichValue()) {
       pb.Value_Value.entity => EntityValue.fromProto(value.entity),
-      pb.Value_Value.extensionCall =>
-        ExtensionCall.fromProto(value.extensionCall),
+      pb.Value_Value.extensionCall => ExtensionCall.fromProto(
+        value.extensionCall,
+      ),
       pb.Value_Value.bool_3 => BoolValue.fromProto(value.bool_3),
       pb.Value_Value.long => LongValue.fromProto(value.long),
       pb.Value_Value.string => StringValue.fromProto(value.string),
@@ -54,14 +54,10 @@ sealed class Value {
     };
   }
 
-  const factory Value.entity({
-    required EntityUid uid,
-  }) = EntityValue;
+  const factory Value.entity({required EntityUid uid}) = EntityValue;
 
-  const factory Value.extensionCall({
-    required String fn,
-    required Value arg,
-  }) = ExtensionCall;
+  const factory Value.extensionCall({required String fn, required Value arg}) =
+      ExtensionCall;
 
   const factory Value.bool(bool value) = BoolValue;
 
@@ -91,10 +87,7 @@ extension ComponentUid on Component {
   ///
   /// Throws a [StateError] if this is a [SlotId].
   EntityUid get uid => switch (this) {
-        final EntityUid uid ||
-        EntityValue(:final uid) ||
-        Entity(:final uid) =>
-          uid,
-        SlotId() => throw StateError('Slot IDs do not have UIDs'),
-      };
+    final EntityUid uid || EntityValue(:final uid) || Entity(:final uid) => uid,
+    SlotId() => throw StateError('Slot IDs do not have UIDs'),
+  };
 }

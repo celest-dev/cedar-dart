@@ -109,7 +109,9 @@ abstract interface class ExprVisitorWithArg<R, A> {
   R visitLessThanOrEquals(ExprLessThanOrEquals lessThanOrEquals, A arg);
   R visitGreaterThan(ExprGreaterThan greaterThan, A arg);
   R visitGreaterThanOrEquals(
-      ExprGreaterThanOrEquals greaterThanOrEquals, A arg);
+    ExprGreaterThanOrEquals greaterThanOrEquals,
+    A arg,
+  );
   R visitAdd(ExprAdd add, A arg);
   R visitSubt(ExprSubt subt, A arg);
   R visitMult(ExprMult mult, A arg);

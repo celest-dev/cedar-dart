@@ -75,11 +75,7 @@ extension Logical on Expr {
     return ExprNot(this);
   }
 
-  Expr ifThenElse(
-    Expr condition,
-    Expr thenCedarExpr,
-    Expr elseCedarExpr,
-  ) {
+  Expr ifThenElse(Expr condition, Expr thenCedarExpr, Expr elseCedarExpr) {
     return ExprIfThenElse(
       cond: condition,
       then: thenCedarExpr,
@@ -90,11 +86,7 @@ extension Logical on Expr {
 
 Expr not(Expr expr) => Expr.not(expr);
 
-Expr ifThenElse(
-  Expr condition,
-  Expr thenCedarExpr,
-  Expr elseCedarExpr,
-) =>
+Expr ifThenElse(Expr condition, Expr thenCedarExpr, Expr elseCedarExpr) =>
     ExprIfThenElse(
       cond: condition,
       then: thenCedarExpr,
@@ -155,37 +147,22 @@ extension Hierarchy on Expr {
 
 extension IpAddressOperators on Expr {
   Expr isIpv4() {
-    return ExprExtensionCall(
-      fn: 'isIpv4',
-      args: [this],
-    );
+    return ExprExtensionCall(fn: 'isIpv4', args: [this]);
   }
 
   Expr isIpv6() {
-    return ExprExtensionCall(
-      fn: 'isIpv6',
-      args: [this],
-    );
+    return ExprExtensionCall(fn: 'isIpv6', args: [this]);
   }
 
   Expr isMulticast() {
-    return ExprExtensionCall(
-      fn: 'isMulticast',
-      args: [this],
-    );
+    return ExprExtensionCall(fn: 'isMulticast', args: [this]);
   }
 
   Expr isLoopback() {
-    return ExprExtensionCall(
-      fn: 'isLoopback',
-      args: [this],
-    );
+    return ExprExtensionCall(fn: 'isLoopback', args: [this]);
   }
 
   Expr isInRange(Expr rhs) {
-    return ExprExtensionCall(
-      fn: 'isInRange',
-      args: [this, rhs],
-    );
+    return ExprExtensionCall(fn: 'isInRange', args: [this, rhs]);
   }
 }

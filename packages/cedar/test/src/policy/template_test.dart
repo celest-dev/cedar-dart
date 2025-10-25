@@ -23,8 +23,11 @@ permit(
         expect(template.isTemplate, true);
         expect(
           template.principal,
-          isA<PrincipalEquals>()
-              .having((it) => it.entity, 'entity', SlotId.principal),
+          isA<PrincipalEquals>().having(
+            (it) => it.entity,
+            'entity',
+            SlotId.principal,
+          ),
         );
 
         // final linkedPolicy = template.link(
@@ -59,8 +62,11 @@ permit(
         expect(template.isTemplate, true);
         expect(
           template.principal,
-          isA<PrincipalIn>()
-              .having((it) => it.entity, 'entity', SlotId.principal),
+          isA<PrincipalIn>().having(
+            (it) => it.entity,
+            'entity',
+            SlotId.principal,
+          ),
         );
 
         // final linkedPolicy = template.link(

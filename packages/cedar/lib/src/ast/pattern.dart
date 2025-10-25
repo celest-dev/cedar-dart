@@ -32,8 +32,8 @@ final class CedarPattern {
     for (final comp in components) {
       switch (comp) {
         case Literal(literal: final String value) ||
-              final String value ||
-              StringValue(:final value):
+            final String value ||
+            StringValue(:final value):
           final component = switch (comps.lastOrNull) {
             null || Wildcard() => Literal(value),
             Literal() => Literal(comps.removeLast().literal + value),
@@ -124,8 +124,7 @@ final class CedarPattern {
           < 0x20 ||
           0x7f ||
           0x96 ||
-          > 0xffff =>
-            '\\u{${char.toRadixString(16)}}'.codeUnits,
+          > 0xffff => '\\u{${char.toRadixString(16)}}'.codeUnits,
           _ => [char],
         };
         escaped.forEach(buf.writeCharCode);
@@ -138,8 +137,10 @@ final class CedarPattern {
   bool operator ==(Object other) =>
       identical(this, other) ||
       other is CedarPattern &&
-          const ListEquality<CedarPatternComponent>()
-              .equals(comps, other.comps);
+          const ListEquality<CedarPatternComponent>().equals(
+            comps,
+            other.comps,
+          );
 
   @override
   int get hashCode => Object.hashAll(comps);

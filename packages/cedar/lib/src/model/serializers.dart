@@ -4,9 +4,7 @@ import 'package:cedar/cedar.dart';
 
 part 'serializers.g.dart';
 
-@SerializersFor([
-  PolicySet,
-])
+@SerializersFor([PolicySet])
 final Serializers cedarSerializers =
     (_$cedarSerializers.toBuilder()..add(const EntityUidSerializer())).build();
 
@@ -14,8 +12,11 @@ final class EntityUidSerializer implements StructuredSerializer<EntityUid> {
   const EntityUidSerializer();
 
   @override
-  EntityUid deserialize(Serializers serializers, Iterable<Object?> serialized,
-      {FullType specifiedType = FullType.unspecified}) {
+  EntityUid deserialize(
+    Serializers serializers,
+    Iterable<Object?> serialized, {
+    FullType specifiedType = FullType.unspecified,
+  }) {
     late String type, id;
     final iterator = serialized.iterator;
     while (iterator.moveNext()) {
@@ -32,14 +33,12 @@ final class EntityUidSerializer implements StructuredSerializer<EntityUid> {
   }
 
   @override
-  Iterable<Object?> serialize(Serializers serializers, EntityUid object,
-      {FullType specifiedType = FullType.unspecified}) {
-    return <Object?>[
-      'type',
-      object.type,
-      'id',
-      object.id,
-    ];
+  Iterable<Object?> serialize(
+    Serializers serializers,
+    EntityUid object, {
+    FullType specifiedType = FullType.unspecified,
+  }) {
+    return <Object?>['type', object.type, 'id', object.id];
   }
 
   @override

@@ -5,14 +5,14 @@ final class RecordValue extends Value {
 
   factory RecordValue.fromJson(Map<String, Object?> json) {
     return RecordValue({
-      for (final entry in json.entries) entry.key: Value.fromJson(entry.value)
+      for (final entry in json.entries) entry.key: Value.fromJson(entry.value),
     });
   }
 
   factory RecordValue.fromProto(pb.RecordValue recordValue) {
     return RecordValue({
       for (final entry in recordValue.attributes.entries)
-        entry.key: Value.fromProto(entry.value)
+        entry.key: Value.fromProto(entry.value),
     });
   }
 
@@ -20,18 +20,18 @@ final class RecordValue extends Value {
 
   @override
   Map<String, Object?> toJson() => {
-        for (final entry in attributes.entries) entry.key: entry.value.toJson(),
-      };
+    for (final entry in attributes.entries) entry.key: entry.value.toJson(),
+  };
 
   @override
   pb.Value toProto() => pb.Value(
-        record: pb.RecordValue(
-          attributes: {
-            for (final entry in attributes.entries)
-              entry.key: entry.value.toProto()
-          },
-        ),
-      );
+    record: pb.RecordValue(
+      attributes: {
+        for (final entry in attributes.entries)
+          entry.key: entry.value.toProto(),
+      },
+    ),
+  );
 
   @override
   bool operator ==(Object other) =>

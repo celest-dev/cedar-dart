@@ -7,8 +7,9 @@ enum SlotId implements Component {
   factory SlotId.fromJson(String json) {
     return SlotId.values.firstWhere(
       (e) => e.toJson() == json,
-      orElse: () =>
-          throw ArgumentError.value(json, 'json', 'Invalid Cedar slot ID'),
+      orElse:
+          () =>
+              throw ArgumentError.value(json, 'json', 'Invalid Cedar slot ID'),
     );
   }
 
@@ -24,12 +25,12 @@ enum SlotId implements Component {
   Expr toExpr() => Expr.slot(this);
 
   String toJson() => switch (this) {
-        principal => '?principal',
-        resource => '?resource',
-      };
+    principal => '?principal',
+    resource => '?resource',
+  };
 
   pb.SlotId toProto() => switch (this) {
-        principal => pb.SlotId.SLOT_ID_PRINCIPAL,
-        resource => pb.SlotId.SLOT_ID_RESOURCE,
-      };
+    principal => pb.SlotId.SLOT_ID_PRINCIPAL,
+    resource => pb.SlotId.SLOT_ID_RESOURCE,
+  };
 }

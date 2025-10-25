@@ -29,9 +29,7 @@ void main(List<String> args) async {
       await runProcess(
         'cargo',
         ['build', '--release'],
-        environment: {
-          'CARGO_TARGET_DIR': cargoOutput.toFilePath(),
-        },
+        environment: {'CARGO_TARGET_DIR': cargoOutput.toFilePath()},
         workingDirectory: input.packageRoot.resolve('src').toFilePath(),
       );
 
@@ -77,16 +75,16 @@ Future<void> runProcess(
       .transform(utf8.decoder)
       .transform(const LineSplitter())
       .listen((line) {
-    buildLogs.writeln('STDOUT: $line');
-    stderrBuffer.writeln(line);
-  });
+        buildLogs.writeln('STDOUT: $line');
+        stderrBuffer.writeln(line);
+      });
   final stderrSub = process.stderr
       .transform(utf8.decoder)
       .transform(const LineSplitter())
       .listen((line) {
-    buildLogs.writeln('STDERR: $line');
-    stderrBuffer.writeln(line);
-  });
+        buildLogs.writeln('STDERR: $line');
+        stderrBuffer.writeln(line);
+      });
   final (exitCode, _, _) = await (
     process.exitCode,
     stdoutSub.asFuture<void>(),

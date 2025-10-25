@@ -14,8 +14,8 @@ external CCedarPolicySetResult cedar_parse_policy_set(
 ///
 /// Returns the linked policy template in JSON format.
 @ffi.Native<
-    ffi.Pointer<ffi.Char> Function(
-        ffi.Pointer<ffi.Char>, ffi.Pointer<ffi.Char>)>(isLeaf: true)
+  ffi.Pointer<ffi.Char> Function(ffi.Pointer<ffi.Char>, ffi.Pointer<ffi.Char>)
+>(isLeaf: true)
 external ffi.Pointer<ffi.Char> cedar_link_policy_template(
   ffi.Pointer<ffi.Char> policy_template_json,
   ffi.Pointer<ffi.Char> entities_json,
@@ -25,24 +25,23 @@ external ffi.Pointer<ffi.Char> cedar_link_policy_template(
 ///
 /// This must be called exactly once before any other Cedar functions are called.
 @ffi.Native<CInitResult Function(ffi.Pointer<CCedarConfig>)>(isLeaf: true)
-external CInitResult cedar_init(
-  ffi.Pointer<CCedarConfig> config,
-);
+external CInitResult cedar_init(ffi.Pointer<CCedarConfig> config);
 
 /// De-initializes the Cedar policy engine.
 ///
 /// This must be called exactly once when the Cedar policy engine is no longer needed.
 @ffi.Native<ffi.Void Function(ffi.Pointer<CedarStore>)>(isLeaf: true)
-external void cedar_deinit(
-  ffi.Pointer<CedarStore> store,
-);
+external void cedar_deinit(ffi.Pointer<CedarStore> store);
 
 /// Performs a Cedar authorization check.
 ///
 /// This must be called after [cedar_init] has been called.
 @ffi.Native<
-    CAuthorizationDecision Function(
-        ffi.Pointer<CedarStore>, ffi.Pointer<CCedarQuery>)>(isLeaf: true)
+  CAuthorizationDecision Function(
+    ffi.Pointer<CedarStore>,
+    ffi.Pointer<CCedarQuery>,
+  )
+>(isLeaf: true)
 external CAuthorizationDecision cedar_is_authorized(
   ffi.Pointer<CedarStore> store,
   ffi.Pointer<CCedarQuery> query,

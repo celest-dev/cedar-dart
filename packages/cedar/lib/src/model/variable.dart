@@ -17,9 +17,9 @@ enum CedarVariable {
   }
 
   pb.Variable toProto() => switch (this) {
-        principal => pb.Variable.VARIABLE_PRINCIPAL,
-        action => pb.Variable.VARIABLE_ACTION,
-        resource => pb.Variable.VARIABLE_RESOURCE,
-        context => pb.Variable.VARIABLE_CONTEXT,
-      };
+    principal => pb.Variable.VARIABLE_PRINCIPAL,
+    action => pb.Variable.VARIABLE_ACTION,
+    resource => pb.Variable.VARIABLE_RESOURCE,
+    context => pb.Variable.VARIABLE_CONTEXT,
+  };
 }

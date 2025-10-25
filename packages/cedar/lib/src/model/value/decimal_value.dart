@@ -17,9 +17,8 @@ final class DecimalValue extends Value {
   Object? toJson() => value.toString();
 
   @override
-  pb.Value toProto() => pb.Value(
-        decimal: pb.DecimalValue(value: value.toString()),
-      );
+  pb.Value toProto() =>
+      pb.Value(decimal: pb.DecimalValue(value: value.toString()));
 
   @override
   bool operator ==(Object other) =>

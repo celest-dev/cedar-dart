@@ -13,13 +13,13 @@ extension type const EntityId(String _id) implements String {}
 final class EntityUid implements Component {
   const EntityUid(this.type, this.id);
   const EntityUid.of(String type, String id)
-      : type = type as EntityTypeName,
-        id = id as EntityId;
+    : type = type as EntityTypeName,
+      id = id as EntityId;
 
   factory EntityUid.fromJson(Map<String, Object?> json) {
     switch (json) {
       case {'type': final String type, 'id': final String id} ||
-            {'__entity': {'type': final String type, 'id': final String id}}:
+          {'__entity': {'type': final String type, 'id': final String id}}:
         return EntityUid(EntityTypeName(type), EntityId(id));
       default:
         throw FormatException('Invalid entity ID JSON: $json');
@@ -27,10 +27,7 @@ final class EntityUid implements Component {
   }
 
   factory EntityUid.fromProto(pb.EntityUid entityUid) {
-    return EntityUid(
-      EntityTypeName(entityUid.type),
-      EntityId(entityUid.id),
-    );
+    return EntityUid(EntityTypeName(entityUid.type), EntityId(entityUid.id));
   }
 
   factory EntityUid.parse(String uid) {
@@ -51,8 +48,8 @@ final class EntityUid implements Component {
   }
 
   const EntityUid.unknown()
-      : type = const EntityTypeName(''),
-        id = const EntityId('');
+    : type = const EntityTypeName(''),
+      id = const EntityId('');
 
   final EntityTypeName type;
   final EntityId id;
@@ -65,8 +62,8 @@ final class EntityUid implements Component {
   /// See Cedar [RFC 9](https://github.com/cedar-policy/rfcs/blob/main/text/0009-disallow-whitespace-in-entityuid.md)
   /// for more information.
   EntityUid get normalized => EntityUid(
-        type,
-        String.fromCharCodes(
+    type,
+    String.fromCharCodes(
           id.runes.expand((char) {
             return switch (char) {
               0 => '\\0'.codeUnits,
@@ -78,29 +75,23 @@ final class EntityUid implements Component {
               < 0x20 ||
               0x7f || // Delete
               0x96 || // Non-breaking space
-              > 0xffff =>
-                '\\u{${char.toRadixString(16)}}'.codeUnits,
+              > 0xffff => '\\u{${char.toRadixString(16)}}'.codeUnits,
               _ => [char],
             };
           }),
-        ) as EntityId,
-      );
+        )
+        as EntityId,
+  );
 
   @override
   Expr toExpr() => Expr.value(Value.entity(uid: this));
 
-  pb.EntityUid toProto() => pb.EntityUid(
-        type: type,
-        id: id,
-      );
+  pb.EntityUid toProto() => pb.EntityUid(type: type, id: id);
 
   @override
   String toString() => '$type::"$id"';
 
-  Map<String, Object?> toJson() => {
-        'type': type,
-        'id': id,
-      };
+  Map<String, Object?> toJson() => {'type': type, 'id': id};
 
   @override
   operator ==(Object other) =>

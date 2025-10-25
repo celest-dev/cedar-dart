@@ -9,17 +9,13 @@ const cedarVersion = '3.4';
 // TODO: Update to pull from https://github.com/cedar-policy/cedar-integration-tests/tree/main
 Future<void> main() async {
   final tempDir = await Directory.systemTemp.createTemp('cedar_');
-  final res = await Process.run(
-    'git',
-    [
-      'clone',
-      'https://github.com/cedar-policy/cedar',
-      '--single-branch',
-      '--branch=release/$cedarVersion.x',
-      '.',
-    ],
-    workingDirectory: tempDir.path,
-  );
+  final res = await Process.run('git', [
+    'clone',
+    'https://github.com/cedar-policy/cedar',
+    '--single-branch',
+    '--branch=release/$cedarVersion.x',
+    '.',
+  ], workingDirectory: tempDir.path);
   if (res.exitCode != 0) {
     throw ProcessException(
       'git',
@@ -28,10 +24,7 @@ Future<void> main() async {
       res.exitCode,
     );
   }
-  final testRoot = p.join(
-    tempDir.path,
-    'cedar-integration-tests',
-  );
+  final testRoot = p.join(tempDir.path, 'cedar-integration-tests');
   final outputFile = File.fromUri(
     Directory.current.uri.resolve('lib/src/corpus.json'),
   );
@@ -40,12 +33,12 @@ Future<void> main() async {
       .listSync()
       .cast<File>()
       .where((file) {
-    final name = p.basename(file.path);
-    return name.endsWith('.json') &&
-        !name.startsWith('schema_') &&
-        !name.startsWith('policies_') &&
-        !name.startsWith('entities_');
-  });
+        final name = p.basename(file.path);
+        return name.endsWith('.json') &&
+            !name.startsWith('schema_') &&
+            !name.startsWith('policies_') &&
+            !name.startsWith('entities_');
+      });
   const skipTests = {
     '57b7cfe0e1f8f9067164d7fb9f13e8b5da276ba5': 'Bad policy set',
     '38d1fcf284cdf4f1c53cb41c358b757918075cc0': 'Bad policy set',
@@ -72,23 +65,26 @@ Future<void> main() async {
         jsonDecode(testFile.readAsStringSync()) as Map<String, Object?>;
     switch (json) {
       case {
-          'schema': final String schemaPath,
-          'policies': final String policiesPath,
-          'should_validate': final bool shouldValidate,
-          'entities': final String entitiesPath,
-          'queries': final List<Object?> queries,
-        }:
+        'schema': final String schemaPath,
+        'policies': final String policiesPath,
+        'should_validate': final bool shouldValidate,
+        'entities': final String entitiesPath,
+        'queries': final List<Object?> queries,
+      }:
         final test = CedarTest(
           name: name,
-          schemaJson: jsonDecode(
-            File(p.join(testRoot, schemaPath)).readAsStringSync(),
-          ) as Map<String, Object?>,
-          policiesCedar:
-              File(p.join(testRoot, policiesPath)).readAsStringSync(),
+          schemaJson:
+              jsonDecode(File(p.join(testRoot, schemaPath)).readAsStringSync())
+                  as Map<String, Object?>,
+          policiesCedar: File(
+            p.join(testRoot, policiesPath),
+          ).readAsStringSync(),
           shouldValidate: shouldValidate,
-          entitiesJson: jsonDecode(
-            File(p.join(testRoot, entitiesPath)).readAsStringSync(),
-          ) as List<Object?>,
+          entitiesJson:
+              jsonDecode(
+                    File(p.join(testRoot, entitiesPath)).readAsStringSync(),
+                  )
+                  as List<Object?>,
           queries: queries
               .map(
                 (query) => CedarQuery.fromJson(query as Map<String, Object?>),
@@ -103,10 +99,12 @@ Future<void> main() async {
   await outputFile.writeAsString(
     jsonEncode(testData.map((k, v) => MapEntry(k, v.toJson()))),
   );
-  final result = await Process.run(
-    Platform.resolvedExecutable,
-    ['run', 'build_runner', 'build', '--delete-conflicting-outputs'],
-  );
+  final result = await Process.run(Platform.resolvedExecutable, [
+    'run',
+    'build_runner',
+    'build',
+    '--delete-conflicting-outputs',
+  ]);
   if (result.exitCode != 0) {
     throw ProcessException(
       'dart',

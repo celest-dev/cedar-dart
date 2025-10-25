@@ -31,9 +31,9 @@ enum Effect {
   String toJson() => name;
 
   pb.Effect toProto() => switch (this) {
-        permit => pb.Effect.EFFECT_PERMIT,
-        forbid => pb.Effect.EFFECT_FORBID,
-      };
+    permit => pb.Effect.EFFECT_PERMIT,
+    forbid => pb.Effect.EFFECT_FORBID,
+  };
 }
 
 enum ConditionKind {
@@ -55,9 +55,9 @@ enum ConditionKind {
   String toJson() => name;
 
   pb.ConditionKind toProto() => switch (this) {
-        ConditionKind.when => pb.ConditionKind.CONDITION_KIND_WHEN,
-        unless => pb.ConditionKind.CONDITION_KIND_UNLESS,
-      };
+    ConditionKind.when => pb.ConditionKind.CONDITION_KIND_WHEN,
+    unless => pb.ConditionKind.CONDITION_KIND_UNLESS,
+  };
 }
 
 final class Policy {
@@ -77,40 +77,47 @@ final class Policy {
       principal: PrincipalConstraint.fromJson(
         json['principal'] as Map<String, Object?>,
       ),
-      action: ActionConstraint.fromJson(
-        json['action'] as Map<String, Object?>,
-      ),
+      action: ActionConstraint.fromJson(json['action'] as Map<String, Object?>),
       resource: ResourceConstraint.fromJson(
         json['resource'] as Map<String, Object?>,
       ),
-      conditions: (json['conditions'] as List<Object?>)
-          .map((c) => Condition.fromJson(c as Map<String, Object?>))
-          .toList(),
-      annotations: json['annotations'] == null
-          ? null
-          : Annotations.fromJson(json['annotations'] as Map<String, Object?>),
-      position: json['position'] == null
-          ? null
-          : Position.fromJson(json['position'] as Map<String, Object?>),
+      conditions:
+          (json['conditions'] as List<Object?>)
+              .map((c) => Condition.fromJson(c as Map<String, Object?>))
+              .toList(),
+      annotations:
+          json['annotations'] == null
+              ? null
+              : Annotations.fromJson(
+                json['annotations'] as Map<String, Object?>,
+              ),
+      position:
+          json['position'] == null
+              ? null
+              : Position.fromJson(json['position'] as Map<String, Object?>),
     );
   }
 
   factory Policy.fromProto(pb.Policy proto) {
     return Policy(
       effect: Effect.fromProto(proto.effect),
-      principal: proto.hasPrincipal()
-          ? PrincipalConstraint.fromProto(proto.principal)
-          : const PrincipalAll(),
-      action: proto.hasAction()
-          ? ActionConstraint.fromProto(proto.action)
-          : const ActionAll(),
-      resource: proto.hasResource()
-          ? ResourceConstraint.fromProto(proto.resource)
-          : const ResourceAll(),
+      principal:
+          proto.hasPrincipal()
+              ? PrincipalConstraint.fromProto(proto.principal)
+              : const PrincipalAll(),
+      action:
+          proto.hasAction()
+              ? ActionConstraint.fromProto(proto.action)
+              : const ActionAll(),
+      resource:
+          proto.hasResource()
+              ? ResourceConstraint.fromProto(proto.resource)
+              : const ResourceAll(),
       conditions: proto.conditions.map(Condition.fromProto).toList(),
-      annotations: proto.hasAnnotations()
-          ? Annotations.fromProto(proto.annotations)
-          : null,
+      annotations:
+          proto.hasAnnotations()
+              ? Annotations.fromProto(proto.annotations)
+              : null,
       position: proto.hasPosition() ? Position.fromProto(proto.position) : null,
     );
   }
@@ -175,7 +182,8 @@ final class Policy {
 
   Policy annotate(String key, String value) {
     return rebuild(
-        (policy) => (policy.annotations ??= Annotations({}))[key] = value);
+      (policy) => (policy.annotations ??= Annotations({}))[key] = value,
+    );
   }
 
   Expr toExpr() {
@@ -200,15 +208,15 @@ final class Policy {
   }
 
   Map<String, Object?> toJson() => {
-        'effect': effect.toJson(),
-        'principal': principal.toJson(),
-        'action': action.toJson(),
-        'resource': resource.toJson(),
-        'conditions': conditions.map((c) => c.toJson()).toList(),
-        if (annotations case final annotations?)
-          'annotations': annotations.toJson(),
-        if (position case final position?) 'position': position.toJson(),
-      };
+    'effect': effect.toJson(),
+    'principal': principal.toJson(),
+    'action': action.toJson(),
+    'resource': resource.toJson(),
+    'conditions': conditions.map((c) => c.toJson()).toList(),
+    if (annotations case final annotations?)
+      'annotations': annotations.toJson(),
+    if (position case final position?) 'position': position.toJson(),
+  };
 
   pb.Policy toProto() {
     return pb.Policy(
@@ -230,21 +238,23 @@ final class Policy {
           principal == other.principal &&
           action == other.action &&
           resource == other.resource &&
-          const ListEquality<Condition>()
-              .equals(conditions, other.conditions) &&
+          const ListEquality<Condition>().equals(
+            conditions,
+            other.conditions,
+          ) &&
           annotations == other.annotations &&
           position == other.position;
 
   @override
   int get hashCode => Object.hashAll([
-        effect,
-        principal,
-        action,
-        resource,
-        ...conditions,
-        annotations,
-        position,
-      ]);
+    effect,
+    principal,
+    action,
+    resource,
+    ...conditions,
+    annotations,
+    position,
+  ]);
 
   @override
   String toString() {
@@ -267,19 +277,13 @@ final class PolicyBuilder {
 
   PolicyBuilder when(Expr expr) {
     conditions ??= [];
-    conditions!.add(Condition(
-      kind: ConditionKind.when,
-      body: expr,
-    ));
+    conditions!.add(Condition(kind: ConditionKind.when, body: expr));
     return this;
   }
 
   PolicyBuilder unless(Expr expr) {
     conditions ??= [];
-    conditions!.add(Condition(
-      kind: ConditionKind.unless,
-      body: expr,
-    ));
+    conditions!.add(Condition(kind: ConditionKind.unless, body: expr));
     return this;
   }
 
@@ -303,33 +307,28 @@ final class PolicyBuilder {
 }
 
 final class Condition {
-  const Condition({
-    required this.kind,
-    required this.body,
-  });
+  const Condition({required this.kind, required this.body});
 
   factory Condition.fromJson(Map<String, Object?> json) => Condition(
-        kind: ConditionKind.fromJson(json['kind'] as String),
-        body: Expr.fromJson(json['body'] as Map<String, Object?>),
-      );
+    kind: ConditionKind.fromJson(json['kind'] as String),
+    body: Expr.fromJson(json['body'] as Map<String, Object?>),
+  );
 
   factory Condition.fromProto(pb.Condition proto) => Condition(
-        kind: ConditionKind.fromProto(proto.kind),
-        body: Expr.fromProto(proto.body),
-      );
+    kind: ConditionKind.fromProto(proto.kind),
+    body: Expr.fromProto(proto.body),
+  );
 
   final ConditionKind kind;
   final Expr body;
 
   Map<String, Object?> toJson() => {
-        'kind': kind.toJson(),
-        'body': body.toJson(),
-      };
+    'kind': kind.toJson(),
+    'body': body.toJson(),
+  };
 
-  pb.Condition toProto() => pb.Condition(
-        kind: kind.toProto(),
-        body: body.toProto(),
-      );
+  pb.Condition toProto() =>
+      pb.Condition(kind: kind.toProto(), body: body.toProto());
 
   @override
   bool operator ==(Object other) =>

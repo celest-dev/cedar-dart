@@ -5,21 +5,10 @@ import 'package:meta/meta.dart';
 import 'package:source_span/source_span.dart';
 import 'package:string_scanner/string_scanner.dart';
 
-enum TokenType {
-  eof,
-  ident,
-  int,
-  string,
-  operator,
-  slot,
-  unknown;
-}
+enum TokenType { eof, ident, int, string, operator, slot, unknown }
 
 final class Token {
-  const Token({
-    required this.type,
-    required this.span,
-  });
+  const Token({required this.type, required this.span});
 
   final TokenType type;
   final SourceSpan span;
@@ -32,8 +21,9 @@ final class Token {
   bool get isSlot => type == TokenType.slot;
 
   String get stringValue {
-    final value =
-        text.replaceAll(RegExp(r'^"'), '').replaceAll(RegExp(r'"$'), '');
+    final value = text
+        .replaceAll(RegExp(r'^"'), '')
+        .replaceAll(RegExp(r'"$'), '');
     return value.unquoted(star: false);
   }
 
@@ -68,10 +58,8 @@ final class Token {
 }
 
 final class Tokenizer {
-  Tokenizer(
-    String source, {
-    Uri? sourceUrl,
-  }) : _scanner = _SpanScanner(SpanScanner(source, sourceUrl: sourceUrl));
+  Tokenizer(String source, {Uri? sourceUrl})
+    : _scanner = _SpanScanner(SpanScanner(source, sourceUrl: sourceUrl));
 
   final _SpanScanner _scanner;
 
@@ -116,10 +104,7 @@ final class Tokenizer {
       }
       type = TokenType.unknown;
     }
-    return Token(
-      type: type,
-      span: _scanner.spanFrom(startState),
-    );
+    return Token(type: type, span: _scanner.spanFrom(startState));
   }
 }
 
@@ -138,10 +123,14 @@ extension type _SpanScanner(SpanScanner s) implements SpanScanner {
   static final RegExp _hexEscape = RegExp(r'\\x([0-9a-fA-F]{2,})');
   static final RegExp _unicodeEscape = RegExp(r'\\u\{([0-9a-fA-F]{1,6})\}');
   static final RegExp _singleLineComment = RegExp(r'\/\/.*', multiLine: false);
-  static final RegExp _multiLineComment =
-      RegExp(r'\/\*.*\*\/', multiLine: true, dotAll: true);
-  static final RegExp _operator =
-      RegExp(r'[@\.,;\(\)\{\}\[\]\+\-*]|::?|<=?|>=?|==|!=?|\|\||&&');
+  static final RegExp _multiLineComment = RegExp(
+    r'\/\*.*\*\/',
+    multiLine: true,
+    dotAll: true,
+  );
+  static final RegExp _operator = RegExp(
+    r'[@\.,;\(\)\{\}\[\]\+\-*]|::?|<=?|>=?|==|!=?|\|\||&&',
+  );
   static final _commentStart = RegExp(r'\/(\/|\*)');
 
   bool matchesComment() => s.matches(_commentStart);

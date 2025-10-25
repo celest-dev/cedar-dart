@@ -13,36 +13,36 @@ import 'package:meta/meta.dart';
 
 sealed class Op {
   factory Op.fromJson(String json) => switch (json) {
-        'Value' => OpBuiltin.value,
-        'Var' => OpBuiltin.variable,
-        'Slot' => OpBuiltin.slot,
-        'Unknown' => OpBuiltin.unknown,
-        '!' => OpBuiltin.not,
-        'neg' => OpBuiltin.negate,
-        '==' => OpBuiltin.equals,
-        '!=' => OpBuiltin.notEquals,
-        'in' => OpBuiltin.in_,
-        '<' => OpBuiltin.lessThan,
-        '<=' => OpBuiltin.lessThanOrEquals,
-        '>' => OpBuiltin.greaterThan,
-        '>=' => OpBuiltin.greaterThanOrEquals,
-        '&&' => OpBuiltin.and,
-        '||' => OpBuiltin.or,
-        '+' => OpBuiltin.add,
-        '-' => OpBuiltin.subtract,
-        '*' => OpBuiltin.multiply,
-        'contains' => OpBuiltin.contains,
-        'containsAll' => OpBuiltin.containsAll,
-        'containsAny' => OpBuiltin.containsAny,
-        '.' => OpBuiltin.getAttribute,
-        'has' => OpBuiltin.hasAttribute,
-        'like' => OpBuiltin.like,
-        'is' => OpBuiltin.is_,
-        'if-then-else' => OpBuiltin.ifThenElse,
-        'Set' => OpBuiltin.set,
-        'Record' => OpBuiltin.record,
-        _ => OpExtension(json),
-      };
+    'Value' => OpBuiltin.value,
+    'Var' => OpBuiltin.variable,
+    'Slot' => OpBuiltin.slot,
+    'Unknown' => OpBuiltin.unknown,
+    '!' => OpBuiltin.not,
+    'neg' => OpBuiltin.negate,
+    '==' => OpBuiltin.equals,
+    '!=' => OpBuiltin.notEquals,
+    'in' => OpBuiltin.in_,
+    '<' => OpBuiltin.lessThan,
+    '<=' => OpBuiltin.lessThanOrEquals,
+    '>' => OpBuiltin.greaterThan,
+    '>=' => OpBuiltin.greaterThanOrEquals,
+    '&&' => OpBuiltin.and,
+    '||' => OpBuiltin.or,
+    '+' => OpBuiltin.add,
+    '-' => OpBuiltin.subtract,
+    '*' => OpBuiltin.multiply,
+    'contains' => OpBuiltin.contains,
+    'containsAll' => OpBuiltin.containsAll,
+    'containsAny' => OpBuiltin.containsAny,
+    '.' => OpBuiltin.getAttribute,
+    'has' => OpBuiltin.hasAttribute,
+    'like' => OpBuiltin.like,
+    'is' => OpBuiltin.is_,
+    'if-then-else' => OpBuiltin.ifThenElse,
+    'Set' => OpBuiltin.set,
+    'Record' => OpBuiltin.record,
+    _ => OpExtension(json),
+  };
 
   String toJson();
 }
@@ -95,35 +95,35 @@ enum OpBuiltin implements Op {
 
   @override
   String toJson() => switch (this) {
-        value => 'Value',
-        variable => 'Var',
-        slot => 'Slot',
-        unknown => 'Unknown',
-        not => '!',
-        negate => 'neg',
-        equals => '==',
-        notEquals => '!=',
-        in_ => 'in',
-        lessThan => '<',
-        lessThanOrEquals => '<=',
-        greaterThan => '>',
-        greaterThanOrEquals => '>=',
-        and => '&&',
-        or => '||',
-        add => '+',
-        subtract => '-',
-        multiply => '*',
-        contains => 'contains',
-        containsAll => 'containsAll',
-        containsAny => 'containsAny',
-        getAttribute => '.',
-        hasAttribute => 'has',
-        like => 'like',
-        is_ => 'is',
-        ifThenElse => 'if-then-else',
-        set => 'Set',
-        record => 'Record',
-      };
+    value => 'Value',
+    variable => 'Var',
+    slot => 'Slot',
+    unknown => 'Unknown',
+    not => '!',
+    negate => 'neg',
+    equals => '==',
+    notEquals => '!=',
+    in_ => 'in',
+    lessThan => '<',
+    lessThanOrEquals => '<=',
+    greaterThan => '>',
+    greaterThanOrEquals => '>=',
+    and => '&&',
+    or => '||',
+    add => '+',
+    subtract => '-',
+    multiply => '*',
+    contains => 'contains',
+    containsAll => 'containsAll',
+    containsAny => 'containsAny',
+    getAttribute => '.',
+    hasAttribute => 'has',
+    like => 'like',
+    is_ => 'is',
+    ifThenElse => 'if-then-else',
+    set => 'Set',
+    record => 'Record',
+  };
 }
 
 sealed class Expr {
@@ -143,44 +143,56 @@ sealed class Expr {
       OpBuiltin.not => ExprNot.fromJson(value as Map<String, Object?>),
       OpBuiltin.negate => ExprNegate.fromJson(value as Map<String, Object?>),
       OpBuiltin.equals => ExprEquals.fromJson(value as Map<String, Object?>),
-      OpBuiltin.notEquals =>
-        ExprNotEquals.fromJson(value as Map<String, Object?>),
+      OpBuiltin.notEquals => ExprNotEquals.fromJson(
+        value as Map<String, Object?>,
+      ),
       OpBuiltin.in_ => ExprIn.fromJson(value as Map<String, Object?>),
-      OpBuiltin.lessThan =>
-        ExprLessThan.fromJson(value as Map<String, Object?>),
-      OpBuiltin.lessThanOrEquals =>
-        ExprLessThanOrEquals.fromJson(value as Map<String, Object?>),
-      OpBuiltin.greaterThan =>
-        ExprGreaterThan.fromJson(value as Map<String, Object?>),
-      OpBuiltin.greaterThanOrEquals =>
-        ExprGreaterThanOrEquals.fromJson(value as Map<String, Object?>),
+      OpBuiltin.lessThan => ExprLessThan.fromJson(
+        value as Map<String, Object?>,
+      ),
+      OpBuiltin.lessThanOrEquals => ExprLessThanOrEquals.fromJson(
+        value as Map<String, Object?>,
+      ),
+      OpBuiltin.greaterThan => ExprGreaterThan.fromJson(
+        value as Map<String, Object?>,
+      ),
+      OpBuiltin.greaterThanOrEquals => ExprGreaterThanOrEquals.fromJson(
+        value as Map<String, Object?>,
+      ),
       OpBuiltin.and => ExprAnd.fromJson(value as Map<String, Object?>),
       OpBuiltin.or => ExprOr.fromJson(value as Map<String, Object?>),
       OpBuiltin.add => ExprAdd.fromJson(value as Map<String, Object?>),
       OpBuiltin.subtract => ExprSubt.fromJson(value as Map<String, Object?>),
       OpBuiltin.multiply => ExprMult.fromJson(value as Map<String, Object?>),
-      OpBuiltin.contains =>
-        ExprContains.fromJson(value as Map<String, Object?>),
-      OpBuiltin.containsAll =>
-        ExprContainsAll.fromJson(value as Map<String, Object?>),
-      OpBuiltin.containsAny =>
-        ExprContainsAny.fromJson(value as Map<String, Object?>),
-      OpBuiltin.getAttribute =>
-        ExprGetAttribute.fromJson(value as Map<String, Object?>),
-      OpBuiltin.hasAttribute =>
-        ExprHasAttribute.fromJson(value as Map<String, Object?>),
+      OpBuiltin.contains => ExprContains.fromJson(
+        value as Map<String, Object?>,
+      ),
+      OpBuiltin.containsAll => ExprContainsAll.fromJson(
+        value as Map<String, Object?>,
+      ),
+      OpBuiltin.containsAny => ExprContainsAny.fromJson(
+        value as Map<String, Object?>,
+      ),
+      OpBuiltin.getAttribute => ExprGetAttribute.fromJson(
+        value as Map<String, Object?>,
+      ),
+      OpBuiltin.hasAttribute => ExprHasAttribute.fromJson(
+        value as Map<String, Object?>,
+      ),
       OpBuiltin.like => ExprLike.fromJson(value as Map<String, Object?>),
       OpBuiltin.is_ => ExprIs.fromJson(value as Map<String, Object?>),
-      OpBuiltin.ifThenElse =>
-        ExprIfThenElse.fromJson(value as Map<String, Object?>),
+      OpBuiltin.ifThenElse => ExprIfThenElse.fromJson(
+        value as Map<String, Object?>,
+      ),
       OpBuiltin.set => ExprSet.fromJson(value as List<Object?>),
       OpBuiltin.record => ExprRecord.fromJson(value as Map<String, Object?>),
       final OpExtension op => ExprExtensionCall(
-          fn: op.name,
-          args: (value as List<Object?>)
-              .map((el) => Expr.fromJson(el as Map<String, Object?>))
-              .toList(),
-        ),
+        fn: op.name,
+        args:
+            (value as List<Object?>)
+                .map((el) => Expr.fromJson(el as Map<String, Object?>))
+                .toList(),
+      ),
     };
   }
 
@@ -196,11 +208,13 @@ sealed class Expr {
       pb.Expr_Expr.notEquals => ExprNotEquals.fromProto(proto.notEquals),
       pb.Expr_Expr.in_ => ExprIn.fromProto(proto.in_),
       pb.Expr_Expr.lessThan => ExprLessThan.fromProto(proto.lessThan),
-      pb.Expr_Expr.lessThanOrEquals =>
-        ExprLessThanOrEquals.fromProto(proto.lessThanOrEquals),
+      pb.Expr_Expr.lessThanOrEquals => ExprLessThanOrEquals.fromProto(
+        proto.lessThanOrEquals,
+      ),
       pb.Expr_Expr.greaterThan => ExprGreaterThan.fromProto(proto.greaterThan),
-      pb.Expr_Expr.greaterThanOrEquals =>
-        ExprGreaterThanOrEquals.fromProto(proto.greaterThanOrEquals),
+      pb.Expr_Expr.greaterThanOrEquals => ExprGreaterThanOrEquals.fromProto(
+        proto.greaterThanOrEquals,
+      ),
       pb.Expr_Expr.and => ExprAnd.fromProto(proto.and),
       pb.Expr_Expr.or => ExprOr.fromProto(proto.or),
       pb.Expr_Expr.add => ExprAdd.fromProto(proto.add),
@@ -209,17 +223,20 @@ sealed class Expr {
       pb.Expr_Expr.contains => ExprContains.fromProto(proto.contains),
       pb.Expr_Expr.containsAll => ExprContainsAll.fromProto(proto.containsAll),
       pb.Expr_Expr.containsAny => ExprContainsAny.fromProto(proto.containsAny),
-      pb.Expr_Expr.getAttribute =>
-        ExprGetAttribute.fromProto(proto.getAttribute),
-      pb.Expr_Expr.hasAttribute =>
-        ExprHasAttribute.fromProto(proto.hasAttribute),
+      pb.Expr_Expr.getAttribute => ExprGetAttribute.fromProto(
+        proto.getAttribute,
+      ),
+      pb.Expr_Expr.hasAttribute => ExprHasAttribute.fromProto(
+        proto.hasAttribute,
+      ),
       pb.Expr_Expr.like => ExprLike.fromProto(proto.like),
       pb.Expr_Expr.is_ => ExprIs.fromProto(proto.is_),
       pb.Expr_Expr.ifThenElse => ExprIfThenElse.fromProto(proto.ifThenElse),
       pb.Expr_Expr.set => ExprSet.fromProto(proto.set),
       pb.Expr_Expr.record => ExprRecord.fromProto(proto.record),
-      pb.Expr_Expr.extensionCall =>
-        ExprExtensionCall.fromProto(proto.extensionCall),
+      pb.Expr_Expr.extensionCall => ExprExtensionCall.fromProto(
+        proto.extensionCall,
+      ),
       final unknown =>
         throw UnimplementedError('Unknown expression type: $unknown'),
     };
@@ -237,95 +254,59 @@ sealed class Expr {
 
   const factory Expr.negate(Expr arg) = ExprNegate;
 
-  const factory Expr.equals({
-    required Expr left,
-    required Expr right,
-  }) = ExprEquals;
+  const factory Expr.equals({required Expr left, required Expr right}) =
+      ExprEquals;
 
-  const factory Expr.notEquals({
-    required Expr left,
-    required Expr right,
-  }) = ExprNotEquals;
+  const factory Expr.notEquals({required Expr left, required Expr right}) =
+      ExprNotEquals;
 
-  const factory Expr.in_({
-    required Expr left,
-    required Expr right,
-  }) = ExprIn;
+  const factory Expr.in_({required Expr left, required Expr right}) = ExprIn;
 
-  const factory Expr.lessThan({
-    required Expr left,
-    required Expr right,
-  }) = ExprLessThan;
+  const factory Expr.lessThan({required Expr left, required Expr right}) =
+      ExprLessThan;
 
   const factory Expr.lessThanOrEquals({
     required Expr left,
     required Expr right,
   }) = ExprLessThanOrEquals;
 
-  const factory Expr.greaterThan({
-    required Expr left,
-    required Expr right,
-  }) = ExprGreaterThan;
+  const factory Expr.greaterThan({required Expr left, required Expr right}) =
+      ExprGreaterThan;
 
   const factory Expr.greaterThanOrEquals({
     required Expr left,
     required Expr right,
   }) = ExprGreaterThanOrEquals;
 
-  const factory Expr.and({
-    required Expr left,
-    required Expr right,
-  }) = ExprAnd;
+  const factory Expr.and({required Expr left, required Expr right}) = ExprAnd;
 
-  const factory Expr.or({
-    required Expr left,
-    required Expr right,
-  }) = ExprOr;
+  const factory Expr.or({required Expr left, required Expr right}) = ExprOr;
 
-  const factory Expr.add({
-    required Expr left,
-    required Expr right,
-  }) = ExprAdd;
+  const factory Expr.add({required Expr left, required Expr right}) = ExprAdd;
 
-  const factory Expr.subtract({
-    required Expr left,
-    required Expr right,
-  }) = ExprSubt;
+  const factory Expr.subtract({required Expr left, required Expr right}) =
+      ExprSubt;
 
-  const factory Expr.multiply({
-    required Expr left,
-    required Expr right,
-  }) = ExprMult;
+  const factory Expr.multiply({required Expr left, required Expr right}) =
+      ExprMult;
 
-  const factory Expr.contains({
-    required Expr left,
-    required Expr right,
-  }) = ExprContains;
+  const factory Expr.contains({required Expr left, required Expr right}) =
+      ExprContains;
 
-  const factory Expr.containsAll({
-    required Expr left,
-    required Expr right,
-  }) = ExprContainsAll;
+  const factory Expr.containsAll({required Expr left, required Expr right}) =
+      ExprContainsAll;
 
-  const factory Expr.containsAny({
-    required Expr left,
-    required Expr right,
-  }) = ExprContainsAny;
+  const factory Expr.containsAny({required Expr left, required Expr right}) =
+      ExprContainsAny;
 
-  const factory Expr.getAttribute({
-    required Expr left,
-    required String attr,
-  }) = ExprGetAttribute;
+  const factory Expr.getAttribute({required Expr left, required String attr}) =
+      ExprGetAttribute;
 
-  const factory Expr.hasAttribute({
-    required Expr left,
-    required String attr,
-  }) = ExprHasAttribute;
+  const factory Expr.hasAttribute({required Expr left, required String attr}) =
+      ExprHasAttribute;
 
-  const factory Expr.like({
-    required Expr left,
-    required CedarPattern pattern,
-  }) = ExprLike;
+  const factory Expr.like({required Expr left, required CedarPattern pattern}) =
+      ExprLike;
 
   const factory Expr.is_({
     required Expr left,
@@ -362,19 +343,14 @@ sealed class Expr {
   R acceptWithArg<R, A>(ExprVisitorWithArg<R, A> visitor, A arg);
 
   @nonVirtual
-  Map<String, Object?> toJson() => {
-        op.toJson(): valueToJson(),
-      };
+  Map<String, Object?> toJson() => {op.toJson(): valueToJson()};
 
   @override
   String toString() => prettyJson(toJson());
 }
 
 final class ExprExtensionCall extends Expr {
-  const ExprExtensionCall({
-    required this.fn,
-    required this.args,
-  });
+  const ExprExtensionCall({required this.fn, required this.args});
 
   factory ExprExtensionCall.fromProto(pb.ExprExtensionCall proto) {
     return ExprExtensionCall(
@@ -402,11 +378,11 @@ final class ExprExtensionCall extends Expr {
 
   @override
   pb.Expr toProto() => pb.Expr(
-        extensionCall: pb.ExprExtensionCall(
-          fn: fn,
-          args: args.map((arg) => arg.toProto()).toList(),
-        ),
-      );
+    extensionCall: pb.ExprExtensionCall(
+      fn: fn,
+      args: args.map((arg) => arg.toProto()).toList(),
+    ),
+  );
 
   @override
   bool operator ==(Object other) =>
@@ -489,11 +465,8 @@ final class ExprVariable extends Expr {
   String valueToJson() => variable.name;
 
   @override
-  pb.Expr toProto() => pb.Expr(
-        variable: pb.ExprVariable(
-          variable: variable.toProto(),
-        ),
-      );
+  pb.Expr toProto() =>
+      pb.Expr(variable: pb.ExprVariable(variable: variable.toProto()));
 
   @override
   bool operator ==(Object other) =>
@@ -534,11 +507,7 @@ final class ExprSlot extends Expr {
   String valueToJson() => slotId.toJson();
 
   @override
-  pb.Expr toProto() => pb.Expr(
-        slot: pb.ExprSlot(
-          slotId: slotId.toProto(),
-        ),
-      );
+  pb.Expr toProto() => pb.Expr(slot: pb.ExprSlot(slotId: slotId.toProto()));
 
   @override
   bool operator ==(Object other) =>
@@ -575,16 +544,10 @@ final class ExprUnknown extends Expr {
       visitor.visitUnknown(this, arg);
 
   @override
-  Map<String, Object?> valueToJson() => {
-        'name': name,
-      };
+  Map<String, Object?> valueToJson() => {'name': name};
 
   @override
-  pb.Expr toProto() => pb.Expr(
-        unknown: pb.ExprUnknown(
-          name: name,
-        ),
-      );
+  pb.Expr toProto() => pb.Expr(unknown: pb.ExprUnknown(name: name));
 
   @override
   bool operator ==(Object other) =>
@@ -601,9 +564,7 @@ final class ExprNot extends Expr {
   const ExprNot(this.arg);
 
   factory ExprNot.fromJson(Map<String, Object?> json) {
-    return ExprNot(
-      Expr.fromJson(json['arg'] as Map<String, Object?>),
-    );
+    return ExprNot(Expr.fromJson(json['arg'] as Map<String, Object?>));
   }
 
   factory ExprNot.fromProto(pb.ExprNot proto) {
@@ -623,16 +584,10 @@ final class ExprNot extends Expr {
       visitor.visitNot(this, arg);
 
   @override
-  Map<String, Object?> valueToJson() => {
-        'arg': arg.toJson(),
-      };
+  Map<String, Object?> valueToJson() => {'arg': arg.toJson()};
 
   @override
-  pb.Expr toProto() => pb.Expr(
-        not: pb.ExprNot(
-          arg: arg.toProto(),
-        ),
-      );
+  pb.Expr toProto() => pb.Expr(not: pb.ExprNot(arg: arg.toProto()));
 
   @override
   bool operator ==(Object other) =>
@@ -649,9 +604,7 @@ final class ExprNegate extends Expr {
   const ExprNegate(this.arg);
 
   factory ExprNegate.fromJson(Map<String, Object?> json) {
-    return ExprNegate(
-      Expr.fromJson(json['arg'] as Map<String, Object?>),
-    );
+    return ExprNegate(Expr.fromJson(json['arg'] as Map<String, Object?>));
   }
 
   factory ExprNegate.fromProto(pb.ExprNegate proto) {
@@ -671,16 +624,10 @@ final class ExprNegate extends Expr {
       visitor.visitNegate(this, arg);
 
   @override
-  Map<String, Object?> valueToJson() => {
-        'arg': arg.toJson(),
-      };
+  Map<String, Object?> valueToJson() => {'arg': arg.toJson()};
 
   @override
-  pb.Expr toProto() => pb.Expr(
-        negate: pb.ExprNegate(
-          arg: arg.toProto(),
-        ),
-      );
+  pb.Expr toProto() => pb.Expr(negate: pb.ExprNegate(arg: arg.toProto()));
 
   @override
   bool operator ==(Object other) =>
@@ -694,10 +641,7 @@ final class ExprNegate extends Expr {
 }
 
 sealed class CedarBinaryExpr extends Expr {
-  const CedarBinaryExpr({
-    required this.left,
-    required this.right,
-  });
+  const CedarBinaryExpr({required this.left, required this.right});
 
   final Expr left;
   final Expr right;
@@ -705,9 +649,9 @@ sealed class CedarBinaryExpr extends Expr {
   @nonVirtual
   @override
   Map<String, Object?> valueToJson() => {
-        'left': left.toJson(),
-        'right': right.toJson(),
-      };
+    'left': left.toJson(),
+    'right': right.toJson(),
+  };
 
   @override
   bool operator ==(Object other) =>
@@ -722,10 +666,7 @@ sealed class CedarBinaryExpr extends Expr {
 }
 
 final class ExprEquals extends CedarBinaryExpr {
-  const ExprEquals({
-    required super.left,
-    required super.right,
-  });
+  const ExprEquals({required super.left, required super.right});
 
   factory ExprEquals.fromJson(Map<String, Object?> json) {
     return ExprEquals(
@@ -746,11 +687,8 @@ final class ExprEquals extends CedarBinaryExpr {
 
   @override
   pb.Expr toProto() => pb.Expr(
-        equals: pb.ExprEquals(
-          left: left.toProto(),
-          right: right.toProto(),
-        ),
-      );
+    equals: pb.ExprEquals(left: left.toProto(), right: right.toProto()),
+  );
 
   @override
   R accept<R>(ExprVisitor<R> visitor) => visitor.visitEquals(this);
@@ -764,10 +702,7 @@ final class ExprEquals extends CedarBinaryExpr {
 }
 
 final class ExprNotEquals extends CedarBinaryExpr {
-  const ExprNotEquals({
-    required super.left,
-    required super.right,
-  });
+  const ExprNotEquals({required super.left, required super.right});
 
   factory ExprNotEquals.fromJson(Map<String, Object?> json) {
     return ExprNotEquals(
@@ -788,11 +723,8 @@ final class ExprNotEquals extends CedarBinaryExpr {
 
   @override
   pb.Expr toProto() => pb.Expr(
-        notEquals: pb.ExprNotEquals(
-          left: left.toProto(),
-          right: right.toProto(),
-        ),
-      );
+    notEquals: pb.ExprNotEquals(left: left.toProto(), right: right.toProto()),
+  );
 
   @override
   R accept<R>(ExprVisitor<R> visitor) => visitor.visitNotEquals(this);
@@ -806,10 +738,7 @@ final class ExprNotEquals extends CedarBinaryExpr {
 }
 
 final class ExprIn extends CedarBinaryExpr {
-  const ExprIn({
-    required super.left,
-    required super.right,
-  });
+  const ExprIn({required super.left, required super.right});
 
   factory ExprIn.fromJson(Map<String, Object?> json) {
     return ExprIn(
@@ -829,12 +758,8 @@ final class ExprIn extends CedarBinaryExpr {
   OpBuiltin get op => OpBuiltin.in_;
 
   @override
-  pb.Expr toProto() => pb.Expr(
-        in_: pb.ExprIn(
-          left: left.toProto(),
-          right: right.toProto(),
-        ),
-      );
+  pb.Expr toProto() =>
+      pb.Expr(in_: pb.ExprIn(left: left.toProto(), right: right.toProto()));
 
   @override
   R accept<R>(ExprVisitor<R> visitor) => visitor.visitIn(this);
@@ -848,10 +773,7 @@ final class ExprIn extends CedarBinaryExpr {
 }
 
 final class ExprLessThan extends CedarBinaryExpr {
-  const ExprLessThan({
-    required super.left,
-    required super.right,
-  });
+  const ExprLessThan({required super.left, required super.right});
 
   factory ExprLessThan.fromJson(Map<String, Object?> json) {
     return ExprLessThan(
@@ -872,11 +794,8 @@ final class ExprLessThan extends CedarBinaryExpr {
 
   @override
   pb.Expr toProto() => pb.Expr(
-        lessThan: pb.ExprLessThan(
-          left: left.toProto(),
-          right: right.toProto(),
-        ),
-      );
+    lessThan: pb.ExprLessThan(left: left.toProto(), right: right.toProto()),
+  );
 
   @override
   R accept<R>(ExprVisitor<R> visitor) => visitor.visitLessThan(this);
@@ -890,10 +809,7 @@ final class ExprLessThan extends CedarBinaryExpr {
 }
 
 final class ExprLessThanOrEquals extends CedarBinaryExpr {
-  const ExprLessThanOrEquals({
-    required super.left,
-    required super.right,
-  });
+  const ExprLessThanOrEquals({required super.left, required super.right});
 
   factory ExprLessThanOrEquals.fromJson(Map<String, Object?> json) {
     return ExprLessThanOrEquals(
@@ -914,11 +830,11 @@ final class ExprLessThanOrEquals extends CedarBinaryExpr {
 
   @override
   pb.Expr toProto() => pb.Expr(
-        lessThanOrEquals: pb.ExprLessThanOrEquals(
-          left: left.toProto(),
-          right: right.toProto(),
-        ),
-      );
+    lessThanOrEquals: pb.ExprLessThanOrEquals(
+      left: left.toProto(),
+      right: right.toProto(),
+    ),
+  );
 
   @override
   R accept<R>(ExprVisitor<R> visitor) => visitor.visitLessThanOrEquals(this);
@@ -932,10 +848,7 @@ final class ExprLessThanOrEquals extends CedarBinaryExpr {
 }
 
 final class ExprGreaterThan extends CedarBinaryExpr {
-  const ExprGreaterThan({
-    required super.left,
-    required super.right,
-  });
+  const ExprGreaterThan({required super.left, required super.right});
 
   factory ExprGreaterThan.fromJson(Map<String, Object?> json) {
     return ExprGreaterThan(
@@ -956,11 +869,11 @@ final class ExprGreaterThan extends CedarBinaryExpr {
 
   @override
   pb.Expr toProto() => pb.Expr(
-        greaterThan: pb.ExprGreaterThan(
-          left: left.toProto(),
-          right: right.toProto(),
-        ),
-      );
+    greaterThan: pb.ExprGreaterThan(
+      left: left.toProto(),
+      right: right.toProto(),
+    ),
+  );
 
   @override
   R accept<R>(ExprVisitor<R> visitor) => visitor.visitGreaterThan(this);
@@ -974,10 +887,7 @@ final class ExprGreaterThan extends CedarBinaryExpr {
 }
 
 final class ExprGreaterThanOrEquals extends CedarBinaryExpr {
-  const ExprGreaterThanOrEquals({
-    required super.left,
-    required super.right,
-  });
+  const ExprGreaterThanOrEquals({required super.left, required super.right});
 
   factory ExprGreaterThanOrEquals.fromJson(Map<String, Object?> json) {
     return ExprGreaterThanOrEquals(
@@ -998,11 +908,11 @@ final class ExprGreaterThanOrEquals extends CedarBinaryExpr {
 
   @override
   pb.Expr toProto() => pb.Expr(
-        greaterThanOrEquals: pb.ExprGreaterThanOrEquals(
-          left: left.toProto(),
-          right: right.toProto(),
-        ),
-      );
+    greaterThanOrEquals: pb.ExprGreaterThanOrEquals(
+      left: left.toProto(),
+      right: right.toProto(),
+    ),
+  );
 
   @override
   R accept<R>(ExprVisitor<R> visitor) => visitor.visitGreaterThanOrEquals(this);
@@ -1016,10 +926,7 @@ final class ExprGreaterThanOrEquals extends CedarBinaryExpr {
 }
 
 final class ExprAnd extends CedarBinaryExpr {
-  const ExprAnd({
-    required super.left,
-    required super.right,
-  });
+  const ExprAnd({required super.left, required super.right});
 
   factory ExprAnd.fromJson(Map<String, Object?> json) {
     return ExprAnd(
@@ -1039,12 +946,8 @@ final class ExprAnd extends CedarBinaryExpr {
   OpBuiltin get op => OpBuiltin.and;
 
   @override
-  pb.Expr toProto() => pb.Expr(
-        and: pb.ExprAnd(
-          left: left.toProto(),
-          right: right.toProto(),
-        ),
-      );
+  pb.Expr toProto() =>
+      pb.Expr(and: pb.ExprAnd(left: left.toProto(), right: right.toProto()));
 
   @override
   R accept<R>(ExprVisitor<R> visitor) => visitor.visitAnd(this);
@@ -1058,10 +961,7 @@ final class ExprAnd extends CedarBinaryExpr {
 }
 
 final class ExprOr extends CedarBinaryExpr {
-  const ExprOr({
-    required super.left,
-    required super.right,
-  });
+  const ExprOr({required super.left, required super.right});
 
   factory ExprOr.fromJson(Map<String, Object?> json) {
     return ExprOr(
@@ -1081,12 +981,8 @@ final class ExprOr extends CedarBinaryExpr {
   OpBuiltin get op => OpBuiltin.or;
 
   @override
-  pb.Expr toProto() => pb.Expr(
-        or: pb.ExprOr(
-          left: left.toProto(),
-          right: right.toProto(),
-        ),
-      );
+  pb.Expr toProto() =>
+      pb.Expr(or: pb.ExprOr(left: left.toProto(), right: right.toProto()));
 
   @override
   R accept<R>(ExprVisitor<R> visitor) => visitor.visitOr(this);
@@ -1100,10 +996,7 @@ final class ExprOr extends CedarBinaryExpr {
 }
 
 final class ExprAdd extends CedarBinaryExpr {
-  const ExprAdd({
-    required super.left,
-    required super.right,
-  });
+  const ExprAdd({required super.left, required super.right});
 
   factory ExprAdd.fromJson(Map<String, Object?> json) {
     return ExprAdd(
@@ -1123,12 +1016,8 @@ final class ExprAdd extends CedarBinaryExpr {
   OpBuiltin get op => OpBuiltin.add;
 
   @override
-  pb.Expr toProto() => pb.Expr(
-        add: pb.ExprAdd(
-          left: left.toProto(),
-          right: right.toProto(),
-        ),
-      );
+  pb.Expr toProto() =>
+      pb.Expr(add: pb.ExprAdd(left: left.toProto(), right: right.toProto()));
 
   @override
   R accept<R>(ExprVisitor<R> visitor) => visitor.visitAdd(this);
@@ -1142,10 +1031,7 @@ final class ExprAdd extends CedarBinaryExpr {
 }
 
 final class ExprSubt extends CedarBinaryExpr {
-  const ExprSubt({
-    required super.left,
-    required super.right,
-  });
+  const ExprSubt({required super.left, required super.right});
 
   factory ExprSubt.fromJson(Map<String, Object?> json) {
     return ExprSubt(
@@ -1166,11 +1052,8 @@ final class ExprSubt extends CedarBinaryExpr {
 
   @override
   pb.Expr toProto() => pb.Expr(
-        subtract: pb.ExprSubt(
-          left: left.toProto(),
-          right: right.toProto(),
-        ),
-      );
+    subtract: pb.ExprSubt(left: left.toProto(), right: right.toProto()),
+  );
 
   @override
   R accept<R>(ExprVisitor<R> visitor) => visitor.visitSubt(this);
@@ -1184,10 +1067,7 @@ final class ExprSubt extends CedarBinaryExpr {
 }
 
 final class ExprMult extends CedarBinaryExpr {
-  const ExprMult({
-    required super.left,
-    required super.right,
-  });
+  const ExprMult({required super.left, required super.right});
 
   factory ExprMult.fromJson(Map<String, Object?> json) {
     return ExprMult(
@@ -1208,11 +1088,8 @@ final class ExprMult extends CedarBinaryExpr {
 
   @override
   pb.Expr toProto() => pb.Expr(
-        multiply: pb.ExprMult(
-          left: left.toProto(),
-          right: right.toProto(),
-        ),
-      );
+    multiply: pb.ExprMult(left: left.toProto(), right: right.toProto()),
+  );
 
   @override
   R accept<R>(ExprVisitor<R> visitor) => visitor.visitMult(this);
@@ -1226,10 +1103,7 @@ final class ExprMult extends CedarBinaryExpr {
 }
 
 final class ExprContains extends CedarBinaryExpr {
-  const ExprContains({
-    required super.left,
-    required super.right,
-  });
+  const ExprContains({required super.left, required super.right});
 
   factory ExprContains.fromJson(Map<String, Object?> json) {
     return ExprContains(
@@ -1250,11 +1124,8 @@ final class ExprContains extends CedarBinaryExpr {
 
   @override
   pb.Expr toProto() => pb.Expr(
-        contains: pb.ExprContains(
-          left: left.toProto(),
-          right: right.toProto(),
-        ),
-      );
+    contains: pb.ExprContains(left: left.toProto(), right: right.toProto()),
+  );
 
   @override
   R accept<R>(ExprVisitor<R> visitor) => visitor.visitContains(this);
@@ -1268,10 +1139,7 @@ final class ExprContains extends CedarBinaryExpr {
 }
 
 final class ExprContainsAll extends CedarBinaryExpr {
-  const ExprContainsAll({
-    required super.left,
-    required super.right,
-  });
+  const ExprContainsAll({required super.left, required super.right});
 
   factory ExprContainsAll.fromJson(Map<String, Object?> json) {
     return ExprContainsAll(
@@ -1292,11 +1160,11 @@ final class ExprContainsAll extends CedarBinaryExpr {
 
   @override
   pb.Expr toProto() => pb.Expr(
-        containsAll: pb.ExprContainsAll(
-          left: left.toProto(),
-          right: right.toProto(),
-        ),
-      );
+    containsAll: pb.ExprContainsAll(
+      left: left.toProto(),
+      right: right.toProto(),
+    ),
+  );
 
   @override
   R accept<R>(ExprVisitor<R> visitor) => visitor.visitContainsAll(this);
@@ -1310,10 +1178,7 @@ final class ExprContainsAll extends CedarBinaryExpr {
 }
 
 final class ExprContainsAny extends CedarBinaryExpr {
-  const ExprContainsAny({
-    required super.left,
-    required super.right,
-  });
+  const ExprContainsAny({required super.left, required super.right});
 
   factory ExprContainsAny.fromJson(Map<String, Object?> json) {
     return ExprContainsAny(
@@ -1334,11 +1199,11 @@ final class ExprContainsAny extends CedarBinaryExpr {
 
   @override
   pb.Expr toProto() => pb.Expr(
-        containsAny: pb.ExprContainsAny(
-          left: left.toProto(),
-          right: right.toProto(),
-        ),
-      );
+    containsAny: pb.ExprContainsAny(
+      left: left.toProto(),
+      right: right.toProto(),
+    ),
+  );
 
   @override
   R accept<R>(ExprVisitor<R> visitor) => visitor.visitContainsAny(this);
@@ -1359,10 +1224,7 @@ sealed class CedarStringExpr extends Expr {
 }
 
 final class ExprGetAttribute extends CedarStringExpr {
-  const ExprGetAttribute({
-    required this.left,
-    required this.attr,
-  });
+  const ExprGetAttribute({required this.left, required this.attr});
 
   factory ExprGetAttribute.fromJson(Map<String, Object?> json) {
     return ExprGetAttribute(
@@ -1372,10 +1234,7 @@ final class ExprGetAttribute extends CedarStringExpr {
   }
 
   factory ExprGetAttribute.fromProto(pb.ExprGetAttribute proto) {
-    return ExprGetAttribute(
-      left: Expr.fromProto(proto.left),
-      attr: proto.attr,
-    );
+    return ExprGetAttribute(left: Expr.fromProto(proto.left), attr: proto.attr);
   }
 
   @override
@@ -1389,11 +1248,8 @@ final class ExprGetAttribute extends CedarStringExpr {
 
   @override
   pb.Expr toProto() => pb.Expr(
-        getAttribute: pb.ExprGetAttribute(
-          left: left.toProto(),
-          attr: attr,
-        ),
-      );
+    getAttribute: pb.ExprGetAttribute(left: left.toProto(), attr: attr),
+  );
 
   @override
   R accept<R>(ExprVisitor<R> visitor) => visitor.visitGetAttribute(this);
@@ -1403,10 +1259,7 @@ final class ExprGetAttribute extends CedarStringExpr {
       visitor.visitGetAttribute(this, arg);
 
   @override
-  Map<String, Object?> valueToJson() => {
-        'left': left.toJson(),
-        'attr': attr,
-      };
+  Map<String, Object?> valueToJson() => {'left': left.toJson(), 'attr': attr};
 
   @override
   bool operator ==(Object other) =>
@@ -1421,10 +1274,7 @@ final class ExprGetAttribute extends CedarStringExpr {
 }
 
 final class ExprHasAttribute extends CedarStringExpr {
-  const ExprHasAttribute({
-    required this.left,
-    required this.attr,
-  });
+  const ExprHasAttribute({required this.left, required this.attr});
 
   factory ExprHasAttribute.fromJson(Map<String, Object?> json) {
     return ExprHasAttribute(
@@ -1434,10 +1284,7 @@ final class ExprHasAttribute extends CedarStringExpr {
   }
 
   factory ExprHasAttribute.fromProto(pb.ExprHasAttribute proto) {
-    return ExprHasAttribute(
-      left: Expr.fromProto(proto.left),
-      attr: proto.attr,
-    );
+    return ExprHasAttribute(left: Expr.fromProto(proto.left), attr: proto.attr);
   }
 
   @override
@@ -1451,11 +1298,8 @@ final class ExprHasAttribute extends CedarStringExpr {
 
   @override
   pb.Expr toProto() => pb.Expr(
-        hasAttribute: pb.ExprHasAttribute(
-          left: left.toProto(),
-          attr: attr,
-        ),
-      );
+    hasAttribute: pb.ExprHasAttribute(left: left.toProto(), attr: attr),
+  );
 
   @override
   R accept<R>(ExprVisitor<R> visitor) => visitor.visitHasAttribute(this);
@@ -1465,10 +1309,7 @@ final class ExprHasAttribute extends CedarStringExpr {
       visitor.visitHasAttribute(this, arg);
 
   @override
-  Map<String, Object?> valueToJson() => {
-        'left': left.toJson(),
-        'attr': attr,
-      };
+  Map<String, Object?> valueToJson() => {'left': left.toJson(), 'attr': attr};
 
   @override
   bool operator ==(Object other) =>
@@ -1483,10 +1324,7 @@ final class ExprHasAttribute extends CedarStringExpr {
 }
 
 final class ExprLike extends Expr {
-  const ExprLike({
-    required this.left,
-    required this.pattern,
-  });
+  const ExprLike({required this.left, required this.pattern});
 
   factory ExprLike.fromJson(Map<String, Object?> json) {
     return ExprLike(
@@ -1510,11 +1348,8 @@ final class ExprLike extends Expr {
 
   @override
   pb.Expr toProto() => pb.Expr(
-        like: pb.ExprLike(
-          left: left.toProto(),
-          pattern: pattern.toString(),
-        ),
-      );
+    like: pb.ExprLike(left: left.toProto(), pattern: pattern.toString()),
+  );
 
   @override
   R accept<R>(ExprVisitor<R> visitor) => visitor.visitLike(this);
@@ -1525,9 +1360,9 @@ final class ExprLike extends Expr {
 
   @override
   Map<String, Object?> valueToJson() => {
-        'left': left.toJson(),
-        'pattern': pattern.toString(),
-      };
+    'left': left.toJson(),
+    'pattern': pattern.toString(),
+  };
 
   @override
   bool operator ==(Object other) =>
@@ -1542,19 +1377,16 @@ final class ExprLike extends Expr {
 }
 
 final class ExprIs extends Expr {
-  const ExprIs({
-    required this.left,
-    required this.entityType,
-    this.inExpr,
-  });
+  const ExprIs({required this.left, required this.entityType, this.inExpr});
 
   factory ExprIs.fromJson(Map<String, Object?> json) {
     return ExprIs(
       left: Expr.fromJson(json['left'] as Map<String, Object?>),
       entityType: json['entity_type'] as String,
-      inExpr: json['in'] != null
-          ? Expr.fromJson(json['in'] as Map<String, Object?>)
-          : null,
+      inExpr:
+          json['in'] != null
+              ? Expr.fromJson(json['in'] as Map<String, Object?>)
+              : null,
     );
   }
 
@@ -1575,12 +1407,12 @@ final class ExprIs extends Expr {
 
   @override
   pb.Expr toProto() => pb.Expr(
-        is_: pb.ExprIs(
-          left: left.toProto(),
-          entityType: entityType,
-          in_: inExpr?.toProto(),
-        ),
-      );
+    is_: pb.ExprIs(
+      left: left.toProto(),
+      entityType: entityType,
+      in_: inExpr?.toProto(),
+    ),
+  );
 
   @override
   R accept<R>(ExprVisitor<R> visitor) => visitor.visitIs(this);
@@ -1591,10 +1423,10 @@ final class ExprIs extends Expr {
 
   @override
   Map<String, Object?> valueToJson() => {
-        'left': left.toJson(),
-        'entity_type': entityType,
-        if (inExpr case final inExpr?) 'in': inExpr.toJson(),
-      };
+    'left': left.toJson(),
+    'entity_type': entityType,
+    if (inExpr case final inExpr?) 'in': inExpr.toJson(),
+  };
 
   @override
   bool operator ==(Object other) =>
@@ -1644,12 +1476,12 @@ final class ExprIfThenElse extends Expr {
 
   @override
   pb.Expr toProto() => pb.Expr(
-        ifThenElse: pb.ExprIfThenElse(
-          cond: cond.toProto(),
-          then: then.toProto(),
-          otherwise: otherwise.toProto(),
-        ),
-      );
+    ifThenElse: pb.ExprIfThenElse(
+      cond: cond.toProto(),
+      then: then.toProto(),
+      otherwise: otherwise.toProto(),
+    ),
+  );
 
   @override
   R accept<R>(ExprVisitor<R> visitor) => visitor.visitIfThenElse(this);
@@ -1660,10 +1492,10 @@ final class ExprIfThenElse extends Expr {
 
   @override
   Map<String, Object?> valueToJson() => {
-        'if': cond.toJson(),
-        'then': then.toJson(),
-        'else': otherwise.toJson(),
-      };
+    'if': cond.toJson(),
+    'then': then.toJson(),
+    'else': otherwise.toJson(),
+  };
 
   @override
   bool operator ==(Object other) =>
@@ -1686,7 +1518,7 @@ final class ExprSet extends Expr {
   factory ExprSet.fromJson(List<Object?> json) {
     return ExprSet([
       for (final expression in json)
-        Expr.fromJson(expression as Map<String, Object?>)
+        Expr.fromJson(expression as Map<String, Object?>),
     ]);
   }
 
@@ -1703,10 +1535,10 @@ final class ExprSet extends Expr {
 
   @override
   pb.Expr toProto() => pb.Expr(
-        set: pb.ExprSet(
-          expressions: expressions.map((expr) => expr.toProto()).toList(),
-        ),
-      );
+    set: pb.ExprSet(
+      expressions: expressions.map((expr) => expr.toProto()).toList(),
+    ),
+  );
 
   @override
   R accept<R>(ExprVisitor<R> visitor) => visitor.visitSet(this);
@@ -1717,15 +1549,17 @@ final class ExprSet extends Expr {
 
   @override
   List<Object?> valueToJson() => [
-        for (final expression in expressions) expression.toJson(),
-      ];
+    for (final expression in expressions) expression.toJson(),
+  ];
 
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       other is ExprSet &&
-          const UnorderedIterableEquality()
-              .equals(expressions, other.expressions);
+          const UnorderedIterableEquality().equals(
+            expressions,
+            other.expressions,
+          );
 
   @override
   int get hashCode => Object.hashAllUnordered(expressions);
@@ -1740,14 +1574,14 @@ final class ExprRecord extends Expr {
   factory ExprRecord.fromJson(Map<String, Object?> json) {
     return ExprRecord({
       for (final entry in json.entries)
-        entry.key: Expr.fromJson(entry.value as Map<String, Object?>)
+        entry.key: Expr.fromJson(entry.value as Map<String, Object?>),
     });
   }
 
   factory ExprRecord.fromProto(pb.ExprRecord proto) {
     return ExprRecord({
       for (final entry in proto.attributes.entries)
-        entry.key: Expr.fromProto(entry.value)
+        entry.key: Expr.fromProto(entry.value),
     });
   }
 
@@ -1758,13 +1592,13 @@ final class ExprRecord extends Expr {
 
   @override
   pb.Expr toProto() => pb.Expr(
-        record: pb.ExprRecord(
-          attributes: {
-            for (final entry in attributes.entries)
-              entry.key: entry.value.toProto()
-          },
-        ),
-      );
+    record: pb.ExprRecord(
+      attributes: {
+        for (final entry in attributes.entries)
+          entry.key: entry.value.toProto(),
+      },
+    ),
+  );
 
   @override
   R accept<R>(ExprVisitor<R> visitor) => visitor.visitRecord(this);
@@ -1775,8 +1609,8 @@ final class ExprRecord extends Expr {
 
   @override
   Map<String, Object?> valueToJson() => {
-        for (final entry in attributes.entries) entry.key: entry.value.toJson(),
-      };
+    for (final entry in attributes.entries) entry.key: entry.value.toJson(),
+  };
 
   @override
   bool operator ==(Object other) =>

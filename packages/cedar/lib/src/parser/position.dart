@@ -8,12 +8,7 @@ final class Position {
     required this.column,
   });
 
-  const Position.unknown()
-      : this(
-          offset: 0,
-          line: 0,
-          column: 0,
-        );
+  const Position.unknown() : this(offset: 0, line: 0, column: 0);
 
   factory Position.fromJson(Map<String, Object?> json) {
     return Position(
@@ -42,18 +37,18 @@ final class Position {
   final int column;
 
   Map<String, Object?> toJson() => {
-        if (filename case final filename?) 'filename': filename.toString(),
-        'offset': offset,
-        'line': line,
-        'column': column,
-      };
+    if (filename case final filename?) 'filename': filename.toString(),
+    'offset': offset,
+    'line': line,
+    'column': column,
+  };
 
   pb.Position toProto() => pb.Position(
-        filename: filename?.toString(),
-        offset: offset,
-        line: line,
-        column: column,
-      );
+    filename: filename?.toString(),
+    offset: offset,
+    line: line,
+    column: column,
+  );
 
   @override
   bool operator ==(Object other) =>

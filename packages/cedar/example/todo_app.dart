@@ -15,15 +15,11 @@ when { resource has owner && resource.owner == principal };
 ''';
   final policySet = PolicySet.parse(policies);
 
-  final app = Entity(
-    uid: EntityUid.of('Application', 'TinyTodo'),
-  );
+  final app = Entity(uid: EntityUid.of('Application', 'TinyTodo'));
   final user = Entity(
     uid: EntityUid.of('User', 'alice'),
     parents: [app.uid],
-    attributes: {
-      'name': Value.string('Alice'),
-    },
+    attributes: {'name': Value.string('Alice')},
   );
   final canCreateTodo = policySet.isAuthorized(
     AuthorizationRequest(
@@ -36,10 +32,7 @@ when { resource has owner && resource.owner == principal };
   switch (canCreateTodo) {
     case AuthorizationResponse(decision: Decision.allow):
       print('Alice can create the todo list!');
-    case AuthorizationResponse(
-        :final errorMessages,
-        :final reasons,
-      ):
+    case AuthorizationResponse(:final errorMessages, :final reasons):
       print('Alice cannot create the todo list');
       print('Contributing policies: $reasons');
       print('Error messages: $errorMessages');

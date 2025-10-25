@@ -15,29 +15,46 @@ class _$PolicySetSerializer implements StructuredSerializer<PolicySet> {
   final String wireName = 'PolicySet';
 
   @override
-  Iterable<Object?> serialize(Serializers serializers, PolicySet object,
-      {FullType specifiedType = FullType.unspecified}) {
+  Iterable<Object?> serialize(
+    Serializers serializers,
+    PolicySet object, {
+    FullType specifiedType = FullType.unspecified,
+  }) {
     final result = <Object?>[
       'policies',
-      serializers.serialize(object.policies,
-          specifiedType: const FullType(BuiltMap,
-              const [const FullType(String), const FullType(Policy)])),
+      serializers.serialize(
+        object.policies,
+        specifiedType: const FullType(BuiltMap, const [
+          const FullType(String),
+          const FullType(Policy),
+        ]),
+      ),
       'templates',
-      serializers.serialize(object.templates,
-          specifiedType: const FullType(BuiltMap,
-              const [const FullType(String), const FullType(Policy)])),
+      serializers.serialize(
+        object.templates,
+        specifiedType: const FullType(BuiltMap, const [
+          const FullType(String),
+          const FullType(Policy),
+        ]),
+      ),
       'templateLinks',
-      serializers.serialize(object.templateLinks,
-          specifiedType:
-              const FullType(BuiltList, const [const FullType(TemplateLink)])),
+      serializers.serialize(
+        object.templateLinks,
+        specifiedType: const FullType(BuiltList, const [
+          const FullType(TemplateLink),
+        ]),
+      ),
     ];
 
     return result;
   }
 
   @override
-  PolicySet deserialize(Serializers serializers, Iterable<Object?> serialized,
-      {FullType specifiedType = FullType.unspecified}) {
+  PolicySet deserialize(
+    Serializers serializers,
+    Iterable<Object?> serialized, {
+    FullType specifiedType = FullType.unspecified,
+  }) {
     final result = new PolicySetBuilder();
 
     final iterator = serialized.iterator;
@@ -47,20 +64,37 @@ class _$PolicySetSerializer implements StructuredSerializer<PolicySet> {
       final Object? value = iterator.current;
       switch (key) {
         case 'policies':
-          result.policies.replace(serializers.deserialize(value,
-              specifiedType: const FullType(BuiltMap,
-                  const [const FullType(String), const FullType(Policy)]))!);
+          result.policies.replace(
+            serializers.deserialize(
+              value,
+              specifiedType: const FullType(BuiltMap, const [
+                const FullType(String),
+                const FullType(Policy),
+              ]),
+            )!,
+          );
           break;
         case 'templates':
-          result.templates.replace(serializers.deserialize(value,
-              specifiedType: const FullType(BuiltMap,
-                  const [const FullType(String), const FullType(Policy)]))!);
+          result.templates.replace(
+            serializers.deserialize(
+              value,
+              specifiedType: const FullType(BuiltMap, const [
+                const FullType(String),
+                const FullType(Policy),
+              ]),
+            )!,
+          );
           break;
         case 'templateLinks':
-          result.templateLinks.replace(serializers.deserialize(value,
-                  specifiedType: const FullType(
-                      BuiltList, const [const FullType(TemplateLink)]))!
-              as BuiltList<Object?>);
+          result.templateLinks.replace(
+            serializers.deserialize(
+                  value,
+                  specifiedType: const FullType(BuiltList, const [
+                    const FullType(TemplateLink),
+                  ]),
+                )!
+                as BuiltList<Object?>,
+          );
           break;
       }
     }
@@ -80,15 +114,18 @@ class _$PolicySet extends PolicySet {
   factory _$PolicySet([void Function(PolicySetBuilder)? updates]) =>
       (new PolicySetBuilder()..update(updates))._build();
 
-  _$PolicySet._(
-      {required this.policies,
-      required this.templates,
-      required this.templateLinks})
-      : super._() {
+  _$PolicySet._({
+    required this.policies,
+    required this.templates,
+    required this.templateLinks,
+  }) : super._() {
     BuiltValueNullFieldError.checkNotNull(policies, r'PolicySet', 'policies');
     BuiltValueNullFieldError.checkNotNull(templates, r'PolicySet', 'templates');
     BuiltValueNullFieldError.checkNotNull(
-        templateLinks, r'PolicySet', 'templateLinks');
+      templateLinks,
+      r'PolicySet',
+      'templateLinks',
+    );
   }
 
   @override
@@ -178,7 +215,8 @@ class PolicySetBuilder implements Builder<PolicySet, PolicySetBuilder> {
   _$PolicySet _build() {
     _$PolicySet _$result;
     try {
-      _$result = _$v ??
+      _$result =
+          _$v ??
           new _$PolicySet._(
             policies: policies.build(),
             templates: templates.build(),
@@ -195,7 +233,10 @@ class PolicySetBuilder implements Builder<PolicySet, PolicySetBuilder> {
         templateLinks.build();
       } catch (e) {
         throw new BuiltValueNestedFieldError(
-            r'PolicySet', _$failedField, e.toString());
+          r'PolicySet',
+          _$failedField,
+          e.toString(),
+        );
       }
       rethrow;
     }

@@ -6,14 +6,7 @@ import 'package:cedar_ffi/src/ffi/cedar_bindings.ffi.dart' as bindings;
 import 'package:ffi/ffi.dart';
 import 'package:meta/meta.dart';
 
-enum CedarLogLevel {
-  off,
-  error,
-  warn,
-  info,
-  debug,
-  trace,
-}
+enum CedarLogLevel { off, error, warn, info, debug, trace }
 
 final class CedarEngine implements CedarAuthorizer, Finalizable {
   factory CedarEngine({
@@ -26,18 +19,19 @@ final class CedarEngine implements CedarAuthorizer, Finalizable {
     final storeRef = using((arena) {
       final config = arena<bindings.CCedarConfig>();
       config.ref
-        ..schema_json =
-            jsonEncode(schema.toJson()).toNativeUtf8(allocator: arena).cast()
+        ..schema_json = jsonEncode(
+          schema.toJson(),
+        ).toNativeUtf8(allocator: arena).cast()
         ..policies_json = switch (policySet) {
-          final policies? =>
-            jsonEncode(policies.toJson()).toNativeUtf8(allocator: arena).cast(),
+          final policies? => jsonEncode(
+            policies.toJson(),
+          ).toNativeUtf8(allocator: arena).cast(),
           null => nullptr,
         }
         ..entities_json = switch (entities) {
-          final entities? =>
-            jsonEncode(entities.map((e) => e.toJson()).toList())
-                .toNativeUtf8(allocator: arena)
-                .cast(),
+          final entities? => jsonEncode(
+            entities.map((e) => e.toJson()).toList(),
+          ).toNativeUtf8(allocator: arena).cast(),
           null => nullptr,
         }
         ..validate = validate
@@ -60,9 +54,7 @@ final class CedarEngine implements CedarAuthorizer, Finalizable {
     return engine;
   }
 
-  CedarEngine._({
-    required Pointer<bindings.CedarStore> ref,
-  }) : _ref = ref;
+  CedarEngine._({required Pointer<bindings.CedarStore> ref}) : _ref = ref;
 
   static final Finalizer<Pointer<bindings.CedarStore>> _finalizer = Finalizer(
     bindings.cedar_deinit,
@@ -85,17 +77,19 @@ final class CedarEngine implements CedarAuthorizer, Finalizable {
       final query = arena<bindings.CCedarQuery>();
       query.ref
         ..principal_str = switch (request.principal) {
-          final principal? => principal.normalized
-              .toString()
-              .toNativeUtf8(allocator: arena)
-              .cast(),
+          final principal? =>
+            principal.normalized
+                .toString()
+                .toNativeUtf8(allocator: arena)
+                .cast(),
           null => nullptr,
         }
         ..resource_str = switch (request.resource) {
-          final resource? => resource.normalized
-              .toString()
-              .toNativeUtf8(allocator: arena)
-              .cast(),
+          final resource? =>
+            resource.normalized
+                .toString()
+                .toNativeUtf8(allocator: arena)
+                .cast(),
           null => nullptr,
         }
         ..action_str = switch (request.action) {
@@ -104,27 +98,28 @@ final class CedarEngine implements CedarAuthorizer, Finalizable {
           null => nullptr,
         }
         ..context_json = switch (request.context) {
-          final context? =>
-            jsonEncode(context).toNativeUtf8(allocator: arena).cast(),
+          final context? => jsonEncode(
+            context,
+          ).toNativeUtf8(allocator: arena).cast(),
           null => nullptr,
         }
         ..entities_json = switch (entities) {
-          final entities? =>
-            jsonEncode(entities.map((e) => e.toJson()).toList())
-                .toNativeUtf8(allocator: arena)
-                .cast(),
+          final entities? => jsonEncode(
+            entities.map((e) => e.toJson()).toList(),
+          ).toNativeUtf8(allocator: arena).cast(),
           null => nullptr,
         }
         ..policies_json = switch (policies) {
-          final policies? =>
-            jsonEncode(policies.toJson()).toNativeUtf8(allocator: arena).cast(),
+          final policies? => jsonEncode(
+            policies.toJson(),
+          ).toNativeUtf8(allocator: arena).cast(),
           null => nullptr,
         };
       final cDecision = bindings.cedar_is_authorized(_ref, query);
       return switch (cDecision) {
         bindings.CAuthorizationDecision(
           :final completion_error,
-          :final completion_error_len
+          :final completion_error_len,
         )
             when completion_error != nullptr =>
           throw Exception(
@@ -146,21 +141,25 @@ final class CedarEngine implements CedarAuthorizer, Finalizable {
             reasons: reasons_json == nullptr
                 ? const []
                 : (jsonDecode(
-                    reasons_json
-                        .cast<Utf8>()
-                        .toDartString(length: reasons_json_len),
-                  ) as List)
-                    .cast<String>(),
+                            reasons_json.cast<Utf8>().toDartString(
+                              length: reasons_json_len,
+                            ),
+                          )
+                          as List)
+                      .cast<String>(),
             errors: errors_json == nullptr
                 ? const []
                 : () {
-                    final json = jsonDecode(
-                      errors_json
-                          .cast<Utf8>()
-                          .toDartString(length: errors_json_len),
-                    ) as List;
+                    final json =
+                        jsonDecode(
+                              errors_json.cast<Utf8>().toDartString(
+                                length: errors_json_len,
+                              ),
+                            )
+                            as List;
                     return json.cast<Map>().map(
-                        (it) => AuthorizationException.fromJson(it.cast()));
+                      (it) => AuthorizationException.fromJson(it.cast()),
+                    );
                   }(),
           ),
       };

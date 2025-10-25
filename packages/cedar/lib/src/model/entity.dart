@@ -11,14 +11,15 @@ final class Entity implements Component {
   });
 
   factory Entity.fromJson(Map<String, Object?> json) => Entity(
-        uid: EntityUid.fromJson(json['uid'] as Map<String, Object?>),
-        parents: (json['parents'] as List<Object?>)
+    uid: EntityUid.fromJson(json['uid'] as Map<String, Object?>),
+    parents:
+        (json['parents'] as List<Object?>)
             .map((e) => EntityUid.fromJson(e as Map<String, Object?>))
             .toList(),
-        attributes: (json['attrs'] as Map<Object?, Object?>)
-            .cast<String, Object?>()
-            .map((key, value) => MapEntry(key, Value.fromJson(value))),
-      );
+    attributes: (json['attrs'] as Map<Object?, Object?>)
+        .cast<String, Object?>()
+        .map((key, value) => MapEntry(key, Value.fromJson(value))),
+  );
 
   factory Entity.fromProto(pb.Entity proto) {
     return Entity(
@@ -35,17 +36,18 @@ final class Entity implements Component {
   final Map<String, Value> attributes;
 
   Map<String, Object?> toJson() => {
-        'uid': uid.toJson(),
-        'parents': parents.map((e) => e.toJson()).toList(),
-        'attrs': attributes.map((key, value) => MapEntry(key, value.toJson())),
-      };
+    'uid': uid.toJson(),
+    'parents': parents.map((e) => e.toJson()).toList(),
+    'attrs': attributes.map((key, value) => MapEntry(key, value.toJson())),
+  };
 
   pb.Entity toProto() {
     return pb.Entity(
       uid: uid.toProto(),
       parents: parents.map((e) => e.toProto()).toList(),
-      attributes:
-          attributes.map((key, value) => MapEntry(key, value.toProto())),
+      attributes: attributes.map(
+        (key, value) => MapEntry(key, value.toProto()),
+      ),
     );
   }
 
@@ -58,11 +60,7 @@ final class Entity implements Component {
           const MapEquality().equals(attributes, other.attributes);
 
   @override
-  int get hashCode => Object.hashAll([
-        uid,
-        ...parents,
-        ...attributes.entries,
-      ]);
+  int get hashCode => Object.hashAll([uid, ...parents, ...attributes.entries]);
 
   @override
   String toString() =>

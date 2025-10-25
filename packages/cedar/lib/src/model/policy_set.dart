@@ -33,18 +33,12 @@ abstract class PolicySet
 
   factory PolicySet.fromJson(Map<String, Object?> json) {
     return PolicySet(
-      policies:
-          (json['staticPolicies'] as Map<String, Object?>? ?? const {}).map(
-        (k, v) => MapEntry(
-          k,
-          Policy.fromJson(v as Map<String, Object?>),
-        ),
-      ),
+      policies: (json['staticPolicies'] as Map<String, Object?>? ?? const {})
+          .map(
+            (k, v) => MapEntry(k, Policy.fromJson(v as Map<String, Object?>)),
+          ),
       templates: (json['templates'] as Map<String, Object?>? ?? const {}).map(
-        (k, v) => MapEntry(
-          k,
-          Policy.fromJson(v as Map<String, Object?>),
-        ),
+        (k, v) => MapEntry(k, Policy.fromJson(v as Map<String, Object?>)),
       ),
       templateLinks: (json['templateLinks'] as List<Object?>? ?? const [])
           .map((l) => TemplateLink.fromJson(l as Map<String, Object?>))
@@ -89,18 +83,20 @@ abstract class PolicySet
   BuiltList<TemplateLink> get templateLinks;
 
   Map<String, Object?> toJson() => {
-        'staticPolicies':
-            policies.map((key, value) => MapEntry(key, value.toJson())).toMap(),
-        'templates': templates
-            .map((key, value) => MapEntry(key, value.toJson()))
-            .toMap(),
-        'templateLinks': templateLinks.map((link) => link.toJson()).toList(),
-      };
+    'staticPolicies': policies
+        .map((key, value) => MapEntry(key, value.toJson()))
+        .toMap(),
+    'templates': templates
+        .map((key, value) => MapEntry(key, value.toJson()))
+        .toMap(),
+    'templateLinks': templateLinks.map((link) => link.toJson()).toList(),
+  };
 
   pb.PolicySet toProto() {
     return pb.PolicySet(
-      policies:
-          policies.map((id, policy) => MapEntry(id, policy.toProto())).toMap(),
+      policies: policies
+          .map((id, policy) => MapEntry(id, policy.toProto()))
+          .toMap(),
       templates: templates
           .map((id, template) => MapEntry(id, template.toProto()))
           .toMap(),
@@ -155,10 +151,9 @@ abstract class PolicySet
           permitReasons.add(id);
         }
       } on EvaluationException catch (e) {
-        diagnostics.add(AuthorizationException(
-          policyId: id,
-          message: e.toString(),
-        ));
+        diagnostics.add(
+          AuthorizationException(policyId: id, message: e.toString()),
+        );
       }
     }
 
@@ -202,10 +197,7 @@ final class TemplateLink {
       templateId: proto.templateId,
       newId: proto.newId,
       values: proto.values.map(
-        (k, v) => MapEntry(
-          SlotId.fromJson(k),
-          EntityUid.fromProto(v),
-        ),
+        (k, v) => MapEntry(SlotId.fromJson(k), EntityUid.fromProto(v)),
       ),
     );
   }
@@ -215,10 +207,10 @@ final class TemplateLink {
   final Map<SlotId, EntityUid> values;
 
   Map<String, Object?> toJson() => {
-        'templateId': templateId,
-        'newId': newId,
-        'values': values.map((k, v) => MapEntry(k.toJson(), v.toString())),
-      };
+    'templateId': templateId,
+    'newId': newId,
+    'values': values.map((k, v) => MapEntry(k.toJson(), v.toJson())),
+  };
 
   pb.TemplateLink toProto() {
     return pb.TemplateLink(

@@ -21,8 +21,8 @@ final class AuthorizationResponse {
     required this.decision,
     List<String>? reasons,
     Iterable<AuthorizationException>? errors,
-  })  : reasons = reasons ?? const [],
-        errors = AuthorizationErrors(errors ?? const []);
+  }) : reasons = reasons ?? const [],
+       errors = AuthorizationErrors(errors ?? const []);
 
   /// The decision of the authorization request.
   final Decision decision;
@@ -71,10 +71,7 @@ final class AuthorizationErrors
 /// {@endtemplate}
 final class AuthorizationException implements CedarException {
   /// {@macro cedar.cedar_authorization_error}
-  const AuthorizationException({
-    this.policyId,
-    required this.message,
-  });
+  const AuthorizationException({this.policyId, required this.message});
 
   /// Deserializes a [AuthorizationException] from JSON.
   factory AuthorizationException.fromJson(Map<String, Object?> json) {

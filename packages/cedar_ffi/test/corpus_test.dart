@@ -12,7 +12,8 @@ void main() {
           :policiesCedar,
           :shouldValidate,
           :queries,
-        ) in cedarCorpusTests.values) {
+        )
+        in cedarCorpusTests.values) {
       group(name, () {
         late final CedarEngine cedar;
 
@@ -21,9 +22,7 @@ void main() {
             schema: CedarSchema.fromJson(schemaJson),
             entities: entitiesJson
                 .map(
-                  (entity) => Entity.fromJson(
-                    entity as Map<String, Object?>,
-                  ),
+                  (entity) => Entity.fromJson(entity as Map<String, Object?>),
                 )
                 .toList(),
             policySet: CedarPolicySetFfi.fromCedar(policiesCedar),
@@ -52,8 +51,9 @@ void main() {
                 principal: query.principal,
                 action: query.action,
                 resource: query.resource,
-                context:
-                    query.context.map((k, v) => MapEntry(k, Value.fromJson(v))),
+                context: query.context.map(
+                  (k, v) => MapEntry(k, Value.fromJson(v)),
+                ),
               ),
             );
             expect(response.decision, query.decision);

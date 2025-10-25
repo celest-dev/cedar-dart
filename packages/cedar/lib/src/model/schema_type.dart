@@ -2,17 +2,11 @@ sealed class CedarType {
   factory CedarType.fromJson(Map<String, Object?> json) {
     switch (json) {
       case {'type': 'Boolean'}:
-        return CedarBooleanType(
-          required: json['required'] as bool?,
-        );
+        return CedarBooleanType(required: json['required'] as bool?);
       case {'type': 'String'}:
-        return CedarStringType(
-          required: json['required'] as bool?,
-        );
+        return CedarStringType(required: json['required'] as bool?);
       case {'type': 'Long'}:
-        return CedarLongType(
-          required: json['required'] as bool?,
-        );
+        return CedarLongType(required: json['required'] as bool?);
       case {'type': 'Set'}:
         return CedarSetType(
           elementType: CedarType.fromJson(
@@ -39,13 +33,9 @@ sealed class CedarType {
           required: json['required'] as bool?,
         );
       case {'type': 'Extension', 'name': 'ipaddr'}:
-        return CedarIpAddressType(
-          required: json['required'] as bool?,
-        );
+        return CedarIpAddressType(required: json['required'] as bool?);
       case {'type': 'Extension', 'name': 'decimal'}:
-        return CedarDecimalType(
-          required: json['required'] as bool?,
-        );
+        return CedarDecimalType(required: json['required'] as bool?);
       case {'type': final String type}:
         if (json.keys.length > 1) {
           throw ArgumentError.value(json, 'json', 'Invalid Cedar type');
@@ -56,52 +46,35 @@ sealed class CedarType {
     }
   }
 
-  const factory CedarType.boolean({
-    bool required,
-  }) = CedarBooleanType;
+  const factory CedarType.boolean({bool required}) = CedarBooleanType;
 
-  const factory CedarType.string({
-    bool required,
-  }) = CedarStringType;
+  const factory CedarType.string({bool required}) = CedarStringType;
 
-  const factory CedarType.long({
-    bool required,
-  }) = CedarLongType;
+  const factory CedarType.long({bool required}) = CedarLongType;
 
-  const factory CedarType.set({
-    required CedarType elementType,
-    bool required,
-  }) = CedarSetType;
+  const factory CedarType.set({required CedarType elementType, bool required}) =
+      CedarSetType;
 
   const factory CedarType.record({
     required Map<String, CedarType> attributes,
     bool required,
   }) = CedarRecordType;
 
-  const factory CedarType.entity({
-    required String entityName,
-    bool required,
-  }) = CedarEntityType;
+  const factory CedarType.entity({required String entityName, bool required}) =
+      CedarEntityType;
 
-  const factory CedarType.ipAddress({
-    bool required,
-  }) = CedarIpAddressType;
+  const factory CedarType.ipAddress({bool required}) = CedarIpAddressType;
 
-  const factory CedarType.decimal({
-    bool required,
-  }) = CedarDecimalType;
+  const factory CedarType.decimal({bool required}) = CedarDecimalType;
 
-  const factory CedarType.reference({
-    required String type,
-  }) = CedarTypeReference;
+  const factory CedarType.reference({required String type}) =
+      CedarTypeReference;
 
   Map<String, Object?> toJson();
 }
 
 final class CedarTypeReference implements CedarType {
-  const CedarTypeReference({
-    required this.type,
-  });
+  const CedarTypeReference({required this.type});
 
   factory CedarTypeReference.fromJson(Map<String, Object?> json) {
     return CedarTypeReference(type: json['type'] as String);
@@ -110,32 +83,22 @@ final class CedarTypeReference implements CedarType {
   final String type;
 
   @override
-  Map<String, Object?> toJson() => {
-        'type': type,
-      };
+  Map<String, Object?> toJson() => {'type': type};
 }
 
 sealed class CedarTypeDefinition implements CedarType {
-  const CedarTypeDefinition({
-    this.required,
-  });
+  const CedarTypeDefinition({this.required});
 
   /// Whether a value of this type is required.
   ///
   /// Defaults to `true`.
   final bool? required;
 
-  const factory CedarTypeDefinition.boolean({
-    bool required,
-  }) = CedarBooleanType;
+  const factory CedarTypeDefinition.boolean({bool required}) = CedarBooleanType;
 
-  const factory CedarTypeDefinition.string({
-    bool required,
-  }) = CedarStringType;
+  const factory CedarTypeDefinition.string({bool required}) = CedarStringType;
 
-  const factory CedarTypeDefinition.long({
-    bool required,
-  }) = CedarLongType;
+  const factory CedarTypeDefinition.long({bool required}) = CedarLongType;
 
   const factory CedarTypeDefinition.set({
     required CedarType elementType,
@@ -152,66 +115,54 @@ sealed class CedarTypeDefinition implements CedarType {
     bool required,
   }) = CedarEntityType;
 
-  const factory CedarTypeDefinition.ipAddress({
-    bool required,
-  }) = CedarIpAddressType;
+  const factory CedarTypeDefinition.ipAddress({bool required}) =
+      CedarIpAddressType;
 
-  const factory CedarTypeDefinition.decimal({
-    bool required,
-  }) = CedarDecimalType;
+  const factory CedarTypeDefinition.decimal({bool required}) = CedarDecimalType;
 }
 
 final class CedarBooleanType extends CedarTypeDefinition {
-  const CedarBooleanType({
-    super.required,
-  });
+  const CedarBooleanType({super.required});
 
   @override
   Map<String, Object?> toJson() => {
-        'type': 'Boolean',
-        if (required != null) 'required': required,
-      };
+    'type': 'Boolean',
+    if (required != null) 'required': required,
+  };
 }
 
 final class CedarStringType extends CedarTypeDefinition {
-  const CedarStringType({
-    super.required,
-  });
+  const CedarStringType({super.required});
 
   @override
   Map<String, Object?> toJson() => {
-        'type': 'String',
-        if (required != null) 'required': required,
-      };
+    'type': 'String',
+    if (required != null) 'required': required,
+  };
 }
 
 final class CedarLongType extends CedarTypeDefinition {
-  const CedarLongType({
-    super.required,
-  });
+  const CedarLongType({super.required});
 
   @override
   Map<String, Object?> toJson() => {
-        'type': 'Long',
-        if (required != null) 'required': required,
-      };
+    'type': 'Long',
+    if (required != null) 'required': required,
+  };
 }
 
 final class CedarSetType extends CedarTypeDefinition {
-  const CedarSetType({
-    required this.elementType,
-    super.required,
-  });
+  const CedarSetType({required this.elementType, super.required});
 
   /// The type of the elements in the set.
   final CedarType elementType;
 
   @override
   Map<String, Object?> toJson() => {
-        'type': 'Set',
-        if (required != null) 'required': required,
-        'element': elementType.toJson(),
-      };
+    'type': 'Set',
+    if (required != null) 'required': required,
+    'element': elementType.toJson(),
+  };
 }
 
 final class CedarRecordType extends CedarTypeDefinition {
@@ -227,55 +178,46 @@ final class CedarRecordType extends CedarTypeDefinition {
 
   @override
   Map<String, Object?> toJson() => {
-        'type': 'Record',
-        if (required != null) 'required': required,
-        'attributes': attributes.map(
-          (name, type) => MapEntry(name, type.toJson()),
-        ),
-        if (additionalAttributes != null)
-          'additionalAttributes': additionalAttributes,
-      };
+    'type': 'Record',
+    if (required != null) 'required': required,
+    'attributes': attributes.map((name, type) => MapEntry(name, type.toJson())),
+    if (additionalAttributes != null)
+      'additionalAttributes': additionalAttributes,
+  };
 }
 
 final class CedarEntityType extends CedarTypeDefinition {
-  const CedarEntityType({
-    required this.entityName,
-    super.required,
-  });
+  const CedarEntityType({required this.entityName, super.required});
 
   /// The namespaced name of the entity type.
   final String entityName;
 
   @override
   Map<String, Object?> toJson() => {
-        'type': 'Entity',
-        if (required != null) 'required': required,
-        'name': entityName,
-      };
+    'type': 'Entity',
+    if (required != null) 'required': required,
+    'name': entityName,
+  };
 }
 
 final class CedarIpAddressType extends CedarTypeDefinition {
-  const CedarIpAddressType({
-    super.required,
-  });
+  const CedarIpAddressType({super.required});
 
   @override
   Map<String, Object?> toJson() => {
-        'type': 'Extension',
-        if (required != null) 'required': required,
-        'name': 'ipaddr',
-      };
+    'type': 'Extension',
+    if (required != null) 'required': required,
+    'name': 'ipaddr',
+  };
 }
 
 final class CedarDecimalType extends CedarTypeDefinition {
-  const CedarDecimalType({
-    super.required,
-  });
+  const CedarDecimalType({super.required});
 
   @override
   Map<String, Object?> toJson() => {
-        'type': 'Extension',
-        if (required != null) 'required': required,
-        'name': 'decimal',
-      };
+    'type': 'Extension',
+    if (required != null) 'required': required,
+    'name': 'decimal',
+  };
 }

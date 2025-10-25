@@ -5,27 +5,21 @@ import 'package:test/test.dart';
 
 Matcher matchesToken(TokenType type, String text, int start, [int? end]) {
   end ??= start;
-  return predicate(
-    (Token token) {
-      return token.type == type &&
-          token.text == text &&
-          token.span.start.offset == start &&
-          token.span.end.offset == end;
-    },
-    'matches token $type $text at offset $start-$end',
-  );
+  return predicate((Token token) {
+    return token.type == type &&
+        token.text == text &&
+        token.span.start.offset == start &&
+        token.span.end.offset == end;
+  }, 'matches token $type $text at offset $start-$end');
 }
 
 Matcher matchesError(String message, int line, int column) {
   return throwsA(
-    predicate(
-      (StringScannerException e) {
-        return e.message.contains(message) &&
-            e.span!.start.line + 1 == line &&
-            e.span!.start.column + 1 == column;
-      },
-      'matches error "$message" at line $line col $column',
-    ),
+    predicate((StringScannerException e) {
+      return e.message.contains(message) &&
+          e.span!.start.line + 1 == line &&
+          e.span!.start.column + 1 == column;
+    }, 'matches error "$message" at line $line col $column'),
   );
 }
 
@@ -229,13 +223,18 @@ multiline comment
         (
           input: '9223372036854775807',
           want: Int64.parseInt('9223372036854775807'),
-          wantErr: null
+          wantErr: null,
         ),
         (
           input: '9223372036854775808',
           want: null,
-          wantErr: throwsA(isA<FormatException>().having((e) => e.message,
-              'message', 'Positive input exceeds the limit of integer')),
+          wantErr: throwsA(
+            isA<FormatException>().having(
+              (e) => e.message,
+              'message',
+              'Positive input exceeds the limit of integer',
+            ),
+          ),
         ),
       ];
       for (final intValueTest in intValueTests) {
@@ -253,115 +252,76 @@ multiline comment
 
     test('string token values', () {
       final stringValueTests = <_StringValueTest>[
-        (
-          input: '""',
-          want: '',
-          wantErr: null,
-        ),
-        (
-          input: '"hello"',
-          want: 'hello',
-          wantErr: null,
-        ),
-        (
-          input: r'"a\n\r\t\\\0b"',
-          want: 'a\n\r\t\\\x00b',
-          wantErr: null,
-        ),
-        (
-          input: r'"a\"b"',
-          want: 'a"b',
-          wantErr: null,
-        ),
-        (
-          input: r'''"a\'b"''',
-          want: 'a\'b',
-          wantErr: null,
-        ),
-        (
-          input: r'"a\x00b"',
-          want: 'a\x00b',
-          wantErr: null,
-        ),
-        (
-          input: r'"a\x7fb"',
-          want: 'a\x7fb',
-          wantErr: null,
-        ),
+        (input: '""', want: '', wantErr: null),
+        (input: '"hello"', want: 'hello', wantErr: null),
+        (input: r'"a\n\r\t\\\0b"', want: 'a\n\r\t\\\x00b', wantErr: null),
+        (input: r'"a\"b"', want: 'a"b', wantErr: null),
+        (input: r'''"a\'b"''', want: 'a\'b', wantErr: null),
+        (input: r'"a\x00b"', want: 'a\x00b', wantErr: null),
+        (input: r'"a\x7fb"', want: 'a\x7fb', wantErr: null),
         (
           input: r'"a\x80b"',
           want: null,
-          wantErr: throwsA(isA<StringScannerException>()
-              .having((e) => e.message, 'message', 'Bad hex escape sequence')),
+          wantErr: throwsA(
+            isA<StringScannerException>().having(
+              (e) => e.message,
+              'message',
+              'Bad hex escape sequence',
+            ),
+          ),
         ),
-        (
-          input: r'"a\u{A}b"',
-          want: 'a\u000ab',
-          wantErr: null,
-        ),
-        (
-          input: r'"a\u{aB}b"',
-          want: 'a\u00abb',
-          wantErr: null,
-        ),
-        (
-          input: r'"a\u{AbC}b"',
-          want: 'a\u0abcb',
-          wantErr: null,
-        ),
-        (
-          input: r'"a\u{aBcD}b"',
-          want: 'a\uabcdb',
-          wantErr: null,
-        ),
-        (
-          input: r'"a\u{AbCdE}b"',
-          want: 'a\u{abcde}b',
-          wantErr: null,
-        ),
-        (
-          input: r'"a\u{10cDeF}b"',
-          want: 'a\u{10cdef}b',
-          wantErr: null,
-        ),
+        (input: r'"a\u{A}b"', want: 'a\u000ab', wantErr: null),
+        (input: r'"a\u{aB}b"', want: 'a\u00abb', wantErr: null),
+        (input: r'"a\u{AbC}b"', want: 'a\u0abcb', wantErr: null),
+        (input: r'"a\u{aBcD}b"', want: 'a\uabcdb', wantErr: null),
+        (input: r'"a\u{AbCdE}b"', want: 'a\u{abcde}b', wantErr: null),
+        (input: r'"a\u{10cDeF}b"', want: 'a\u{10cdef}b', wantErr: null),
         (
           input: r'"a\u{ffffff}b"',
           want: null,
-          wantErr: throwsA(isA<StringScannerException>().having(
-              (e) => e.message, 'message', 'Bad unicode escape sequence')),
+          wantErr: throwsA(
+            isA<StringScannerException>().having(
+              (e) => e.message,
+              'message',
+              'Bad unicode escape sequence',
+            ),
+          ),
         ),
-        (
-          input: r'"a\u{d7ff}b"',
-          want: 'a\ud7ffb',
-          wantErr: null,
-        ),
+        (input: r'"a\u{d7ff}b"', want: 'a\ud7ffb', wantErr: null),
         (
           input: r'"a\u{d800}b"',
           want: null,
-          wantErr: throwsA(isA<StringScannerException>().having(
-              (e) => e.message, 'message', 'Bad unicode escape sequence')),
+          wantErr: throwsA(
+            isA<StringScannerException>().having(
+              (e) => e.message,
+              'message',
+              'Bad unicode escape sequence',
+            ),
+          ),
         ),
         (
           input: r'"a\u{dfff}b"',
           want: null,
-          wantErr: throwsA(isA<StringScannerException>().having(
-              (e) => e.message, 'message', 'Bad unicode escape sequence')),
+          wantErr: throwsA(
+            isA<StringScannerException>().having(
+              (e) => e.message,
+              'message',
+              'Bad unicode escape sequence',
+            ),
+          ),
         ),
-        (
-          input: r'"a\u{e000}b"',
-          want: 'a\ue000b',
-          wantErr: null,
-        ),
-        (
-          input: r'"a\u{10ffff}b"',
-          want: 'a\u{10ffff}b',
-          wantErr: null,
-        ),
+        (input: r'"a\u{e000}b"', want: 'a\ue000b', wantErr: null),
+        (input: r'"a\u{10ffff}b"', want: 'a\u{10ffff}b', wantErr: null),
         (
           input: r'"a\u{110000}b"',
           want: null,
-          wantErr: throwsA(isA<StringScannerException>().having(
-              (e) => e.message, 'message', 'Bad unicode escape sequence')),
+          wantErr: throwsA(
+            isA<StringScannerException>().having(
+              (e) => e.message,
+              'message',
+              'Bad unicode escape sequence',
+            ),
+          ),
         ),
       ];
       for (final stringValueTest in stringValueTests) {
@@ -379,20 +339,8 @@ multiline comment
   });
 }
 
-typedef _ErrorTest = ({
-  String input,
-  String message,
-  (int, int) position,
-});
+typedef _ErrorTest = ({String input, String message, (int, int) position});
 
-typedef _IntValueTest = ({
-  String input,
-  Int64? want,
-  Matcher? wantErr,
-});
+typedef _IntValueTest = ({String input, Int64? want, Matcher? wantErr});
 
-typedef _StringValueTest = ({
-  String input,
-  String? want,
-  Matcher? wantErr,
-});
+typedef _StringValueTest = ({String input, String? want, Matcher? wantErr});

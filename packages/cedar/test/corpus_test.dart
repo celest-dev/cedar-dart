@@ -10,7 +10,8 @@ void main() {
           :entitiesJson,
           :policiesCedar,
           :queries,
-        ) in cedarCorpusTests.values) {
+        )
+        in cedarCorpusTests.values) {
       group(name, () {
         late final PolicySet policySet;
         late final Map<EntityUid, Entity> entities;
@@ -19,9 +20,7 @@ void main() {
           policySet = PolicySet.parse(policiesCedar);
           entities = Map.fromEntries(
             entitiesJson.map((json) {
-              final entity = Entity.fromJson(
-                json as Map<String, Object?>,
-              );
+              final entity = Entity.fromJson(json as Map<String, Object?>);
               return MapEntry(entity.uid, entity);
             }),
           );
@@ -56,9 +55,12 @@ void main() {
         });
 
         test('can parse entities', () {
-          final entities = entitiesJson
-              .map((entity) => Entity.fromJson(entity as Map<String, Object?>))
-              .toList();
+          final entities =
+              entitiesJson
+                  .map(
+                    (entity) => Entity.fromJson(entity as Map<String, Object?>),
+                  )
+                  .toList();
           expect(entities.map((e) => e.toJson()), equals(entitiesJson));
 
           final entitiesProto = entities.map((e) => e.toProto()).toList();
@@ -80,8 +82,9 @@ void main() {
                   principal: query.principal,
                   action: query.action,
                   resource: query.resource,
-                  context: query.context
-                      .map((k, v) => MapEntry(k, Value.fromJson(v))),
+                  context: query.context.map(
+                    (k, v) => MapEntry(k, Value.fromJson(v)),
+                  ),
                 ),
               );
               expect(response.decision, query.decision);

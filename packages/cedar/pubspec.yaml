@@ -1,10 +1,10 @@
 name: cedar
 description: Implementation of the Cedar policy language in Dart.
-version: 0.2.6
+version: 1.0.0
 repository: https://github.com/celest-dev/cedar-dart/tree/main/packages/cedar
 
 environment:
-  sdk: ^3.7.0
+  sdk: ^3.8.0
 resolution: workspace
 
 dependencies:

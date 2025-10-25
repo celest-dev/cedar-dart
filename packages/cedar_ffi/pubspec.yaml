@@ -1,13 +1,14 @@
 name: cedar_ffi
 description: FFI bindings for the Cedar policy language, written in Rust.
-version: 0.2.1
+version: 0.3.0
 repository: https://github.com/celest-dev/cedar-dart/tree/main/packages/cedar_ffi
 
 environment:
-  sdk: ^3.8.0-278.2.beta
+  sdk: ^3.8.0
+resolution: workspace
 
 dependencies:
-  cedar: ^0.2.0
+  cedar: ^1.0.0
   ffi: ^2.1.0
   meta: ^1.10.0
   native_assets_cli: ^0.16.0
