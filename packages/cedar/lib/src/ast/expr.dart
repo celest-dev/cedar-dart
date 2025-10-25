@@ -188,10 +188,9 @@ sealed class Expr {
       OpBuiltin.record => ExprRecord.fromJson(value as Map<String, Object?>),
       final OpExtension op => ExprExtensionCall(
         fn: op.name,
-        args:
-            (value as List<Object?>)
-                .map((el) => Expr.fromJson(el as Map<String, Object?>))
-                .toList(),
+        args: (value as List<Object?>)
+            .map((el) => Expr.fromJson(el as Map<String, Object?>))
+            .toList(),
       ),
     };
   }
@@ -237,8 +236,9 @@ sealed class Expr {
       pb.Expr_Expr.extensionCall => ExprExtensionCall.fromProto(
         proto.extensionCall,
       ),
-      final unknown =>
-        throw UnimplementedError('Unknown expression type: $unknown'),
+      final unknown => throw UnimplementedError(
+        'Unknown expression type: $unknown',
+      ),
     };
   }
 
@@ -758,8 +758,9 @@ final class ExprIn extends CedarBinaryExpr {
   OpBuiltin get op => OpBuiltin.in_;
 
   @override
-  pb.Expr toProto() =>
-      pb.Expr(in_: pb.ExprIn(left: left.toProto(), right: right.toProto()));
+  pb.Expr toProto() => pb.Expr(
+    in_: pb.ExprIn(left: left.toProto(), right: right.toProto()),
+  );
 
   @override
   R accept<R>(ExprVisitor<R> visitor) => visitor.visitIn(this);
@@ -946,8 +947,9 @@ final class ExprAnd extends CedarBinaryExpr {
   OpBuiltin get op => OpBuiltin.and;
 
   @override
-  pb.Expr toProto() =>
-      pb.Expr(and: pb.ExprAnd(left: left.toProto(), right: right.toProto()));
+  pb.Expr toProto() => pb.Expr(
+    and: pb.ExprAnd(left: left.toProto(), right: right.toProto()),
+  );
 
   @override
   R accept<R>(ExprVisitor<R> visitor) => visitor.visitAnd(this);
@@ -981,8 +983,9 @@ final class ExprOr extends CedarBinaryExpr {
   OpBuiltin get op => OpBuiltin.or;
 
   @override
-  pb.Expr toProto() =>
-      pb.Expr(or: pb.ExprOr(left: left.toProto(), right: right.toProto()));
+  pb.Expr toProto() => pb.Expr(
+    or: pb.ExprOr(left: left.toProto(), right: right.toProto()),
+  );
 
   @override
   R accept<R>(ExprVisitor<R> visitor) => visitor.visitOr(this);
@@ -1016,8 +1019,9 @@ final class ExprAdd extends CedarBinaryExpr {
   OpBuiltin get op => OpBuiltin.add;
 
   @override
-  pb.Expr toProto() =>
-      pb.Expr(add: pb.ExprAdd(left: left.toProto(), right: right.toProto()));
+  pb.Expr toProto() => pb.Expr(
+    add: pb.ExprAdd(left: left.toProto(), right: right.toProto()),
+  );
 
   @override
   R accept<R>(ExprVisitor<R> visitor) => visitor.visitAdd(this);
@@ -1383,10 +1387,9 @@ final class ExprIs extends Expr {
     return ExprIs(
       left: Expr.fromJson(json['left'] as Map<String, Object?>),
       entityType: json['entity_type'] as String,
-      inExpr:
-          json['in'] != null
-              ? Expr.fromJson(json['in'] as Map<String, Object?>)
-              : null,
+      inExpr: json['in'] != null
+          ? Expr.fromJson(json['in'] as Map<String, Object?>)
+          : null,
     );
   }
 
@@ -1624,4 +1627,183 @@ final class ExprRecord extends Expr {
   @override
   String toString() =>
       '{${attributes.entries.map((e) => '${e.key}: ${e.value}').join(', ')}}';
+}
+
+extension ExprTemplateUtils on Expr {
+  /// Returns a new expression with all [`ExprSlot`] occurrences replaced using
+  /// the provided [bindings].
+  Expr substituteSlots(Map<SlotId, Value> bindings) {
+    Expr visit(Expr expr) => switch (expr) {
+      ExprValue() => expr,
+      ExprVariable() => expr,
+      ExprUnknown() => expr,
+      ExprSlot(:final slotId) => switch (bindings[slotId]) {
+        final Value value => Expr.value(value),
+        _ => throw StateError('Missing binding for slot ${slotId.toJson()}'),
+      },
+      ExprNot(:final arg) => Expr.not(visit(arg)),
+      ExprNegate(:final arg) => Expr.negate(visit(arg)),
+      ExprAnd(:final left, :final right) => Expr.and(
+        left: visit(left),
+        right: visit(right),
+      ),
+      ExprOr(:final left, :final right) => Expr.or(
+        left: visit(left),
+        right: visit(right),
+      ),
+      ExprEquals(:final left, :final right) => Expr.equals(
+        left: visit(left),
+        right: visit(right),
+      ),
+      ExprNotEquals(:final left, :final right) => Expr.notEquals(
+        left: visit(left),
+        right: visit(right),
+      ),
+      ExprLessThan(:final left, :final right) => Expr.lessThan(
+        left: visit(left),
+        right: visit(right),
+      ),
+      ExprLessThanOrEquals(:final left, :final right) => Expr.lessThanOrEquals(
+        left: visit(left),
+        right: visit(right),
+      ),
+      ExprGreaterThan(:final left, :final right) => Expr.greaterThan(
+        left: visit(left),
+        right: visit(right),
+      ),
+      ExprGreaterThanOrEquals(:final left, :final right) =>
+        Expr.greaterThanOrEquals(left: visit(left), right: visit(right)),
+      ExprAdd(:final left, :final right) => Expr.add(
+        left: visit(left),
+        right: visit(right),
+      ),
+      ExprSubt(:final left, :final right) => Expr.subtract(
+        left: visit(left),
+        right: visit(right),
+      ),
+      ExprMult(:final left, :final right) => Expr.multiply(
+        left: visit(left),
+        right: visit(right),
+      ),
+      ExprContains(:final left, :final right) => Expr.contains(
+        left: visit(left),
+        right: visit(right),
+      ),
+      ExprContainsAll(:final left, :final right) => Expr.containsAll(
+        left: visit(left),
+        right: visit(right),
+      ),
+      ExprContainsAny(:final left, :final right) => Expr.containsAny(
+        left: visit(left),
+        right: visit(right),
+      ),
+      ExprGetAttribute(:final left, :final attr) => Expr.getAttribute(
+        left: visit(left),
+        attr: attr,
+      ),
+      ExprHasAttribute(:final left, :final attr) => Expr.hasAttribute(
+        left: visit(left),
+        attr: attr,
+      ),
+      ExprLike(:final left, :final pattern) => Expr.like(
+        left: visit(left),
+        pattern: pattern,
+      ),
+      ExprIn(:final left, :final right) => Expr.in_(
+        left: visit(left),
+        right: visit(right),
+      ),
+      ExprIs(
+        left: final left,
+        entityType: final entityType,
+        inExpr: final inExpr,
+      ) =>
+        Expr.is_(
+          left: visit(left),
+          entityType: entityType,
+          inExpr: inExpr == null ? null : visit(inExpr),
+        ),
+      ExprIfThenElse(:final cond, :final then, :final otherwise) =>
+        Expr.ifThenElse(
+          cond: visit(cond),
+          then: visit(then),
+          otherwise: visit(otherwise),
+        ),
+      ExprSet(:final expressions) => Expr.set([
+        for (final expression in expressions) visit(expression),
+      ]),
+      ExprRecord(:final attributes) => Expr.record({
+        for (final entry in attributes.entries) entry.key: visit(entry.value),
+      }),
+      ExprExtensionCall(:final fn, :final args) => Expr.extensionCall(
+        fn: fn,
+        args: [for (final arg in args) visit(arg)],
+      ),
+    };
+
+    return visit(this);
+  }
+
+  /// Collects all slot identifiers referenced by this expression.
+  Set<SlotId> collectSlots() {
+    final slots = <SlotId>{};
+
+    void visit(Expr expr) {
+      switch (expr) {
+        case ExprSlot(:final slotId):
+          slots.add(slotId);
+        case ExprNot(:final arg) || ExprNegate(:final arg):
+          visit(arg);
+        case ExprAnd(:final left, :final right) ||
+            ExprOr(:final left, :final right) ||
+            ExprEquals(:final left, :final right) ||
+            ExprNotEquals(:final left, :final right) ||
+            ExprLessThan(:final left, :final right) ||
+            ExprLessThanOrEquals(:final left, :final right) ||
+            ExprGreaterThan(:final left, :final right) ||
+            ExprGreaterThanOrEquals(:final left, :final right) ||
+            ExprAdd(:final left, :final right) ||
+            ExprSubt(:final left, :final right) ||
+            ExprMult(:final left, :final right) ||
+            ExprContains(:final left, :final right) ||
+            ExprContainsAll(:final left, :final right) ||
+            ExprContainsAny(:final left, :final right) ||
+            ExprIn(:final left, :final right):
+          visit(left);
+          visit(right);
+        case ExprGetAttribute(left: final left):
+          visit(left);
+        case ExprHasAttribute(left: final left):
+          visit(left);
+        case ExprLike(left: final left):
+          visit(left);
+        case ExprIs(left: final left, inExpr: final inExpr):
+          visit(left);
+          if (inExpr case final Expr expr) {
+            visit(expr);
+          }
+        case ExprIfThenElse(:final cond, :final then, :final otherwise):
+          visit(cond);
+          visit(then);
+          visit(otherwise);
+        case ExprSet(:final expressions):
+          for (final expression in expressions) {
+            visit(expression);
+          }
+        case ExprRecord(:final attributes):
+          for (final expr in attributes.values) {
+            visit(expr);
+          }
+        case ExprExtensionCall(args: final args):
+          for (final arg in args) {
+            visit(arg);
+          }
+        default:
+          break;
+      }
+    }
+
+    visit(this);
+    return slots;
+  }
 }

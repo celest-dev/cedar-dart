@@ -81,43 +81,34 @@ final class Policy {
       resource: ResourceConstraint.fromJson(
         json['resource'] as Map<String, Object?>,
       ),
-      conditions:
-          (json['conditions'] as List<Object?>)
-              .map((c) => Condition.fromJson(c as Map<String, Object?>))
-              .toList(),
-      annotations:
-          json['annotations'] == null
-              ? null
-              : Annotations.fromJson(
-                json['annotations'] as Map<String, Object?>,
-              ),
-      position:
-          json['position'] == null
-              ? null
-              : Position.fromJson(json['position'] as Map<String, Object?>),
+      conditions: (json['conditions'] as List<Object?>)
+          .map((c) => Condition.fromJson(c as Map<String, Object?>))
+          .toList(),
+      annotations: json['annotations'] == null
+          ? null
+          : Annotations.fromJson(json['annotations'] as Map<String, Object?>),
+      position: json['position'] == null
+          ? null
+          : Position.fromJson(json['position'] as Map<String, Object?>),
     );
   }
 
   factory Policy.fromProto(pb.Policy proto) {
     return Policy(
       effect: Effect.fromProto(proto.effect),
-      principal:
-          proto.hasPrincipal()
-              ? PrincipalConstraint.fromProto(proto.principal)
-              : const PrincipalAll(),
-      action:
-          proto.hasAction()
-              ? ActionConstraint.fromProto(proto.action)
-              : const ActionAll(),
-      resource:
-          proto.hasResource()
-              ? ResourceConstraint.fromProto(proto.resource)
-              : const ResourceAll(),
+      principal: proto.hasPrincipal()
+          ? PrincipalConstraint.fromProto(proto.principal)
+          : const PrincipalAll(),
+      action: proto.hasAction()
+          ? ActionConstraint.fromProto(proto.action)
+          : const ActionAll(),
+      resource: proto.hasResource()
+          ? ResourceConstraint.fromProto(proto.resource)
+          : const ResourceAll(),
       conditions: proto.conditions.map(Condition.fromProto).toList(),
-      annotations:
-          proto.hasAnnotations()
-              ? Annotations.fromProto(proto.annotations)
-              : null,
+      annotations: proto.hasAnnotations()
+          ? Annotations.fromProto(proto.annotations)
+          : null,
       position: proto.hasPosition() ? Position.fromProto(proto.position) : null,
     );
   }
@@ -154,6 +145,9 @@ final class Policy {
     return false;
   }
 
+  /// Returns the set of slot identifiers referenced by this policy.
+  Set<SlotId> get slotIds => toExpr().collectSlots();
+
   Policy rebuild(void Function(PolicyBuilder policy) builder) {
     final policy = toBuilder();
     builder(policy);
@@ -167,8 +161,9 @@ final class Policy {
       ..action = action
       ..resource = resource
       ..conditions = List.of(conditions)
-      ..annotations =
-          annotations == null ? null : Annotations(annotations!.annotations)
+      ..annotations = annotations == null
+          ? null
+          : Annotations(annotations!.annotations)
       ..position = position;
   }
 

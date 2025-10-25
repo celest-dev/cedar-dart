@@ -1,6 +1,7 @@
 import 'package:built_collection/built_collection.dart';
 import 'package:built_value/built_value.dart';
 import 'package:built_value/serializer.dart';
+import 'package:cedar/ast.dart';
 import 'package:cedar/cedar.dart';
 import 'package:cedar/src/eval/evalutator.dart';
 import 'package:cedar/src/parser/parser.dart';
@@ -127,8 +128,8 @@ abstract class PolicySet
     final evaluator = Evalutator(context);
 
     final diagnostics = <AuthorizationException>[];
-    final permitReasons = <String>[];
-    final forbidReasons = <String>[];
+    final permitReasons = <AuthorizationReason>[];
+    final forbidReasons = <AuthorizationReason>[];
     var forbidden = false;
     var permitted = false;
 
@@ -145,14 +146,125 @@ abstract class PolicySet
         }
         if (policy.effect == Effect.forbid) {
           forbidden = true;
-          forbidReasons.add(id);
+          forbidReasons.add(_reasonForPolicy(id: id, policy: policy));
         } else {
           permitted = true;
-          permitReasons.add(id);
+          permitReasons.add(_reasonForPolicy(id: id, policy: policy));
         }
       } on EvaluationException catch (e) {
         diagnostics.add(
-          AuthorizationException(policyId: id, message: e.toString()),
+          AuthorizationException(
+            policyId: id,
+            message: e.toString(),
+            category: AuthorizationErrorCategory.evaluation,
+            annotations: _annotationsFor(policy),
+            position: policy.position,
+          ),
+        );
+      }
+    }
+
+    for (final link in templateLinks) {
+      final template = templates[link.templateId];
+      if (template == null) {
+        diagnostics.add(
+          AuthorizationException(
+            policyId: link.newId,
+            message:
+                'Template `${link.templateId}` not found for link `${link.newId}`',
+            category: AuthorizationErrorCategory.linking,
+            annotations: {'templateId': link.templateId},
+          ),
+        );
+        continue;
+      }
+
+      final requiredSlots = template.slotIds;
+      final providedSlots = link.values.keys.toSet();
+      final missing = [
+        for (final slot in requiredSlots)
+          if (!providedSlots.contains(slot)) slot,
+      ];
+      final extra = [
+        for (final slot in providedSlots)
+          if (!requiredSlots.contains(slot)) slot,
+      ];
+
+      if (missing.isNotEmpty || extra.isNotEmpty) {
+        diagnostics.add(
+          AuthorizationException(
+            policyId: link.newId,
+            message: _linkingErrorMessage(
+              templateId: link.templateId,
+              missing: missing,
+              extra: extra,
+            ),
+            category: AuthorizationErrorCategory.linking,
+            annotations: _annotationsFor(
+              template,
+              additional: {'templateId': link.templateId},
+            ),
+            position: template.position,
+          ),
+        );
+        continue;
+      }
+
+      final substituted = template.toExpr().substituteSlots(
+        link.values.map((slot, uid) => MapEntry(slot, Value.entity(uid: uid))),
+      );
+
+      try {
+        final result = substituted.accept(evaluator).expectBool();
+        if (!result.value) {
+          continue;
+        }
+        if (template.effect == Effect.forbid) {
+          forbidden = true;
+          forbidReasons.add(
+            _reasonForPolicy(
+              id: link.newId,
+              policy: template,
+              templateId: link.templateId,
+              additionalAnnotations: {'templateId': link.templateId},
+            ),
+          );
+        } else {
+          permitted = true;
+          permitReasons.add(
+            _reasonForPolicy(
+              id: link.newId,
+              policy: template,
+              templateId: link.templateId,
+              additionalAnnotations: {'templateId': link.templateId},
+            ),
+          );
+        }
+      } on EvaluationException catch (e) {
+        diagnostics.add(
+          AuthorizationException(
+            policyId: link.newId,
+            message: e.toString(),
+            category: AuthorizationErrorCategory.evaluation,
+            annotations: _annotationsFor(
+              template,
+              additional: {'templateId': link.templateId},
+            ),
+            position: template.position,
+          ),
+        );
+      } on StateError catch (e) {
+        diagnostics.add(
+          AuthorizationException(
+            policyId: link.newId,
+            message: e.toString(),
+            category: AuthorizationErrorCategory.internal,
+            annotations: _annotationsFor(
+              template,
+              additional: {'templateId': link.templateId},
+            ),
+            position: template.position,
+          ),
         );
       }
     }
@@ -164,12 +276,63 @@ abstract class PolicySet
     };
     return AuthorizationResponse(
       decision: decision,
-      reasons: reasons.isEmpty ? null : reasons,
-      errors: diagnostics.isEmpty ? null : AuthorizationErrors(diagnostics),
+      diagnostics: AuthorizationDiagnostics(
+        reasons: reasons,
+        errors: diagnostics,
+      ),
     );
   }
 
   static Serializer<PolicySet> get serializer => _$policySetSerializer;
+
+  static String _linkingErrorMessage({
+    required String templateId,
+    required List<SlotId> missing,
+    required List<SlotId> extra,
+  }) {
+    final parts = <String>[];
+    if (missing.isNotEmpty) {
+      final slots = missing.map((slot) => slot.toJson()).join(', ');
+      parts.add('missing values for $slots');
+    }
+    if (extra.isNotEmpty) {
+      final slots = extra.map((slot) => slot.toJson()).join(', ');
+      parts.add('unexpected bindings for $slots');
+    }
+    final detail = parts.join('; ');
+    return 'Invalid template link for template `$templateId`: $detail';
+  }
+}
+
+AuthorizationReason _reasonForPolicy({
+  required String id,
+  required Policy policy,
+  String? templateId,
+  Map<String, String>? additionalAnnotations,
+}) {
+  return AuthorizationReason(
+    policyId: id,
+    effect: policy.effect,
+    position: policy.position,
+    templateId: templateId,
+    annotations: _annotationsFor(policy, additional: additionalAnnotations),
+  );
+}
+
+Map<String, String>? _annotationsFor(
+  Policy policy, {
+  Map<String, String>? additional,
+}) {
+  final hasBase = policy.annotations?.annotations.isNotEmpty ?? false;
+  final hasAdditional = additional?.isNotEmpty ?? false;
+  if (!hasBase && !hasAdditional) {
+    return null;
+  }
+  final map = <String, String>{
+    if (hasBase) ...policy.annotations!.annotations,
+    if (hasAdditional) ...additional!,
+  };
+  return Map.unmodifiable(map);
 }
 
 final class TemplateLink {
