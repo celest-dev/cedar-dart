@@ -6,37 +6,44 @@ const int _kMillisPerHour = 60 * _kMillisPerMinute;
 const int _kMillisPerDay = 24 * _kMillisPerHour;
 final Int64 _kMinInt64 = Int64.MIN_VALUE;
 final Int64 _kMaxInt64 = Int64.MAX_VALUE;
+final int _kMinInt64AsInt = _kMinInt64.toInt();
+final int _kMaxInt64AsInt = _kMaxInt64.toInt();
 
 final class DatetimeValue extends Value {
-  const DatetimeValue(this.milliseconds);
+  const DatetimeValue(this.milliseconds, {this.literal});
 
   factory DatetimeValue.parse(String literal) {
     final int epochMillis = _parseDatetime(literal);
-    return DatetimeValue(_intToInt64(epochMillis));
+    return DatetimeValue(_intToInt64(epochMillis), literal: literal);
   }
 
   final Int64 milliseconds;
+  final String? literal;
 
-  String toIso8601String() => _formatIso8601(milliseconds);
+  String toIso8601String() => literal ?? _formatIso8601(milliseconds);
 
   DatetimeValue offset(DurationValue duration) {
-    final int result = milliseconds.toInt() + duration.milliseconds.toInt();
-    if (!_isWithinInt64(result)) {
+    final BigInt result =
+        BigInt.from(milliseconds.toInt()) +
+        BigInt.from(duration.milliseconds.toInt());
+    if (!_bigIntWithinInt64(result)) {
       throw ArgumentError(
         'overflows when adding an offset: ${asExtensionLiteral()}+(${duration.asExtensionLiteral()})',
       );
     }
-    return DatetimeValue(_intToInt64(result));
+    return DatetimeValue(_intToInt64(result.toInt()));
   }
 
   DurationValue durationSince(DatetimeValue other) {
-    final int result = milliseconds.toInt() - other.milliseconds.toInt();
-    if (!_isWithinInt64(result)) {
+    final BigInt result =
+        BigInt.from(milliseconds.toInt()) -
+        BigInt.from(other.milliseconds.toInt());
+    if (!_bigIntWithinInt64(result)) {
       throw ArgumentError(
         'overflows when computing the duration between ${asExtensionLiteral()} and ${other.asExtensionLiteral()}',
       );
     }
-    return DurationValue(_intToInt64(result));
+    return DurationValue(_intToInt64(result.toInt()));
   }
 
   DatetimeValue toDate() {
@@ -102,10 +109,8 @@ Int64 _intToInt64(int value) {
   return Int64(value);
 }
 
-bool _isWithinInt64(int value) {
-  final Int64 asInt64 = Int64(value);
-  return asInt64 >= _kMinInt64 && asInt64 <= _kMaxInt64;
-}
+bool _isWithinInt64(int value) =>
+    value >= _kMinInt64AsInt && value <= _kMaxInt64AsInt;
 
 int _parseDatetime(String input) {
   final int length = input.length;
@@ -238,7 +243,7 @@ int _parseDatetime(String input) {
   }
 
   return dateTime
-      .add(Duration(milliseconds: offsetMillis))
+      .subtract(Duration(milliseconds: offsetMillis))
       .millisecondsSinceEpoch;
 }
 

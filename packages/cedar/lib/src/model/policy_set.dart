@@ -6,7 +6,7 @@ import 'package:cedar/cedar.dart';
 import 'package:cedar/src/eval/evalutator.dart';
 import 'package:cedar/src/parser/parser.dart';
 import 'package:cedar/src/parser/tokenizer.dart';
-import 'package:cedar/src/proto/cedar/v3/policy.pb.dart' as pb;
+import 'package:cedar/src/proto/cedar/v4/policy.pb.dart' as pb;
 import 'package:cedar/src/util/pretty_json.dart';
 import 'package:collection/collection.dart';
 
@@ -95,12 +95,12 @@ abstract class PolicySet
 
   pb.PolicySet toProto() {
     return pb.PolicySet(
-      policies: policies
-          .map((id, policy) => MapEntry(id, policy.toProto()))
-          .toMap(),
-      templates: templates
-          .map((id, template) => MapEntry(id, template.toProto()))
-          .toMap(),
+      policies: policies.entries.map(
+        (entry) => MapEntry(entry.key, entry.value.toProto()),
+      ),
+      templates: templates.entries.map(
+        (entry) => MapEntry(entry.key, entry.value.toProto()),
+      ),
       templateLinks: templateLinks.map((link) => link.toProto()).toList(),
     );
   }
@@ -379,7 +379,9 @@ final class TemplateLink {
     return pb.TemplateLink(
       templateId: templateId,
       newId: newId,
-      values: values.map((k, v) => MapEntry(k.toJson(), v.toProto())),
+      values: values.entries.map(
+        (entry) => MapEntry(entry.key.toJson(), entry.value.toProto()),
+      ),
     );
   }
 
@@ -388,10 +390,11 @@ final class TemplateLink {
       other is TemplateLink &&
       templateId == other.templateId &&
       newId == other.newId &&
-      const MapEquality().equals(values, other.values);
+      const MapEquality<SlotId, EntityUid>().equals(values, other.values);
 
   @override
-  int get hashCode => Object.hashAll([templateId, newId, ...values.entries]);
+  int get hashCode =>
+      const DeepCollectionEquality().hash([templateId, newId, values]);
 
   @override
   String toString() => prettyJson(toJson());

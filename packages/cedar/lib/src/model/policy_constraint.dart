@@ -1,6 +1,6 @@
 import 'package:cedar/ast.dart';
 import 'package:cedar/cedar.dart';
-import 'package:cedar/src/proto/cedar/v3/policy.pb.dart' as pb;
+import 'package:cedar/src/proto/cedar/v4/policy.pb.dart' as pb;
 import 'package:collection/collection.dart';
 
 sealed class PolicyConstraint {
@@ -12,12 +12,11 @@ sealed class PolicyConstraint {
         ActionConstraint.fromJson(action),
       {'resource': final Map<String, Object?> resource} =>
         ResourceConstraint.fromJson(resource),
-      _ =>
-        throw ArgumentError.value(
-          json,
-          'json',
-          'Invalid Cedar policy scope. Expected principal, action, or resource.',
-        ),
+      _ => throw ArgumentError.value(
+        json,
+        'json',
+        'Invalid Cedar policy scope. Expected principal, action, or resource.',
+      ),
     };
   }
 
@@ -61,12 +60,11 @@ sealed class PrincipalConstraint implements PolicyConstraint {
       {'op': 'is', 'entity_type': final String entityType} => PrincipalIs(
         entityType,
       ),
-      _ =>
-        throw ArgumentError.value(
-          json,
-          'json',
-          'Invalid Cedar principal scope. Expected op in [All, ==, in, is].',
-        ),
+      _ => throw ArgumentError.value(
+        json,
+        'json',
+        'Invalid Cedar principal scope. Expected op in [All, ==, in, is].',
+      ),
     };
   }
 
@@ -83,12 +81,11 @@ sealed class PrincipalConstraint implements PolicyConstraint {
       pb.PrincipalConstraint_Constraint.isIn => PrincipalIsIn.fromProto(
         proto.isIn,
       ),
-      final unknown =>
-        throw ArgumentError.value(
-          unknown,
-          'constraint',
-          'Unknown Cedar principal constraint.',
-        ),
+      final unknown => throw ArgumentError.value(
+        unknown,
+        'constraint',
+        'Unknown Cedar principal constraint.',
+      ),
     };
   }
 
@@ -114,12 +111,11 @@ sealed class ActionConstraint implements PolicyConstraint {
             .map((o) => EntityUid.fromJson(o as Map<String, Object?>))
             .toList(),
       ),
-      _ =>
-        throw ArgumentError.value(
-          json,
-          'json',
-          'Invalid Cedar action scope. Expected op in [All, ==, in].',
-        ),
+      _ => throw ArgumentError.value(
+        json,
+        'json',
+        'Invalid Cedar action scope. Expected op in [All, ==, in].',
+      ),
     };
   }
 
@@ -133,12 +129,11 @@ sealed class ActionConstraint implements PolicyConstraint {
       pb.ActionConstraint_Constraint.inSet => ActionInSet(
         proto.inSet.entities.map(EntityUid.fromProto).toList(),
       ),
-      final unknown =>
-        throw ArgumentError.value(
-          unknown,
-          'constraint',
-          'Unknown Cedar action constraint.',
-        ),
+      final unknown => throw ArgumentError.value(
+        unknown,
+        'constraint',
+        'Unknown Cedar action constraint.',
+      ),
     };
   }
 
@@ -182,12 +177,11 @@ sealed class ResourceConstraint implements PolicyConstraint {
       {'op': 'is', 'entity_type': final String entityType} => ResourceIs(
         entityType,
       ),
-      _ =>
-        throw ArgumentError.value(
-          json,
-          'json',
-          'Invalid Cedar resource scope. Expected op in [All, ==, in, is].',
-        ),
+      _ => throw ArgumentError.value(
+        json,
+        'json',
+        'Invalid Cedar resource scope. Expected op in [All, ==, in, is].',
+      ),
     };
   }
 
@@ -202,12 +196,11 @@ sealed class ResourceConstraint implements PolicyConstraint {
       pb.ResourceConstraint_Constraint.isIn => ResourceIsIn.fromProto(
         proto.isIn,
       ),
-      final unknown =>
-        throw ArgumentError.value(
-          unknown,
-          'constraint',
-          'Unknown Cedar resource constraint.',
-        ),
+      final unknown => throw ArgumentError.value(
+        unknown,
+        'constraint',
+        'Unknown Cedar resource constraint.',
+      ),
     };
   }
 
@@ -402,12 +395,11 @@ final class PrincipalEquals extends PrincipalConstraint
     return PrincipalEquals(switch (proto.whichComponent()) {
       pb.PrincipalEquals_Component.slot => SlotId.fromProto(proto.slot),
       pb.PrincipalEquals_Component.entity => EntityUid.fromProto(proto.entity),
-      final unknown =>
-        throw ArgumentError.value(
-          unknown,
-          'entity',
-          'Unknown Cedar principal equals entity.',
-        ),
+      final unknown => throw ArgumentError.value(
+        unknown,
+        'entity',
+        'Unknown Cedar principal equals entity.',
+      ),
     });
   }
 
@@ -432,12 +424,11 @@ final class PrincipalIn extends PrincipalConstraint with PolicyConstraintIn {
     return PrincipalIn(switch (proto.whichComponent()) {
       pb.PrincipalIn_Component.slot => SlotId.fromProto(proto.slot),
       pb.PrincipalIn_Component.entity => EntityUid.fromProto(proto.entity),
-      final unknown =>
-        throw ArgumentError.value(
-          unknown,
-          'entity',
-          'Unknown Cedar principal in entity.',
-        ),
+      final unknown => throw ArgumentError.value(
+        unknown,
+        'entity',
+        'Unknown Cedar principal in entity.',
+      ),
     });
   }
 
@@ -478,12 +469,11 @@ final class PrincipalIsIn extends PrincipalConstraint
     return PrincipalIsIn(proto.entityType, switch (proto.whichIn()) {
       pb.PrincipalIsIn_In.slot => SlotId.fromProto(proto.slot),
       pb.PrincipalIsIn_In.entity => EntityUid.fromProto(proto.entity),
-      final unknown =>
-        throw ArgumentError.value(
-          unknown,
-          'entity',
-          'Unknown Cedar principal is in entity.',
-        ),
+      final unknown => throw ArgumentError.value(
+        unknown,
+        'entity',
+        'Unknown Cedar principal is in entity.',
+      ),
     });
   }
 
@@ -575,12 +565,11 @@ final class ResourceEquals extends ResourceConstraint
     return ResourceEquals(switch (proto.whichComponent()) {
       pb.ResourceEquals_Component.slot => SlotId.fromProto(proto.slot),
       pb.ResourceEquals_Component.entity => EntityUid.fromProto(proto.entity),
-      final unknown =>
-        throw ArgumentError.value(
-          unknown,
-          'entity',
-          'Unknown Cedar resource equals entity.',
-        ),
+      final unknown => throw ArgumentError.value(
+        unknown,
+        'entity',
+        'Unknown Cedar resource equals entity.',
+      ),
     });
   }
 
@@ -605,12 +594,11 @@ final class ResourceIn extends ResourceConstraint with PolicyConstraintIn {
     return ResourceIn(switch (proto.whichComponent()) {
       pb.ResourceIn_Component.slot => SlotId.fromProto(proto.slot),
       pb.ResourceIn_Component.entity => EntityUid.fromProto(proto.entity),
-      final unknown =>
-        throw ArgumentError.value(
-          unknown,
-          'entity',
-          'Unknown Cedar resource in entity.',
-        ),
+      final unknown => throw ArgumentError.value(
+        unknown,
+        'entity',
+        'Unknown Cedar resource in entity.',
+      ),
     });
   }
 
@@ -650,12 +638,11 @@ final class ResourceIsIn extends ResourceConstraint with PolicyConstraintIsIn {
     return ResourceIsIn(proto.entityType, switch (proto.whichIn()) {
       pb.ResourceIsIn_In.slot => SlotId.fromProto(proto.slot),
       pb.ResourceIsIn_In.entity => EntityUid.fromProto(proto.entity),
-      final unknown =>
-        throw ArgumentError.value(
-          unknown,
-          'entity',
-          'Unknown Cedar resource is in entity.',
-        ),
+      final unknown => throw ArgumentError.value(
+        unknown,
+        'entity',
+        'Unknown Cedar resource is in entity.',
+      ),
     });
   }
 
@@ -697,11 +684,10 @@ extension PolicyConstraintBuilder on Policy {
 
   Policy principalIsIn(String entityType, EntityUid entity) {
     return rebuild(
-      (policy) =>
-          policy.principal = PrincipalIsIn(
-            entityType,
-            EntityValue(uid: entity),
-          ),
+      (policy) => policy.principal = PrincipalIsIn(
+        entityType,
+        EntityValue(uid: entity),
+      ),
     );
   }
 

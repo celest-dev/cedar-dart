@@ -1,4 +1,5 @@
 import 'package:cedar/ast.dart';
+import 'package:cedar/cedar.dart';
 import 'package:cedar/src/eval/evalutator.dart';
 import 'package:test/test.dart';
 
@@ -131,7 +132,11 @@ void main() {
       ];
 
       for (final literal in cases) {
-        expect(() => callIp(literal), throwsArgumentError, reason: literal);
+        expect(
+          () => callIp(literal),
+          throwsA(isA<TypeException>()),
+          reason: literal,
+        );
       }
     });
 
@@ -141,7 +146,7 @@ void main() {
         args: [Expr.value(const StringValue('not-an-ip'))],
       );
 
-      expect(() => evaluateExpr(expr), throwsArgumentError);
+      expect(() => evaluateExpr(expr), throwsA(isA<TypeException>()));
     });
 
     test('isIpv4 handles IPv4 addresses and prefixes', () {
@@ -379,7 +384,7 @@ void main() {
         ],
       );
 
-      expect(() => evaluateExpr(expr), throwsArgumentError);
+      expect(() => evaluateExpr(expr), throwsA(isA<TypeException>()));
     });
   });
 }

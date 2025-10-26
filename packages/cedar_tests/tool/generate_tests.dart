@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:cedar/cedar.dart';
 import 'package:cedar_tests/src/corpus.dart';
 import 'package:path/path.dart' as p;
 
@@ -110,8 +111,9 @@ Future<void> main() async {
       );
     }
   }
+  const encoder = JsonEncoder.withIndent('  ');
   await outputFile.writeAsString(
-    jsonEncode(testData.map((k, v) => MapEntry(k, v.toJson()))),
+    encoder.convert(testData.map((k, v) => MapEntry(k, v.toJson()))),
   );
   final result = await Process.run(Platform.resolvedExecutable, [
     'run',
@@ -274,5 +276,5 @@ Map<String, Object?> _loadSchemaJson(String repositoryRoot, String schemaPath) {
     }
     throw UnsupportedError('Schema JSON must be an object: $schemaPath');
   }
-  throw UnsupportedError('Schema IDL not supported yet: $schemaPath');
+  return CedarSchema.parse(contents).toJson();
 }

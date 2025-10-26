@@ -1,13 +1,14 @@
+// This is a generated file - do not edit.
 //
-//  Generated code. Do not modify.
-//  source: cedar/v3/policy.proto
-//
-// @dart = 2.12
+// Generated from cedar/v4/policy.proto.
+
+// @dart = 3.3
 
 // ignore_for_file: annotate_overrides, camel_case_types, comment_references
-// ignore_for_file: constant_identifier_names, library_prefixes
-// ignore_for_file: non_constant_identifier_names, prefer_final_fields
-// ignore_for_file: unnecessary_import, unnecessary_this, unused_import
+// ignore_for_file: constant_identifier_names
+// ignore_for_file: curly_braces_in_flow_control_structures
+// ignore_for_file: deprecated_member_use_from_same_package, library_prefixes
+// ignore_for_file: non_constant_identifier_names, unused_import
 
 import 'dart:convert' as $convert;
 import 'dart:core' as $core;
@@ -52,7 +53,7 @@ const PolicySet$json = {
       '3': 1,
       '4': 3,
       '5': 11,
-      '6': '.cedar.v3.PolicySet.PoliciesEntry',
+      '6': '.cedar.v4.PolicySet.PoliciesEntry',
       '10': 'policies'
     },
     {
@@ -60,7 +61,7 @@ const PolicySet$json = {
       '3': 2,
       '4': 3,
       '5': 11,
-      '6': '.cedar.v3.PolicySet.TemplatesEntry',
+      '6': '.cedar.v4.PolicySet.TemplatesEntry',
       '10': 'templates'
     },
     {
@@ -68,7 +69,7 @@ const PolicySet$json = {
       '3': 3,
       '4': 3,
       '5': 11,
-      '6': '.cedar.v3.TemplateLink',
+      '6': '.cedar.v4.TemplateLink',
       '10': 'templateLinks'
     },
   ],
@@ -85,7 +86,7 @@ const PolicySet_PoliciesEntry$json = {
       '3': 2,
       '4': 1,
       '5': 11,
-      '6': '.cedar.v3.Policy',
+      '6': '.cedar.v4.Policy',
       '10': 'value'
     },
   ],
@@ -102,7 +103,7 @@ const PolicySet_TemplatesEntry$json = {
       '3': 2,
       '4': 1,
       '5': 11,
-      '6': '.cedar.v3.Policy',
+      '6': '.cedar.v4.Policy',
       '10': 'value'
     },
   ],
@@ -111,13 +112,13 @@ const PolicySet_TemplatesEntry$json = {
 
 /// Descriptor for `PolicySet`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List policySetDescriptor = $convert.base64Decode(
-    'CglQb2xpY3lTZXQSPQoIcG9saWNpZXMYASADKAsyIS5jZWRhci52My5Qb2xpY3lTZXQuUG9saW'
-    'NpZXNFbnRyeVIIcG9saWNpZXMSQAoJdGVtcGxhdGVzGAIgAygLMiIuY2VkYXIudjMuUG9saWN5'
+    'CglQb2xpY3lTZXQSPQoIcG9saWNpZXMYASADKAsyIS5jZWRhci52NC5Qb2xpY3lTZXQuUG9saW'
+    'NpZXNFbnRyeVIIcG9saWNpZXMSQAoJdGVtcGxhdGVzGAIgAygLMiIuY2VkYXIudjQuUG9saWN5'
     'U2V0LlRlbXBsYXRlc0VudHJ5Ugl0ZW1wbGF0ZXMSPQoOdGVtcGxhdGVfbGlua3MYAyADKAsyFi'
-    '5jZWRhci52My5UZW1wbGF0ZUxpbmtSDXRlbXBsYXRlTGlua3MaTQoNUG9saWNpZXNFbnRyeRIQ'
-    'CgNrZXkYASABKAlSA2tleRImCgV2YWx1ZRgCIAEoCzIQLmNlZGFyLnYzLlBvbGljeVIFdmFsdW'
+    '5jZWRhci52NC5UZW1wbGF0ZUxpbmtSDXRlbXBsYXRlTGlua3MaTQoNUG9saWNpZXNFbnRyeRIQ'
+    'CgNrZXkYASABKAlSA2tleRImCgV2YWx1ZRgCIAEoCzIQLmNlZGFyLnY0LlBvbGljeVIFdmFsdW'
     'U6AjgBGk4KDlRlbXBsYXRlc0VudHJ5EhAKA2tleRgBIAEoCVIDa2V5EiYKBXZhbHVlGAIgASgL'
-    'MhAuY2VkYXIudjMuUG9saWN5UgV2YWx1ZToCOAE=');
+    'MhAuY2VkYXIudjQuUG9saWN5UgV2YWx1ZToCOAE=');
 
 @$core.Deprecated('Use policyDescriptor instead')
 const Policy$json = {
@@ -129,7 +130,7 @@ const Policy$json = {
       '3': 2,
       '4': 1,
       '5': 14,
-      '6': '.cedar.v3.Effect',
+      '6': '.cedar.v4.Effect',
       '10': 'effect'
     },
     {
@@ -137,7 +138,7 @@ const Policy$json = {
       '3': 3,
       '4': 1,
       '5': 11,
-      '6': '.cedar.v3.PrincipalConstraint',
+      '6': '.cedar.v4.PrincipalConstraint',
       '10': 'principal'
     },
     {
@@ -145,7 +146,7 @@ const Policy$json = {
       '3': 4,
       '4': 1,
       '5': 11,
-      '6': '.cedar.v3.ActionConstraint',
+      '6': '.cedar.v4.ActionConstraint',
       '10': 'action'
     },
     {
@@ -153,7 +154,7 @@ const Policy$json = {
       '3': 5,
       '4': 1,
       '5': 11,
-      '6': '.cedar.v3.ResourceConstraint',
+      '6': '.cedar.v4.ResourceConstraint',
       '10': 'resource'
     },
     {
@@ -161,7 +162,7 @@ const Policy$json = {
       '3': 6,
       '4': 3,
       '5': 11,
-      '6': '.cedar.v3.Condition',
+      '6': '.cedar.v4.Condition',
       '10': 'conditions'
     },
     {
@@ -169,7 +170,7 @@ const Policy$json = {
       '3': 7,
       '4': 1,
       '5': 11,
-      '6': '.cedar.v3.Annotations',
+      '6': '.cedar.v4.Annotations',
       '10': 'annotations'
     },
     {
@@ -177,7 +178,7 @@ const Policy$json = {
       '3': 8,
       '4': 1,
       '5': 11,
-      '6': '.cedar.v3.Position',
+      '6': '.cedar.v4.Position',
       '10': 'position'
     },
   ],
@@ -189,12 +190,12 @@ const Policy$json = {
 /// Descriptor for `Policy`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List policyDescriptor = $convert.base64Decode(
     'CgZQb2xpY3kSEwoCaWQYASABKAlIAFICaWSIAQESKAoGZWZmZWN0GAIgASgOMhAuY2VkYXIudj'
-    'MuRWZmZWN0UgZlZmZlY3QSOwoJcHJpbmNpcGFsGAMgASgLMh0uY2VkYXIudjMuUHJpbmNpcGFs'
-    'Q29uc3RyYWludFIJcHJpbmNpcGFsEjIKBmFjdGlvbhgEIAEoCzIaLmNlZGFyLnYzLkFjdGlvbk'
-    'NvbnN0cmFpbnRSBmFjdGlvbhI4CghyZXNvdXJjZRgFIAEoCzIcLmNlZGFyLnYzLlJlc291cmNl'
-    'Q29uc3RyYWludFIIcmVzb3VyY2USMwoKY29uZGl0aW9ucxgGIAMoCzITLmNlZGFyLnYzLkNvbm'
-    'RpdGlvblIKY29uZGl0aW9ucxI3Cgthbm5vdGF0aW9ucxgHIAEoCzIVLmNlZGFyLnYzLkFubm90'
-    'YXRpb25zUgthbm5vdGF0aW9ucxIuCghwb3NpdGlvbhgIIAEoCzISLmNlZGFyLnYzLlBvc2l0aW'
+    'QuRWZmZWN0UgZlZmZlY3QSOwoJcHJpbmNpcGFsGAMgASgLMh0uY2VkYXIudjQuUHJpbmNpcGFs'
+    'Q29uc3RyYWludFIJcHJpbmNpcGFsEjIKBmFjdGlvbhgEIAEoCzIaLmNlZGFyLnY0LkFjdGlvbk'
+    'NvbnN0cmFpbnRSBmFjdGlvbhI4CghyZXNvdXJjZRgFIAEoCzIcLmNlZGFyLnY0LlJlc291cmNl'
+    'Q29uc3RyYWludFIIcmVzb3VyY2USMwoKY29uZGl0aW9ucxgGIAMoCzITLmNlZGFyLnY0LkNvbm'
+    'RpdGlvblIKY29uZGl0aW9ucxI3Cgthbm5vdGF0aW9ucxgHIAEoCzIVLmNlZGFyLnY0LkFubm90'
+    'YXRpb25zUgthbm5vdGF0aW9ucxIuCghwb3NpdGlvbhgIIAEoCzISLmNlZGFyLnY0LlBvc2l0aW'
     '9uUghwb3NpdGlvbkIFCgNfaWQ=');
 
 @$core.Deprecated('Use annotationsDescriptor instead')
@@ -206,7 +207,7 @@ const Annotations$json = {
       '3': 1,
       '4': 3,
       '5': 11,
-      '6': '.cedar.v3.Annotations.AnnotationsEntry',
+      '6': '.cedar.v4.Annotations.AnnotationsEntry',
       '10': 'annotations'
     },
   ],
@@ -225,7 +226,7 @@ const Annotations_AnnotationsEntry$json = {
 
 /// Descriptor for `Annotations`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List annotationsDescriptor = $convert.base64Decode(
-    'CgtBbm5vdGF0aW9ucxJICgthbm5vdGF0aW9ucxgBIAMoCzImLmNlZGFyLnYzLkFubm90YXRpb2'
+    'CgtBbm5vdGF0aW9ucxJICgthbm5vdGF0aW9ucxgBIAMoCzImLmNlZGFyLnY0LkFubm90YXRpb2'
     '5zLkFubm90YXRpb25zRW50cnlSC2Fubm90YXRpb25zGj4KEEFubm90YXRpb25zRW50cnkSEAoD'
     'a2V5GAEgASgJUgNrZXkSFAoFdmFsdWUYAiABKAlSBXZhbHVlOgI4AQ==');
 
@@ -266,7 +267,7 @@ const PrincipalConstraint$json = {
       '3': 1,
       '4': 1,
       '5': 11,
-      '6': '.cedar.v3.PrincipalAll',
+      '6': '.cedar.v4.PrincipalAll',
       '9': 0,
       '10': 'all'
     },
@@ -275,7 +276,7 @@ const PrincipalConstraint$json = {
       '3': 2,
       '4': 1,
       '5': 11,
-      '6': '.cedar.v3.PrincipalEquals',
+      '6': '.cedar.v4.PrincipalEquals',
       '9': 0,
       '10': 'equals'
     },
@@ -284,7 +285,7 @@ const PrincipalConstraint$json = {
       '3': 3,
       '4': 1,
       '5': 11,
-      '6': '.cedar.v3.PrincipalIn',
+      '6': '.cedar.v4.PrincipalIn',
       '8': {'28700919': 'in_'},
       '9': 0,
       '10': 'in',
@@ -294,7 +295,7 @@ const PrincipalConstraint$json = {
       '3': 4,
       '4': 1,
       '5': 11,
-      '6': '.cedar.v3.PrincipalIsIn',
+      '6': '.cedar.v4.PrincipalIsIn',
       '9': 0,
       '10': 'isIn'
     },
@@ -303,7 +304,7 @@ const PrincipalConstraint$json = {
       '3': 5,
       '4': 1,
       '5': 11,
-      '6': '.cedar.v3.PrincipalIs',
+      '6': '.cedar.v4.PrincipalIs',
       '9': 0,
       '10': 'is'
     },
@@ -315,11 +316,11 @@ const PrincipalConstraint$json = {
 
 /// Descriptor for `PrincipalConstraint`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List principalConstraintDescriptor = $convert.base64Decode(
-    'ChNQcmluY2lwYWxDb25zdHJhaW50EioKA2FsbBgBIAEoCzIWLmNlZGFyLnYzLlByaW5jaXBhbE'
-    'FsbEgAUgNhbGwSMwoGZXF1YWxzGAIgASgLMhkuY2VkYXIudjMuUHJpbmNpcGFsRXF1YWxzSABS'
-    'BmVxdWFscxIxCgJpbhgDIAEoCzIVLmNlZGFyLnYzLlByaW5jaXBhbEluQgi6j75tA2luX0gAUg'
-    'JpbhIuCgVpc19pbhgEIAEoCzIXLmNlZGFyLnYzLlByaW5jaXBhbElzSW5IAFIEaXNJbhInCgJp'
-    'cxgFIAEoCzIVLmNlZGFyLnYzLlByaW5jaXBhbElzSABSAmlzQgwKCmNvbnN0cmFpbnQ=');
+    'ChNQcmluY2lwYWxDb25zdHJhaW50EioKA2FsbBgBIAEoCzIWLmNlZGFyLnY0LlByaW5jaXBhbE'
+    'FsbEgAUgNhbGwSMwoGZXF1YWxzGAIgASgLMhkuY2VkYXIudjQuUHJpbmNpcGFsRXF1YWxzSABS'
+    'BmVxdWFscxIxCgJpbhgDIAEoCzIVLmNlZGFyLnY0LlByaW5jaXBhbEluQgi6j75tA2luX0gAUg'
+    'JpbhIuCgVpc19pbhgEIAEoCzIXLmNlZGFyLnY0LlByaW5jaXBhbElzSW5IAFIEaXNJbhInCgJp'
+    'cxgFIAEoCzIVLmNlZGFyLnY0LlByaW5jaXBhbElzSABSAmlzQgwKCmNvbnN0cmFpbnQ=');
 
 @$core.Deprecated('Use principalAllDescriptor instead')
 const PrincipalAll$json = {
@@ -339,7 +340,7 @@ const PrincipalEquals$json = {
       '3': 1,
       '4': 1,
       '5': 14,
-      '6': '.cedar.v3.SlotId',
+      '6': '.cedar.v4.SlotId',
       '9': 0,
       '10': 'slot'
     },
@@ -348,7 +349,7 @@ const PrincipalEquals$json = {
       '3': 2,
       '4': 1,
       '5': 11,
-      '6': '.cedar.v3.EntityUid',
+      '6': '.cedar.v4.EntityUid',
       '9': 0,
       '10': 'entity'
     },
@@ -360,8 +361,8 @@ const PrincipalEquals$json = {
 
 /// Descriptor for `PrincipalEquals`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List principalEqualsDescriptor = $convert.base64Decode(
-    'Cg9QcmluY2lwYWxFcXVhbHMSJgoEc2xvdBgBIAEoDjIQLmNlZGFyLnYzLlNsb3RJZEgAUgRzbG'
-    '90Ei0KBmVudGl0eRgCIAEoCzITLmNlZGFyLnYzLkVudGl0eVVpZEgAUgZlbnRpdHlCCwoJY29t'
+    'Cg9QcmluY2lwYWxFcXVhbHMSJgoEc2xvdBgBIAEoDjIQLmNlZGFyLnY0LlNsb3RJZEgAUgRzbG'
+    '90Ei0KBmVudGl0eRgCIAEoCzITLmNlZGFyLnY0LkVudGl0eVVpZEgAUgZlbnRpdHlCCwoJY29t'
     'cG9uZW50');
 
 @$core.Deprecated('Use principalInDescriptor instead')
@@ -373,7 +374,7 @@ const PrincipalIn$json = {
       '3': 1,
       '4': 1,
       '5': 14,
-      '6': '.cedar.v3.SlotId',
+      '6': '.cedar.v4.SlotId',
       '9': 0,
       '10': 'slot'
     },
@@ -382,7 +383,7 @@ const PrincipalIn$json = {
       '3': 2,
       '4': 1,
       '5': 11,
-      '6': '.cedar.v3.EntityUid',
+      '6': '.cedar.v4.EntityUid',
       '9': 0,
       '10': 'entity'
     },
@@ -394,8 +395,8 @@ const PrincipalIn$json = {
 
 /// Descriptor for `PrincipalIn`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List principalInDescriptor = $convert.base64Decode(
-    'CgtQcmluY2lwYWxJbhImCgRzbG90GAEgASgOMhAuY2VkYXIudjMuU2xvdElkSABSBHNsb3QSLQ'
-    'oGZW50aXR5GAIgASgLMhMuY2VkYXIudjMuRW50aXR5VWlkSABSBmVudGl0eUILCgljb21wb25l'
+    'CgtQcmluY2lwYWxJbhImCgRzbG90GAEgASgOMhAuY2VkYXIudjQuU2xvdElkSABSBHNsb3QSLQ'
+    'oGZW50aXR5GAIgASgLMhMuY2VkYXIudjQuRW50aXR5VWlkSABSBmVudGl0eUILCgljb21wb25l'
     'bnQ=');
 
 @$core.Deprecated('Use principalIsInDescriptor instead')
@@ -408,7 +409,7 @@ const PrincipalIsIn$json = {
       '3': 2,
       '4': 1,
       '5': 14,
-      '6': '.cedar.v3.SlotId',
+      '6': '.cedar.v4.SlotId',
       '9': 0,
       '10': 'slot'
     },
@@ -417,7 +418,7 @@ const PrincipalIsIn$json = {
       '3': 3,
       '4': 1,
       '5': 11,
-      '6': '.cedar.v3.EntityUid',
+      '6': '.cedar.v4.EntityUid',
       '9': 0,
       '10': 'entity'
     },
@@ -430,8 +431,8 @@ const PrincipalIsIn$json = {
 /// Descriptor for `PrincipalIsIn`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List principalIsInDescriptor = $convert.base64Decode(
     'Cg1QcmluY2lwYWxJc0luEh8KC2VudGl0eV90eXBlGAEgASgJUgplbnRpdHlUeXBlEiYKBHNsb3'
-    'QYAiABKA4yEC5jZWRhci52My5TbG90SWRIAFIEc2xvdBItCgZlbnRpdHkYAyABKAsyEy5jZWRh'
-    'ci52My5FbnRpdHlVaWRIAFIGZW50aXR5QgQKAmlu');
+    'QYAiABKA4yEC5jZWRhci52NC5TbG90SWRIAFIEc2xvdBItCgZlbnRpdHkYAyABKAsyEy5jZWRh'
+    'ci52NC5FbnRpdHlVaWRIAFIGZW50aXR5QgQKAmlu');
 
 @$core.Deprecated('Use principalIsDescriptor instead')
 const PrincipalIs$json = {
@@ -454,7 +455,7 @@ const ActionConstraint$json = {
       '3': 1,
       '4': 1,
       '5': 11,
-      '6': '.cedar.v3.ActionAll',
+      '6': '.cedar.v4.ActionAll',
       '9': 0,
       '10': 'all'
     },
@@ -463,7 +464,7 @@ const ActionConstraint$json = {
       '3': 2,
       '4': 1,
       '5': 11,
-      '6': '.cedar.v3.ActionEquals',
+      '6': '.cedar.v4.ActionEquals',
       '9': 0,
       '10': 'equals'
     },
@@ -472,7 +473,7 @@ const ActionConstraint$json = {
       '3': 3,
       '4': 1,
       '5': 11,
-      '6': '.cedar.v3.ActionIn',
+      '6': '.cedar.v4.ActionIn',
       '8': {'28700919': 'in_'},
       '9': 0,
       '10': 'in',
@@ -482,7 +483,7 @@ const ActionConstraint$json = {
       '3': 4,
       '4': 1,
       '5': 11,
-      '6': '.cedar.v3.ActionInSet',
+      '6': '.cedar.v4.ActionInSet',
       '9': 0,
       '10': 'inSet'
     },
@@ -494,10 +495,10 @@ const ActionConstraint$json = {
 
 /// Descriptor for `ActionConstraint`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List actionConstraintDescriptor = $convert.base64Decode(
-    'ChBBY3Rpb25Db25zdHJhaW50EicKA2FsbBgBIAEoCzITLmNlZGFyLnYzLkFjdGlvbkFsbEgAUg'
-    'NhbGwSMAoGZXF1YWxzGAIgASgLMhYuY2VkYXIudjMuQWN0aW9uRXF1YWxzSABSBmVxdWFscxIu'
-    'CgJpbhgDIAEoCzISLmNlZGFyLnYzLkFjdGlvbkluQgi6j75tA2luX0gAUgJpbhIuCgZpbl9zZX'
-    'QYBCABKAsyFS5jZWRhci52My5BY3Rpb25JblNldEgAUgVpblNldEIMCgpjb25zdHJhaW50');
+    'ChBBY3Rpb25Db25zdHJhaW50EicKA2FsbBgBIAEoCzITLmNlZGFyLnY0LkFjdGlvbkFsbEgAUg'
+    'NhbGwSMAoGZXF1YWxzGAIgASgLMhYuY2VkYXIudjQuQWN0aW9uRXF1YWxzSABSBmVxdWFscxIu'
+    'CgJpbhgDIAEoCzISLmNlZGFyLnY0LkFjdGlvbkluQgi6j75tA2luX0gAUgJpbhIuCgZpbl9zZX'
+    'QYBCABKAsyFS5jZWRhci52NC5BY3Rpb25JblNldEgAUgVpblNldEIMCgpjb25zdHJhaW50');
 
 @$core.Deprecated('Use actionAllDescriptor instead')
 const ActionAll$json = {
@@ -517,7 +518,7 @@ const ActionEquals$json = {
       '3': 1,
       '4': 1,
       '5': 11,
-      '6': '.cedar.v3.EntityUid',
+      '6': '.cedar.v4.EntityUid',
       '10': 'entity'
     },
   ],
@@ -525,7 +526,7 @@ const ActionEquals$json = {
 
 /// Descriptor for `ActionEquals`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List actionEqualsDescriptor = $convert.base64Decode(
-    'CgxBY3Rpb25FcXVhbHMSKwoGZW50aXR5GAEgASgLMhMuY2VkYXIudjMuRW50aXR5VWlkUgZlbn'
+    'CgxBY3Rpb25FcXVhbHMSKwoGZW50aXR5GAEgASgLMhMuY2VkYXIudjQuRW50aXR5VWlkUgZlbn'
     'RpdHk=');
 
 @$core.Deprecated('Use actionInDescriptor instead')
@@ -537,7 +538,7 @@ const ActionIn$json = {
       '3': 1,
       '4': 1,
       '5': 11,
-      '6': '.cedar.v3.EntityUid',
+      '6': '.cedar.v4.EntityUid',
       '10': 'entity'
     },
   ],
@@ -545,7 +546,7 @@ const ActionIn$json = {
 
 /// Descriptor for `ActionIn`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List actionInDescriptor = $convert.base64Decode(
-    'CghBY3Rpb25JbhIrCgZlbnRpdHkYASABKAsyEy5jZWRhci52My5FbnRpdHlVaWRSBmVudGl0eQ'
+    'CghBY3Rpb25JbhIrCgZlbnRpdHkYASABKAsyEy5jZWRhci52NC5FbnRpdHlVaWRSBmVudGl0eQ'
     '==');
 
 @$core.Deprecated('Use actionInSetDescriptor instead')
@@ -557,7 +558,7 @@ const ActionInSet$json = {
       '3': 1,
       '4': 3,
       '5': 11,
-      '6': '.cedar.v3.EntityUid',
+      '6': '.cedar.v4.EntityUid',
       '10': 'entities'
     },
   ],
@@ -565,7 +566,7 @@ const ActionInSet$json = {
 
 /// Descriptor for `ActionInSet`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List actionInSetDescriptor = $convert.base64Decode(
-    'CgtBY3Rpb25JblNldBIvCghlbnRpdGllcxgBIAMoCzITLmNlZGFyLnYzLkVudGl0eVVpZFIIZW'
+    'CgtBY3Rpb25JblNldBIvCghlbnRpdGllcxgBIAMoCzITLmNlZGFyLnY0LkVudGl0eVVpZFIIZW'
     '50aXRpZXM=');
 
 @$core.Deprecated('Use resourceConstraintDescriptor instead')
@@ -577,7 +578,7 @@ const ResourceConstraint$json = {
       '3': 1,
       '4': 1,
       '5': 11,
-      '6': '.cedar.v3.ResourceAll',
+      '6': '.cedar.v4.ResourceAll',
       '9': 0,
       '10': 'all'
     },
@@ -586,7 +587,7 @@ const ResourceConstraint$json = {
       '3': 2,
       '4': 1,
       '5': 11,
-      '6': '.cedar.v3.ResourceEquals',
+      '6': '.cedar.v4.ResourceEquals',
       '9': 0,
       '10': 'equals'
     },
@@ -595,7 +596,7 @@ const ResourceConstraint$json = {
       '3': 3,
       '4': 1,
       '5': 11,
-      '6': '.cedar.v3.ResourceIn',
+      '6': '.cedar.v4.ResourceIn',
       '8': {'28700919': 'in_'},
       '9': 0,
       '10': 'in',
@@ -605,7 +606,7 @@ const ResourceConstraint$json = {
       '3': 4,
       '4': 1,
       '5': 11,
-      '6': '.cedar.v3.ResourceIsIn',
+      '6': '.cedar.v4.ResourceIsIn',
       '9': 0,
       '10': 'isIn'
     },
@@ -614,7 +615,7 @@ const ResourceConstraint$json = {
       '3': 5,
       '4': 1,
       '5': 11,
-      '6': '.cedar.v3.ResourceIs',
+      '6': '.cedar.v4.ResourceIs',
       '9': 0,
       '10': 'is'
     },
@@ -626,11 +627,11 @@ const ResourceConstraint$json = {
 
 /// Descriptor for `ResourceConstraint`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List resourceConstraintDescriptor = $convert.base64Decode(
-    'ChJSZXNvdXJjZUNvbnN0cmFpbnQSKQoDYWxsGAEgASgLMhUuY2VkYXIudjMuUmVzb3VyY2VBbG'
-    'xIAFIDYWxsEjIKBmVxdWFscxgCIAEoCzIYLmNlZGFyLnYzLlJlc291cmNlRXF1YWxzSABSBmVx'
-    'dWFscxIwCgJpbhgDIAEoCzIULmNlZGFyLnYzLlJlc291cmNlSW5CCLqPvm0DaW5fSABSAmluEi'
-    '0KBWlzX2luGAQgASgLMhYuY2VkYXIudjMuUmVzb3VyY2VJc0luSABSBGlzSW4SJgoCaXMYBSAB'
-    'KAsyFC5jZWRhci52My5SZXNvdXJjZUlzSABSAmlzQgwKCmNvbnN0cmFpbnQ=');
+    'ChJSZXNvdXJjZUNvbnN0cmFpbnQSKQoDYWxsGAEgASgLMhUuY2VkYXIudjQuUmVzb3VyY2VBbG'
+    'xIAFIDYWxsEjIKBmVxdWFscxgCIAEoCzIYLmNlZGFyLnY0LlJlc291cmNlRXF1YWxzSABSBmVx'
+    'dWFscxIwCgJpbhgDIAEoCzIULmNlZGFyLnY0LlJlc291cmNlSW5CCLqPvm0DaW5fSABSAmluEi'
+    '0KBWlzX2luGAQgASgLMhYuY2VkYXIudjQuUmVzb3VyY2VJc0luSABSBGlzSW4SJgoCaXMYBSAB'
+    'KAsyFC5jZWRhci52NC5SZXNvdXJjZUlzSABSAmlzQgwKCmNvbnN0cmFpbnQ=');
 
 @$core.Deprecated('Use resourceAllDescriptor instead')
 const ResourceAll$json = {
@@ -650,7 +651,7 @@ const ResourceEquals$json = {
       '3': 1,
       '4': 1,
       '5': 14,
-      '6': '.cedar.v3.SlotId',
+      '6': '.cedar.v4.SlotId',
       '9': 0,
       '10': 'slot'
     },
@@ -659,7 +660,7 @@ const ResourceEquals$json = {
       '3': 2,
       '4': 1,
       '5': 11,
-      '6': '.cedar.v3.EntityUid',
+      '6': '.cedar.v4.EntityUid',
       '9': 0,
       '10': 'entity'
     },
@@ -671,8 +672,8 @@ const ResourceEquals$json = {
 
 /// Descriptor for `ResourceEquals`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List resourceEqualsDescriptor = $convert.base64Decode(
-    'Cg5SZXNvdXJjZUVxdWFscxImCgRzbG90GAEgASgOMhAuY2VkYXIudjMuU2xvdElkSABSBHNsb3'
-    'QSLQoGZW50aXR5GAIgASgLMhMuY2VkYXIudjMuRW50aXR5VWlkSABSBmVudGl0eUILCgljb21w'
+    'Cg5SZXNvdXJjZUVxdWFscxImCgRzbG90GAEgASgOMhAuY2VkYXIudjQuU2xvdElkSABSBHNsb3'
+    'QSLQoGZW50aXR5GAIgASgLMhMuY2VkYXIudjQuRW50aXR5VWlkSABSBmVudGl0eUILCgljb21w'
     'b25lbnQ=');
 
 @$core.Deprecated('Use resourceInDescriptor instead')
@@ -684,7 +685,7 @@ const ResourceIn$json = {
       '3': 1,
       '4': 1,
       '5': 14,
-      '6': '.cedar.v3.SlotId',
+      '6': '.cedar.v4.SlotId',
       '9': 0,
       '10': 'slot'
     },
@@ -693,7 +694,7 @@ const ResourceIn$json = {
       '3': 2,
       '4': 1,
       '5': 11,
-      '6': '.cedar.v3.EntityUid',
+      '6': '.cedar.v4.EntityUid',
       '9': 0,
       '10': 'entity'
     },
@@ -705,8 +706,8 @@ const ResourceIn$json = {
 
 /// Descriptor for `ResourceIn`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List resourceInDescriptor = $convert.base64Decode(
-    'CgpSZXNvdXJjZUluEiYKBHNsb3QYASABKA4yEC5jZWRhci52My5TbG90SWRIAFIEc2xvdBItCg'
-    'ZlbnRpdHkYAiABKAsyEy5jZWRhci52My5FbnRpdHlVaWRIAFIGZW50aXR5QgsKCWNvbXBvbmVu'
+    'CgpSZXNvdXJjZUluEiYKBHNsb3QYASABKA4yEC5jZWRhci52NC5TbG90SWRIAFIEc2xvdBItCg'
+    'ZlbnRpdHkYAiABKAsyEy5jZWRhci52NC5FbnRpdHlVaWRIAFIGZW50aXR5QgsKCWNvbXBvbmVu'
     'dA==');
 
 @$core.Deprecated('Use resourceIsInDescriptor instead')
@@ -719,7 +720,7 @@ const ResourceIsIn$json = {
       '3': 2,
       '4': 1,
       '5': 14,
-      '6': '.cedar.v3.SlotId',
+      '6': '.cedar.v4.SlotId',
       '9': 0,
       '10': 'slot'
     },
@@ -728,7 +729,7 @@ const ResourceIsIn$json = {
       '3': 3,
       '4': 1,
       '5': 11,
-      '6': '.cedar.v3.EntityUid',
+      '6': '.cedar.v4.EntityUid',
       '9': 0,
       '10': 'entity'
     },
@@ -741,8 +742,8 @@ const ResourceIsIn$json = {
 /// Descriptor for `ResourceIsIn`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List resourceIsInDescriptor = $convert.base64Decode(
     'CgxSZXNvdXJjZUlzSW4SHwoLZW50aXR5X3R5cGUYASABKAlSCmVudGl0eVR5cGUSJgoEc2xvdB'
-    'gCIAEoDjIQLmNlZGFyLnYzLlNsb3RJZEgAUgRzbG90Ei0KBmVudGl0eRgDIAEoCzITLmNlZGFy'
-    'LnYzLkVudGl0eVVpZEgAUgZlbnRpdHlCBAoCaW4=');
+    'gCIAEoDjIQLmNlZGFyLnY0LlNsb3RJZEgAUgRzbG90Ei0KBmVudGl0eRgDIAEoCzITLmNlZGFy'
+    'LnY0LkVudGl0eVVpZEgAUgZlbnRpdHlCBAoCaW4=');
 
 @$core.Deprecated('Use resourceIsDescriptor instead')
 const ResourceIs$json = {
@@ -765,17 +766,17 @@ const Condition$json = {
       '3': 1,
       '4': 1,
       '5': 14,
-      '6': '.cedar.v3.ConditionKind',
+      '6': '.cedar.v4.ConditionKind',
       '10': 'kind'
     },
-    {'1': 'body', '3': 2, '4': 1, '5': 11, '6': '.cedar.v3.Expr', '10': 'body'},
+    {'1': 'body', '3': 2, '4': 1, '5': 11, '6': '.cedar.v4.Expr', '10': 'body'},
   ],
 };
 
 /// Descriptor for `Condition`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List conditionDescriptor = $convert.base64Decode(
-    'CglDb25kaXRpb24SKwoEa2luZBgBIAEoDjIXLmNlZGFyLnYzLkNvbmRpdGlvbktpbmRSBGtpbm'
-    'QSIgoEYm9keRgCIAEoCzIOLmNlZGFyLnYzLkV4cHJSBGJvZHk=');
+    'CglDb25kaXRpb24SKwoEa2luZBgBIAEoDjIXLmNlZGFyLnY0LkNvbmRpdGlvbktpbmRSBGtpbm'
+    'QSIgoEYm9keRgCIAEoCzIOLmNlZGFyLnY0LkV4cHJSBGJvZHk=');
 
 @$core.Deprecated('Use templateLinkDescriptor instead')
 const TemplateLink$json = {
@@ -788,7 +789,7 @@ const TemplateLink$json = {
       '3': 3,
       '4': 3,
       '5': 11,
-      '6': '.cedar.v3.TemplateLink.ValuesEntry',
+      '6': '.cedar.v4.TemplateLink.ValuesEntry',
       '10': 'values'
     },
   ],
@@ -805,7 +806,7 @@ const TemplateLink_ValuesEntry$json = {
       '3': 2,
       '4': 1,
       '5': 11,
-      '6': '.cedar.v3.EntityUid',
+      '6': '.cedar.v4.EntityUid',
       '10': 'value'
     },
   ],
@@ -815,6 +816,6 @@ const TemplateLink_ValuesEntry$json = {
 /// Descriptor for `TemplateLink`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List templateLinkDescriptor = $convert.base64Decode(
     'CgxUZW1wbGF0ZUxpbmsSHwoLdGVtcGxhdGVfaWQYASABKAlSCnRlbXBsYXRlSWQSFQoGbmV3X2'
-    'lkGAIgASgJUgVuZXdJZBI6CgZ2YWx1ZXMYAyADKAsyIi5jZWRhci52My5UZW1wbGF0ZUxpbmsu'
+    'lkGAIgASgJUgVuZXdJZBI6CgZ2YWx1ZXMYAyADKAsyIi5jZWRhci52NC5UZW1wbGF0ZUxpbmsu'
     'VmFsdWVzRW50cnlSBnZhbHVlcxpOCgtWYWx1ZXNFbnRyeRIQCgNrZXkYASABKAlSA2tleRIpCg'
-    'V2YWx1ZRgCIAEoCzITLmNlZGFyLnYzLkVudGl0eVVpZFIFdmFsdWU6AjgB');
+    'V2YWx1ZRgCIAEoCzITLmNlZGFyLnY0LkVudGl0eVVpZFIFdmFsdWU6AjgB');

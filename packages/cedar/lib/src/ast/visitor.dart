@@ -23,6 +23,8 @@ abstract interface class ExprVisitor<R> {
   R visitContainsAny(ExprContainsAny containsAny);
   R visitGetAttribute(ExprGetAttribute getAttribute);
   R visitHasAttribute(ExprHasAttribute hasAttribute);
+  R visitGetTag(ExprGetTag getTag);
+  R visitHasTag(ExprHasTag hasTag);
   R visitExtensionCall(ExprExtensionCall extensionCall);
   R visitSet(ExprSet set);
   R visitRecord(ExprRecord record);
@@ -79,6 +81,10 @@ abstract base class DefaultExprVisitor<R> implements ExprVisitor<R?> {
   @override
   R? visitHasAttribute(ExprHasAttribute hasAttribute) => null;
   @override
+  R? visitGetTag(ExprGetTag getTag) => null;
+  @override
+  R? visitHasTag(ExprHasTag hasTag) => null;
+  @override
   R? visitExtensionCall(ExprExtensionCall extensionCall) => null;
   @override
   R? visitSet(ExprSet set) => null;
@@ -120,6 +126,8 @@ abstract interface class ExprVisitorWithArg<R, A> {
   R visitContainsAny(ExprContainsAny containsAny, A arg);
   R visitGetAttribute(ExprGetAttribute getAttribute, A arg);
   R visitHasAttribute(ExprHasAttribute hasAttribute, A arg);
+  R visitGetTag(ExprGetTag getTag, A arg);
+  R visitHasTag(ExprHasTag hasTag, A arg);
   R visitExtensionCall(ExprExtensionCall extensionCall, A arg);
   R visitSet(ExprSet set, A arg);
   R visitRecord(ExprRecord record, A arg);

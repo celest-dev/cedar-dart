@@ -1,16 +1,17 @@
 part of '../value.dart';
 
 final class DurationValue extends Value {
-  const DurationValue(this.milliseconds);
+  const DurationValue(this.milliseconds, {this.literal});
 
   factory DurationValue.parse(String literal) {
     final int totalMillis = _parseDuration(literal);
-    return DurationValue(_intToInt64(totalMillis));
+    return DurationValue(_intToInt64(totalMillis), literal: literal);
   }
 
   final Int64 milliseconds;
+  final String? literal;
 
-  String toCanonicalString() => _formatDuration(milliseconds);
+  String toCanonicalString() => literal ?? _formatDuration(milliseconds);
 
   Int64 toMilliseconds() => milliseconds;
 
@@ -67,15 +68,15 @@ int _parseDuration(String input) {
     }
   }
 
-  var total = 0;
-  var value = 0;
+  var total = BigInt.zero;
+  var value = BigInt.zero;
   var hasValue = false;
 
   while (index < length && unitIndex < _durationUnits.length) {
     final int codeUnit = input.codeUnitAt(index);
     if (_isDigit(codeUnit)) {
-      value = value * 10 + (codeUnit - 0x30);
-      if (value > 0x7fffffff) {
+      value = (value * BigInt.from(10)) + BigInt.from(codeUnit - 0x30);
+      if (!_bigIntWithinInt64(value)) {
         _durationError('overflow');
       }
       hasValue = true;
@@ -112,13 +113,13 @@ int _parseDuration(String input) {
         _durationError("unexpected unit '$unit'");
       }
 
-      final int addition = value * _durationUnitToMillis[unit]!;
+      final BigInt addition = value * _durationUnitToMillisBigInt[unit]!;
       total += addition;
-      if (!_isWithinInt64(total)) {
+      if (!_bigIntWithinInt64(total)) {
         _durationError('overflow');
       }
       hasValue = false;
-      value = 0;
+      value = BigInt.zero;
       index++;
       continue;
     }
@@ -134,11 +135,11 @@ int _parseDuration(String input) {
     _durationError('invalid duration');
   }
 
-  final int result = negative * total;
-  if (!_isWithinInt64(result)) {
+  final BigInt result = total * BigInt.from(negative);
+  if (!_bigIntWithinInt64(result)) {
     _durationError('overflow');
   }
-  return result;
+  return result.toInt();
 }
 
 Never _durationError(String message) {
@@ -153,6 +154,17 @@ const Map<String, int> _durationUnitToMillis = {
   's': _kMillisPerSecond,
   'ms': 1,
 };
+
+final Map<String, BigInt> _durationUnitToMillisBigInt = {
+  for (final entry in _durationUnitToMillis.entries)
+    entry.key: BigInt.from(entry.value),
+};
+
+final BigInt _kMinInt64BigInt = BigInt.from(_kMinInt64AsInt);
+final BigInt _kMaxInt64BigInt = BigInt.from(_kMaxInt64AsInt);
+
+bool _bigIntWithinInt64(BigInt value) =>
+    value >= _kMinInt64BigInt && value <= _kMaxInt64BigInt;
 
 String _formatDuration(Int64 milliseconds) {
   final int value = milliseconds.toInt();

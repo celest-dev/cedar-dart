@@ -28,11 +28,9 @@ void main() {
 
         // Workaround for buggy == for BuiltMap
         void expectEquals(PolicySet set, PolicySet other) {
-          // TODO(dnys1): Get working
-          return;
-          // expect(set.policies.toMap(), equals(other.policies.toMap()));
-          // expect(set.templates.toMap(), equals(other.templates.toMap()));
-          // expect(set.templateLinks, unorderedEquals(other.templateLinks));
+          expect(set.policies.toMap(), equals(other.policies.toMap()));
+          expect(set.templates.toMap(), equals(other.templates.toMap()));
+          expect(set.templateLinks, unorderedEquals(other.templateLinks));
         }
 
         test('can interop policies with proto', () {
@@ -55,17 +53,15 @@ void main() {
         });
 
         test('can parse entities', () {
-          final entities =
-              entitiesJson
-                  .map(
-                    (entity) => Entity.fromJson(entity as Map<String, Object?>),
-                  )
-                  .toList();
+          final entities = entitiesJson
+              .map((entity) => Entity.fromJson(entity as Map<String, Object?>))
+              .toList();
           expect(entities.map((e) => e.toJson()), equals(entitiesJson));
 
           final entitiesProto = entities.map((e) => e.toProto()).toList();
-          final entitiesFromProto =
-              entitiesProto.map((proto) => Entity.fromProto(proto)).toList();
+          final entitiesFromProto = entitiesProto
+              .map((proto) => Entity.fromProto(proto))
+              .toList();
           expect(entities, equals(entitiesFromProto));
           expect(
             entitiesProto,
@@ -75,31 +71,23 @@ void main() {
 
         for (final query in queries) {
           test(query.description, () {
-            try {
-              final response = policySet.isAuthorized(
-                AuthorizationRequest(
-                  entities: entities,
-                  principal: query.principal,
-                  action: query.action,
-                  resource: query.resource,
-                  context: query.context.map(
-                    (k, v) => MapEntry(k, Value.fromJson(v)),
-                  ),
+            final response = policySet.isAuthorized(
+              AuthorizationRequest(
+                entities: entities,
+                principal: query.principal,
+                action: query.action,
+                resource: query.resource,
+                context: query.context.map(
+                  (k, v) => MapEntry(k, Value.fromJson(v)),
                 ),
-              );
-              expect(response.decision, query.decision);
-              expect(
-                response.errors.map((it) => it.policyId),
-                orderedEquals(query.errors),
-              );
-              expect(response.reasons, query.reasons);
-            } on UnsupportedError {
-              if (!const bool.fromEnvironment('dart.library.io')) {
-                // OK, some methods not implemented on web
-                return;
-              }
-              rethrow;
-            }
+              ),
+            );
+            expect(response.decision, query.decision);
+            expect(
+              response.errors.map((it) => it.policyId),
+              orderedEquals(query.errors),
+            );
+            expect(response.reasons, query.reasons);
           });
         }
       });

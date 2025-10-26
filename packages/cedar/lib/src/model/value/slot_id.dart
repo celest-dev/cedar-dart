@@ -7,9 +7,8 @@ enum SlotId implements Component {
   factory SlotId.fromJson(String json) {
     return SlotId.values.firstWhere(
       (e) => e.toJson() == json,
-      orElse:
-          () =>
-              throw ArgumentError.value(json, 'json', 'Invalid Cedar slot ID'),
+      orElse: () =>
+          throw ArgumentError.value(json, 'json', 'Invalid Cedar slot ID'),
     );
   }
 

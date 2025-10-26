@@ -9,7 +9,7 @@ library;
 import 'package:cedar/ast.dart';
 import 'package:cedar/src/parser/parser.dart';
 import 'package:cedar/src/parser/tokenizer.dart';
-import 'package:cedar/src/proto/cedar/v3/policy.pb.dart' as pb;
+import 'package:cedar/src/proto/cedar/v4/policy.pb.dart' as pb;
 import 'package:collection/collection.dart';
 
 enum Effect {
@@ -226,19 +226,38 @@ final class Policy {
   }
 
   @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is Policy &&
-          effect == other.effect &&
-          principal == other.principal &&
-          action == other.action &&
-          resource == other.resource &&
-          const ListEquality<Condition>().equals(
-            conditions,
-            other.conditions,
-          ) &&
-          annotations == other.annotations &&
-          position == other.position;
+  bool operator ==(Object other) {
+    final equal =
+        identical(this, other) ||
+        other is Policy &&
+            effect == other.effect &&
+            principal == other.principal &&
+            action == other.action &&
+            resource == other.resource &&
+            const ListEquality<Condition>().equals(
+              conditions,
+              other.conditions,
+            ) &&
+            annotations == other.annotations &&
+            position == other.position;
+    if (!equal && other is Policy) {
+      for (var i = 0; i < conditions.length; i++) {
+        if (i < other.conditions.length) {
+          if (conditions[i] != other.conditions[i]) {
+            print(
+              'Condition $i differs: ${conditions[i]} != ${other.conditions[i]}',
+            );
+          }
+        } else {
+          print('Other policy has fewer conditions.');
+        }
+      }
+      return false;
+    }
+    return true;
+  }
+  // annotations == other.annotations &&
+  // position == other.position;
 
   @override
   int get hashCode => Object.hashAll([

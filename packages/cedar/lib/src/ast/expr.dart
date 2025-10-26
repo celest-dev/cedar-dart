@@ -6,7 +6,7 @@ library;
 
 import 'package:cedar/cedar.dart';
 import 'package:cedar/src/ast.dart';
-import 'package:cedar/src/proto/cedar/v3/expr.pb.dart' as pb;
+import 'package:cedar/src/proto/cedar/v4/expr.pb.dart' as pb;
 import 'package:cedar/src/util/pretty_json.dart';
 import 'package:collection/collection.dart';
 import 'package:meta/meta.dart';
@@ -36,6 +36,8 @@ sealed class Op {
     'containsAny' => OpBuiltin.containsAny,
     '.' => OpBuiltin.getAttribute,
     'has' => OpBuiltin.hasAttribute,
+    'getTag' => OpBuiltin.getTag,
+    'hasTag' => OpBuiltin.hasTag,
     'like' => OpBuiltin.like,
     'is' => OpBuiltin.is_,
     'if-then-else' => OpBuiltin.ifThenElse,
@@ -87,6 +89,8 @@ enum OpBuiltin implements Op {
   containsAny,
   getAttribute,
   hasAttribute,
+  getTag,
+  hasTag,
   like,
   is_,
   ifThenElse,
@@ -118,6 +122,8 @@ enum OpBuiltin implements Op {
     containsAny => 'containsAny',
     getAttribute => '.',
     hasAttribute => 'has',
+    getTag => 'getTag',
+    hasTag => 'hasTag',
     like => 'like',
     is_ => 'is',
     ifThenElse => 'if-then-else',
@@ -179,6 +185,8 @@ sealed class Expr {
       OpBuiltin.hasAttribute => ExprHasAttribute.fromJson(
         value as Map<String, Object?>,
       ),
+      OpBuiltin.getTag => ExprGetTag.fromJson(value as Map<String, Object?>),
+      OpBuiltin.hasTag => ExprHasTag.fromJson(value as Map<String, Object?>),
       OpBuiltin.like => ExprLike.fromJson(value as Map<String, Object?>),
       OpBuiltin.is_ => ExprIs.fromJson(value as Map<String, Object?>),
       OpBuiltin.ifThenElse => ExprIfThenElse.fromJson(
@@ -228,6 +236,8 @@ sealed class Expr {
       pb.Expr_Expr.hasAttribute => ExprHasAttribute.fromProto(
         proto.hasAttribute,
       ),
+      pb.Expr_Expr.getTag => ExprGetTag.fromProto(proto.getTag),
+      pb.Expr_Expr.hasTag => ExprHasTag.fromProto(proto.hasTag),
       pb.Expr_Expr.like => ExprLike.fromProto(proto.like),
       pb.Expr_Expr.is_ => ExprIs.fromProto(proto.is_),
       pb.Expr_Expr.ifThenElse => ExprIfThenElse.fromProto(proto.ifThenElse),
@@ -304,6 +314,12 @@ sealed class Expr {
 
   const factory Expr.hasAttribute({required Expr left, required String attr}) =
       ExprHasAttribute;
+
+  const factory Expr.getTag({required Expr left, required Expr tag}) =
+      ExprGetTag;
+
+  const factory Expr.hasTag({required Expr left, required Expr tag}) =
+      ExprHasTag;
 
   const factory Expr.like({required Expr left, required CedarPattern pattern}) =
       ExprLike;
@@ -389,10 +405,10 @@ final class ExprExtensionCall extends Expr {
       identical(this, other) ||
       other is ExprExtensionCall &&
           fn == other.fn &&
-          const ListEquality().equals(args, other.args);
+          const ListEquality<Expr>().equals(args, other.args);
 
   @override
-  int get hashCode => Object.hash(fn, args);
+  int get hashCode => Object.hashAll([fn, ...args]);
 
   @override
   String toString() => '$fn(${args.join(', ')})';
@@ -1327,6 +1343,112 @@ final class ExprHasAttribute extends CedarStringExpr {
   String toString() => '$left has $attr';
 }
 
+final class ExprGetTag extends Expr {
+  const ExprGetTag({required this.left, required this.tag});
+
+  factory ExprGetTag.fromJson(Map<String, Object?> json) {
+    return ExprGetTag(
+      left: Expr.fromJson(json['left'] as Map<String, Object?>),
+      tag: Expr.fromJson(json['tag'] as Map<String, Object?>),
+    );
+  }
+
+  factory ExprGetTag.fromProto(pb.ExprGetTag proto) {
+    return ExprGetTag(
+      left: Expr.fromProto(proto.left),
+      tag: Expr.fromProto(proto.tag),
+    );
+  }
+
+  final Expr left;
+  final Expr tag;
+
+  @override
+  OpBuiltin get op => OpBuiltin.getTag;
+
+  @override
+  pb.Expr toProto() => pb.Expr(
+    getTag: pb.ExprGetTag(left: left.toProto(), tag: tag.toProto()),
+  );
+
+  @override
+  R accept<R>(ExprVisitor<R> visitor) => visitor.visitGetTag(this);
+
+  @override
+  R acceptWithArg<R, A>(ExprVisitorWithArg<R, A> visitor, A arg) =>
+      visitor.visitGetTag(this, arg);
+
+  @override
+  Map<String, Object?> valueToJson() => {
+    'left': left.toJson(),
+    'tag': tag.toJson(),
+  };
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is ExprGetTag && left == other.left && tag == other.tag;
+
+  @override
+  int get hashCode => Object.hash(op, left, tag);
+
+  @override
+  String toString() => '$left.getTag($tag)';
+}
+
+final class ExprHasTag extends Expr {
+  const ExprHasTag({required this.left, required this.tag});
+
+  factory ExprHasTag.fromJson(Map<String, Object?> json) {
+    return ExprHasTag(
+      left: Expr.fromJson(json['left'] as Map<String, Object?>),
+      tag: Expr.fromJson(json['tag'] as Map<String, Object?>),
+    );
+  }
+
+  factory ExprHasTag.fromProto(pb.ExprHasTag proto) {
+    return ExprHasTag(
+      left: Expr.fromProto(proto.left),
+      tag: Expr.fromProto(proto.tag),
+    );
+  }
+
+  final Expr left;
+  final Expr tag;
+
+  @override
+  OpBuiltin get op => OpBuiltin.hasTag;
+
+  @override
+  pb.Expr toProto() => pb.Expr(
+    hasTag: pb.ExprHasTag(left: left.toProto(), tag: tag.toProto()),
+  );
+
+  @override
+  R accept<R>(ExprVisitor<R> visitor) => visitor.visitHasTag(this);
+
+  @override
+  R acceptWithArg<R, A>(ExprVisitorWithArg<R, A> visitor, A arg) =>
+      visitor.visitHasTag(this, arg);
+
+  @override
+  Map<String, Object?> valueToJson() => {
+    'left': left.toJson(),
+    'tag': tag.toJson(),
+  };
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is ExprHasTag && left == other.left && tag == other.tag;
+
+  @override
+  int get hashCode => Object.hash(op, left, tag);
+
+  @override
+  String toString() => '$left.hasTag($tag)';
+}
+
 final class ExprLike extends Expr {
   const ExprLike({required this.left, required this.pattern});
 
@@ -1559,7 +1681,7 @@ final class ExprSet extends Expr {
   bool operator ==(Object other) =>
       identical(this, other) ||
       other is ExprSet &&
-          const UnorderedIterableEquality().equals(
+          const UnorderedIterableEquality<Expr>().equals(
             expressions,
             other.expressions,
           );
@@ -1596,10 +1718,9 @@ final class ExprRecord extends Expr {
   @override
   pb.Expr toProto() => pb.Expr(
     record: pb.ExprRecord(
-      attributes: {
-        for (final entry in attributes.entries)
-          entry.key: entry.value.toProto(),
-      },
+      attributes: attributes.entries.map(
+        (entry) => MapEntry(entry.key, entry.value.toProto()),
+      ),
     ),
   );
 
@@ -1619,10 +1740,13 @@ final class ExprRecord extends Expr {
   bool operator ==(Object other) =>
       identical(this, other) ||
       other is ExprRecord &&
-          const MapEquality().equals(attributes, other.attributes);
+          const MapEquality<String, Expr>().equals(
+            attributes,
+            other.attributes,
+          );
 
   @override
-  int get hashCode => const MapEquality().hash(attributes);
+  int get hashCode => const MapEquality<String, Expr>().hash(attributes);
 
   @override
   String toString() =>
@@ -1705,6 +1829,14 @@ extension ExprTemplateUtils on Expr {
         left: visit(left),
         attr: attr,
       ),
+      ExprGetTag(:final left, :final tag) => Expr.getTag(
+        left: visit(left),
+        tag: visit(tag),
+      ),
+      ExprHasTag(:final left, :final tag) => Expr.hasTag(
+        left: visit(left),
+        tag: visit(tag),
+      ),
       ExprLike(:final left, :final pattern) => Expr.like(
         left: visit(left),
         pattern: pattern,
@@ -1775,6 +1907,12 @@ extension ExprTemplateUtils on Expr {
           visit(left);
         case ExprHasAttribute(left: final left):
           visit(left);
+        case ExprGetTag(left: final left, tag: final tag):
+          visit(left);
+          visit(tag);
+        case ExprHasTag(left: final left, tag: final tag):
+          visit(left);
+          visit(tag);
         case ExprLike(left: final left):
           visit(left);
         case ExprIs(left: final left, inExpr: final inExpr):

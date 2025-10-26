@@ -1,8 +1,10 @@
 version: v2
 inputs:
   - directory: proto
+    exclude_paths:
+      - proto/cedar/v3
 plugins:
-  - remote: buf.build/protocolbuffers/dart:v21.1.2
+  - remote: buf.build/protocolbuffers/dart:v23.0.0
     include_imports: true
     include_wkt: true
     out: packages/cedar/lib/src/proto

@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package cedar.v4;
+
+import "cedar/v4/value.proto";
+
+option go_package = "cedar/v4;cedarv4pb";
+
+message Context {
+  map<string, Value> values = 1;
+}

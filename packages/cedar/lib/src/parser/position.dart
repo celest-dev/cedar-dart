@@ -1,4 +1,4 @@
-import 'package:cedar/src/proto/cedar/v3/policy.pb.dart' as pb;
+import 'package:cedar/src/proto/cedar/v4/policy.pb.dart' as pb;
 
 final class Position {
   const Position({

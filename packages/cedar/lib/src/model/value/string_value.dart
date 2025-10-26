@@ -1,7 +1,8 @@
 part of '../value.dart';
 
 final class StringValue extends Value {
-  const StringValue(this.value);
+  const StringValue(this.value, {Map<String, Object?>? extensionJson})
+    : _extensionJson = extensionJson;
 
   factory StringValue.fromJson(String json) {
     return StringValue(json);
@@ -12,9 +13,10 @@ final class StringValue extends Value {
   }
 
   final String value;
+  final Map<String, Object?>? _extensionJson;
 
   @override
-  String toJson() => value;
+  Object? toJson() => _extensionJson ?? value;
 
   @override
   pb.Value toProto() => pb.Value(string: pb.StringValue(value: value));

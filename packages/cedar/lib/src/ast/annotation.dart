@@ -1,7 +1,7 @@
 import 'dart:collection';
 
 import 'package:cedar/ast.dart';
-import 'package:cedar/src/proto/cedar/v3/policy.pb.dart' as pb;
+import 'package:cedar/src/proto/cedar/v4/policy.pb.dart' as pb;
 import 'package:collection/collection.dart';
 
 final class Annotations with IterableMixin<Annotation> {
@@ -48,17 +48,20 @@ final class Annotations with IterableMixin<Annotation> {
   Map<String, String> toJson() => annotations;
 
   pb.Annotations toProto() {
-    return pb.Annotations(annotations: annotations);
+    return pb.Annotations(annotations: annotations.entries);
   }
 
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       other is Annotations &&
-          const MapEquality().equals(annotations, other.annotations);
+          const MapEquality<String, String>().equals(
+            annotations,
+            other.annotations,
+          );
 
   @override
-  int get hashCode => const MapEquality().hash(annotations);
+  int get hashCode => const MapEquality<String, String>().hash(annotations);
 }
 
 Annotations annotation(String key, String value) {

@@ -523,6 +523,16 @@ final class Parser {
             builder = Expr.containsAll;
           case 'containsAny':
             builder = Expr.containsAny;
+          case 'getTag':
+            if (args.length != 1) {
+              error('Expected exactly one argument to getTag');
+            }
+            return lhs.getTag(args.first);
+          case 'hasTag':
+            if (args.length != 1) {
+              error('Expected exactly one argument to hasTag');
+            }
+            return lhs.hasTag(args.first);
           default:
             // Although the Cedar grammar says that any name can be provided here, the reference implementation
             // actually checks at parse time whether the name corresponds to a known extension method.
@@ -533,7 +543,8 @@ final class Parser {
             if (!extension.isMethod) {
               error('`$methodName` is a function, not a method');
             }
-            return Expr.extensionCall(fn: methodName, args: args);
+            final callArgs = [lhs, ...args];
+            return Expr.extensionCall(fn: methodName, args: callArgs);
         }
         if (args.length != 1) {
           error('Expected exactly one argument to $methodName');
@@ -574,6 +585,11 @@ final class Parser {
         error('Duplicate record entry: $key');
       }
       pairs[key] = value;
+      if (peek()?.text == '}') {
+        advance();
+        return pairs;
+      }
+      expect(',');
     }
   }
 

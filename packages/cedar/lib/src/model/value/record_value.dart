@@ -26,10 +26,9 @@ final class RecordValue extends Value {
   @override
   pb.Value toProto() => pb.Value(
     record: pb.RecordValue(
-      attributes: {
-        for (final entry in attributes.entries)
-          entry.key: entry.value.toProto(),
-      },
+      attributes: attributes.entries.map(
+        (entry) => MapEntry(entry.key, entry.value.toProto()),
+      ),
     ),
   );
 
@@ -37,8 +36,11 @@ final class RecordValue extends Value {
   bool operator ==(Object other) =>
       identical(this, other) ||
       other is RecordValue &&
-          const MapEquality().equals(attributes, other.attributes);
+          const MapEquality<String, Value>().equals(
+            attributes,
+            other.attributes,
+          );
 
   @override
-  int get hashCode => const MapEquality().hash(attributes);
+  int get hashCode => const MapEquality<String, Value>().hash(attributes);
 }

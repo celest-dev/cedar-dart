@@ -29,7 +29,10 @@ final class SetValue extends Value {
   bool operator ==(Object other) =>
       identical(this, other) ||
       other is SetValue &&
-          const UnorderedIterableEquality().equals(elements, other.elements);
+          const UnorderedIterableEquality<Value>().equals(
+            elements,
+            other.elements,
+          );
 
   @override
   int get hashCode => Object.hashAllUnordered(elements);

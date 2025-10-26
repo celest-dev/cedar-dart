@@ -143,6 +143,14 @@ extension Hierarchy on Expr {
   Expr has(String attr) {
     return ExprHasAttribute(left: this, attr: attr);
   }
+
+  Expr getTag(Expr tag) {
+    return ExprGetTag(left: this, tag: tag);
+  }
+
+  Expr hasTag(Expr tag) {
+    return ExprHasTag(left: this, tag: tag);
+  }
 }
 
 extension IpAddressOperators on Expr {

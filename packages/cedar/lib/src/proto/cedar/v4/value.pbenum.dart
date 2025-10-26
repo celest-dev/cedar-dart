@@ -1,6 +1,6 @@
 // This is a generated file - do not edit.
 //
-// Generated from dart_options/dart_options.proto.
+// Generated from cedar/v4/value.proto.
 
 // @dart = 3.3
 

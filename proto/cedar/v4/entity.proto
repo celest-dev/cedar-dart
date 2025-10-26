@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package cedar.v4;
+
+import "cedar/v4/entity_uid.proto";
+import "cedar/v4/value.proto";
+
+option go_package = "cedar/v4;cedarv4pb";
+
+message Entity {
+  EntityUid uid = 1;
+  repeated EntityUid parents = 2;
+  map<string, Value> attributes = 3;
+  map<string, Value> tags = 4;
+}

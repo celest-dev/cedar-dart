@@ -1,13 +1,14 @@
+// This is a generated file - do not edit.
 //
-//  Generated code. Do not modify.
-//  source: cedar/v3/expr.proto
-//
-// @dart = 2.12
+// Generated from cedar/v4/expr.proto.
+
+// @dart = 3.3
 
 // ignore_for_file: annotate_overrides, camel_case_types, comment_references
-// ignore_for_file: constant_identifier_names, library_prefixes
-// ignore_for_file: non_constant_identifier_names, prefer_final_fields
-// ignore_for_file: unnecessary_import, unnecessary_this, unused_import
+// ignore_for_file: constant_identifier_names
+// ignore_for_file: curly_braces_in_flow_control_structures
+// ignore_for_file: deprecated_member_use_from_same_package, library_prefixes
+// ignore_for_file: non_constant_identifier_names, unused_import
 
 import 'dart:convert' as $convert;
 import 'dart:core' as $core;
@@ -55,7 +56,7 @@ const Expr$json = {
       '3': 1,
       '4': 1,
       '5': 11,
-      '6': '.cedar.v3.ExprValue',
+      '6': '.cedar.v4.ExprValue',
       '9': 0,
       '10': 'value'
     },
@@ -64,7 +65,7 @@ const Expr$json = {
       '3': 2,
       '4': 1,
       '5': 11,
-      '6': '.cedar.v3.ExprVariable',
+      '6': '.cedar.v4.ExprVariable',
       '9': 0,
       '10': 'variable'
     },
@@ -73,7 +74,7 @@ const Expr$json = {
       '3': 3,
       '4': 1,
       '5': 11,
-      '6': '.cedar.v3.ExprSlot',
+      '6': '.cedar.v4.ExprSlot',
       '9': 0,
       '10': 'slot'
     },
@@ -82,7 +83,7 @@ const Expr$json = {
       '3': 4,
       '4': 1,
       '5': 11,
-      '6': '.cedar.v3.ExprUnknown',
+      '6': '.cedar.v4.ExprUnknown',
       '9': 0,
       '10': 'unknown'
     },
@@ -91,7 +92,7 @@ const Expr$json = {
       '3': 5,
       '4': 1,
       '5': 11,
-      '6': '.cedar.v3.ExprNot',
+      '6': '.cedar.v4.ExprNot',
       '9': 0,
       '10': 'not'
     },
@@ -100,7 +101,7 @@ const Expr$json = {
       '3': 6,
       '4': 1,
       '5': 11,
-      '6': '.cedar.v3.ExprNegate',
+      '6': '.cedar.v4.ExprNegate',
       '9': 0,
       '10': 'negate'
     },
@@ -109,7 +110,7 @@ const Expr$json = {
       '3': 7,
       '4': 1,
       '5': 11,
-      '6': '.cedar.v3.ExprEquals',
+      '6': '.cedar.v4.ExprEquals',
       '9': 0,
       '10': 'equals'
     },
@@ -118,7 +119,7 @@ const Expr$json = {
       '3': 8,
       '4': 1,
       '5': 11,
-      '6': '.cedar.v3.ExprNotEquals',
+      '6': '.cedar.v4.ExprNotEquals',
       '9': 0,
       '10': 'notEquals'
     },
@@ -127,7 +128,7 @@ const Expr$json = {
       '3': 9,
       '4': 1,
       '5': 11,
-      '6': '.cedar.v3.ExprIn',
+      '6': '.cedar.v4.ExprIn',
       '8': {'28700919': 'in_'},
       '9': 0,
       '10': 'in',
@@ -137,7 +138,7 @@ const Expr$json = {
       '3': 10,
       '4': 1,
       '5': 11,
-      '6': '.cedar.v3.ExprLessThan',
+      '6': '.cedar.v4.ExprLessThan',
       '9': 0,
       '10': 'lessThan'
     },
@@ -146,7 +147,7 @@ const Expr$json = {
       '3': 11,
       '4': 1,
       '5': 11,
-      '6': '.cedar.v3.ExprLessThanOrEquals',
+      '6': '.cedar.v4.ExprLessThanOrEquals',
       '9': 0,
       '10': 'lessThanOrEquals'
     },
@@ -155,7 +156,7 @@ const Expr$json = {
       '3': 12,
       '4': 1,
       '5': 11,
-      '6': '.cedar.v3.ExprGreaterThan',
+      '6': '.cedar.v4.ExprGreaterThan',
       '9': 0,
       '10': 'greaterThan'
     },
@@ -164,7 +165,7 @@ const Expr$json = {
       '3': 13,
       '4': 1,
       '5': 11,
-      '6': '.cedar.v3.ExprGreaterThanOrEquals',
+      '6': '.cedar.v4.ExprGreaterThanOrEquals',
       '9': 0,
       '10': 'greaterThanOrEquals'
     },
@@ -173,7 +174,7 @@ const Expr$json = {
       '3': 14,
       '4': 1,
       '5': 11,
-      '6': '.cedar.v3.ExprAnd',
+      '6': '.cedar.v4.ExprAnd',
       '9': 0,
       '10': 'and'
     },
@@ -182,7 +183,7 @@ const Expr$json = {
       '3': 15,
       '4': 1,
       '5': 11,
-      '6': '.cedar.v3.ExprOr',
+      '6': '.cedar.v4.ExprOr',
       '9': 0,
       '10': 'or'
     },
@@ -191,7 +192,7 @@ const Expr$json = {
       '3': 16,
       '4': 1,
       '5': 11,
-      '6': '.cedar.v3.ExprAdd',
+      '6': '.cedar.v4.ExprAdd',
       '9': 0,
       '10': 'add'
     },
@@ -200,7 +201,7 @@ const Expr$json = {
       '3': 17,
       '4': 1,
       '5': 11,
-      '6': '.cedar.v3.ExprSubt',
+      '6': '.cedar.v4.ExprSubt',
       '9': 0,
       '10': 'subtract'
     },
@@ -209,7 +210,7 @@ const Expr$json = {
       '3': 18,
       '4': 1,
       '5': 11,
-      '6': '.cedar.v3.ExprMult',
+      '6': '.cedar.v4.ExprMult',
       '9': 0,
       '10': 'multiply'
     },
@@ -218,7 +219,7 @@ const Expr$json = {
       '3': 19,
       '4': 1,
       '5': 11,
-      '6': '.cedar.v3.ExprContains',
+      '6': '.cedar.v4.ExprContains',
       '9': 0,
       '10': 'contains'
     },
@@ -227,7 +228,7 @@ const Expr$json = {
       '3': 20,
       '4': 1,
       '5': 11,
-      '6': '.cedar.v3.ExprContainsAll',
+      '6': '.cedar.v4.ExprContainsAll',
       '9': 0,
       '10': 'containsAll'
     },
@@ -236,7 +237,7 @@ const Expr$json = {
       '3': 21,
       '4': 1,
       '5': 11,
-      '6': '.cedar.v3.ExprContainsAny',
+      '6': '.cedar.v4.ExprContainsAny',
       '9': 0,
       '10': 'containsAny'
     },
@@ -245,7 +246,7 @@ const Expr$json = {
       '3': 22,
       '4': 1,
       '5': 11,
-      '6': '.cedar.v3.ExprGetAttribute',
+      '6': '.cedar.v4.ExprGetAttribute',
       '9': 0,
       '10': 'getAttribute'
     },
@@ -254,7 +255,7 @@ const Expr$json = {
       '3': 23,
       '4': 1,
       '5': 11,
-      '6': '.cedar.v3.ExprHasAttribute',
+      '6': '.cedar.v4.ExprHasAttribute',
       '9': 0,
       '10': 'hasAttribute'
     },
@@ -263,7 +264,7 @@ const Expr$json = {
       '3': 24,
       '4': 1,
       '5': 11,
-      '6': '.cedar.v3.ExprLike',
+      '6': '.cedar.v4.ExprLike',
       '9': 0,
       '10': 'like'
     },
@@ -272,7 +273,7 @@ const Expr$json = {
       '3': 25,
       '4': 1,
       '5': 11,
-      '6': '.cedar.v3.ExprIs',
+      '6': '.cedar.v4.ExprIs',
       '8': {'28700919': 'is_'},
       '9': 0,
       '10': 'is',
@@ -282,7 +283,7 @@ const Expr$json = {
       '3': 26,
       '4': 1,
       '5': 11,
-      '6': '.cedar.v3.ExprIfThenElse',
+      '6': '.cedar.v4.ExprIfThenElse',
       '9': 0,
       '10': 'ifThenElse'
     },
@@ -291,7 +292,7 @@ const Expr$json = {
       '3': 27,
       '4': 1,
       '5': 11,
-      '6': '.cedar.v3.ExprSet',
+      '6': '.cedar.v4.ExprSet',
       '9': 0,
       '10': 'set'
     },
@@ -300,7 +301,7 @@ const Expr$json = {
       '3': 28,
       '4': 1,
       '5': 11,
-      '6': '.cedar.v3.ExprRecord',
+      '6': '.cedar.v4.ExprRecord',
       '9': 0,
       '10': 'record'
     },
@@ -309,9 +310,27 @@ const Expr$json = {
       '3': 29,
       '4': 1,
       '5': 11,
-      '6': '.cedar.v3.ExprExtensionCall',
+      '6': '.cedar.v4.ExprExtensionCall',
       '9': 0,
       '10': 'extensionCall'
+    },
+    {
+      '1': 'get_tag',
+      '3': 30,
+      '4': 1,
+      '5': 11,
+      '6': '.cedar.v4.ExprGetTag',
+      '9': 0,
+      '10': 'getTag'
+    },
+    {
+      '1': 'has_tag',
+      '3': 31,
+      '4': 1,
+      '5': 11,
+      '6': '.cedar.v4.ExprHasTag',
+      '9': 0,
+      '10': 'hasTag'
     },
   ],
   '8': [
@@ -321,35 +340,37 @@ const Expr$json = {
 
 /// Descriptor for `Expr`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List exprDescriptor = $convert.base64Decode(
-    'CgRFeHByEisKBXZhbHVlGAEgASgLMhMuY2VkYXIudjMuRXhwclZhbHVlSABSBXZhbHVlEjQKCH'
-    'ZhcmlhYmxlGAIgASgLMhYuY2VkYXIudjMuRXhwclZhcmlhYmxlSABSCHZhcmlhYmxlEigKBHNs'
-    'b3QYAyABKAsyEi5jZWRhci52My5FeHByU2xvdEgAUgRzbG90EjEKB3Vua25vd24YBCABKAsyFS'
-    '5jZWRhci52My5FeHByVW5rbm93bkgAUgd1bmtub3duEiUKA25vdBgFIAEoCzIRLmNlZGFyLnYz'
-    'LkV4cHJOb3RIAFIDbm90Ei4KBm5lZ2F0ZRgGIAEoCzIULmNlZGFyLnYzLkV4cHJOZWdhdGVIAF'
-    'IGbmVnYXRlEi4KBmVxdWFscxgHIAEoCzIULmNlZGFyLnYzLkV4cHJFcXVhbHNIAFIGZXF1YWxz'
-    'EjgKCm5vdF9lcXVhbHMYCCABKAsyFy5jZWRhci52My5FeHByTm90RXF1YWxzSABSCW5vdEVxdW'
-    'FscxIsCgJpbhgJIAEoCzIQLmNlZGFyLnYzLkV4cHJJbkIIuo++bQNpbl9IAFICaW4SNQoJbGVz'
-    'c190aGFuGAogASgLMhYuY2VkYXIudjMuRXhwckxlc3NUaGFuSABSCGxlc3NUaGFuEk8KE2xlc3'
-    'NfdGhhbl9vcl9lcXVhbHMYCyABKAsyHi5jZWRhci52My5FeHByTGVzc1RoYW5PckVxdWFsc0gA'
-    'UhBsZXNzVGhhbk9yRXF1YWxzEj4KDGdyZWF0ZXJfdGhhbhgMIAEoCzIZLmNlZGFyLnYzLkV4cH'
+    'CgRFeHByEisKBXZhbHVlGAEgASgLMhMuY2VkYXIudjQuRXhwclZhbHVlSABSBXZhbHVlEjQKCH'
+    'ZhcmlhYmxlGAIgASgLMhYuY2VkYXIudjQuRXhwclZhcmlhYmxlSABSCHZhcmlhYmxlEigKBHNs'
+    'b3QYAyABKAsyEi5jZWRhci52NC5FeHByU2xvdEgAUgRzbG90EjEKB3Vua25vd24YBCABKAsyFS'
+    '5jZWRhci52NC5FeHByVW5rbm93bkgAUgd1bmtub3duEiUKA25vdBgFIAEoCzIRLmNlZGFyLnY0'
+    'LkV4cHJOb3RIAFIDbm90Ei4KBm5lZ2F0ZRgGIAEoCzIULmNlZGFyLnY0LkV4cHJOZWdhdGVIAF'
+    'IGbmVnYXRlEi4KBmVxdWFscxgHIAEoCzIULmNlZGFyLnY0LkV4cHJFcXVhbHNIAFIGZXF1YWxz'
+    'EjgKCm5vdF9lcXVhbHMYCCABKAsyFy5jZWRhci52NC5FeHByTm90RXF1YWxzSABSCW5vdEVxdW'
+    'FscxIsCgJpbhgJIAEoCzIQLmNlZGFyLnY0LkV4cHJJbkIIuo++bQNpbl9IAFICaW4SNQoJbGVz'
+    'c190aGFuGAogASgLMhYuY2VkYXIudjQuRXhwckxlc3NUaGFuSABSCGxlc3NUaGFuEk8KE2xlc3'
+    'NfdGhhbl9vcl9lcXVhbHMYCyABKAsyHi5jZWRhci52NC5FeHByTGVzc1RoYW5PckVxdWFsc0gA'
+    'UhBsZXNzVGhhbk9yRXF1YWxzEj4KDGdyZWF0ZXJfdGhhbhgMIAEoCzIZLmNlZGFyLnY0LkV4cH'
     'JHcmVhdGVyVGhhbkgAUgtncmVhdGVyVGhhbhJYChZncmVhdGVyX3RoYW5fb3JfZXF1YWxzGA0g'
-    'ASgLMiEuY2VkYXIudjMuRXhwckdyZWF0ZXJUaGFuT3JFcXVhbHNIAFITZ3JlYXRlclRoYW5Pck'
-    'VxdWFscxIlCgNhbmQYDiABKAsyES5jZWRhci52My5FeHByQW5kSABSA2FuZBIiCgJvchgPIAEo'
-    'CzIQLmNlZGFyLnYzLkV4cHJPckgAUgJvchIlCgNhZGQYECABKAsyES5jZWRhci52My5FeHByQW'
-    'RkSABSA2FkZBIwCghzdWJ0cmFjdBgRIAEoCzISLmNlZGFyLnYzLkV4cHJTdWJ0SABSCHN1YnRy'
-    'YWN0EjAKCG11bHRpcGx5GBIgASgLMhIuY2VkYXIudjMuRXhwck11bHRIAFIIbXVsdGlwbHkSNA'
-    'oIY29udGFpbnMYEyABKAsyFi5jZWRhci52My5FeHByQ29udGFpbnNIAFIIY29udGFpbnMSPgoM'
-    'Y29udGFpbnNfYWxsGBQgASgLMhkuY2VkYXIudjMuRXhwckNvbnRhaW5zQWxsSABSC2NvbnRhaW'
-    '5zQWxsEj4KDGNvbnRhaW5zX2FueRgVIAEoCzIZLmNlZGFyLnYzLkV4cHJDb250YWluc0FueUgA'
-    'Ugtjb250YWluc0FueRJBCg1nZXRfYXR0cmlidXRlGBYgASgLMhouY2VkYXIudjMuRXhwckdldE'
+    'ASgLMiEuY2VkYXIudjQuRXhwckdyZWF0ZXJUaGFuT3JFcXVhbHNIAFITZ3JlYXRlclRoYW5Pck'
+    'VxdWFscxIlCgNhbmQYDiABKAsyES5jZWRhci52NC5FeHByQW5kSABSA2FuZBIiCgJvchgPIAEo'
+    'CzIQLmNlZGFyLnY0LkV4cHJPckgAUgJvchIlCgNhZGQYECABKAsyES5jZWRhci52NC5FeHByQW'
+    'RkSABSA2FkZBIwCghzdWJ0cmFjdBgRIAEoCzISLmNlZGFyLnY0LkV4cHJTdWJ0SABSCHN1YnRy'
+    'YWN0EjAKCG11bHRpcGx5GBIgASgLMhIuY2VkYXIudjQuRXhwck11bHRIAFIIbXVsdGlwbHkSNA'
+    'oIY29udGFpbnMYEyABKAsyFi5jZWRhci52NC5FeHByQ29udGFpbnNIAFIIY29udGFpbnMSPgoM'
+    'Y29udGFpbnNfYWxsGBQgASgLMhkuY2VkYXIudjQuRXhwckNvbnRhaW5zQWxsSABSC2NvbnRhaW'
+    '5zQWxsEj4KDGNvbnRhaW5zX2FueRgVIAEoCzIZLmNlZGFyLnY0LkV4cHJDb250YWluc0FueUgA'
+    'Ugtjb250YWluc0FueRJBCg1nZXRfYXR0cmlidXRlGBYgASgLMhouY2VkYXIudjQuRXhwckdldE'
     'F0dHJpYnV0ZUgAUgxnZXRBdHRyaWJ1dGUSQQoNaGFzX2F0dHJpYnV0ZRgXIAEoCzIaLmNlZGFy'
-    'LnYzLkV4cHJIYXNBdHRyaWJ1dGVIAFIMaGFzQXR0cmlidXRlEigKBGxpa2UYGCABKAsyEi5jZW'
-    'Rhci52My5FeHByTGlrZUgAUgRsaWtlEiwKAmlzGBkgASgLMhAuY2VkYXIudjMuRXhwcklzQgi6'
-    'j75tA2lzX0gAUgJpcxI8CgxpZl90aGVuX2Vsc2UYGiABKAsyGC5jZWRhci52My5FeHBySWZUaG'
-    'VuRWxzZUgAUgppZlRoZW5FbHNlEiUKA3NldBgbIAEoCzIRLmNlZGFyLnYzLkV4cHJTZXRIAFID'
-    'c2V0Ei4KBnJlY29yZBgcIAEoCzIULmNlZGFyLnYzLkV4cHJSZWNvcmRIAFIGcmVjb3JkEkQKDm'
-    'V4dGVuc2lvbl9jYWxsGB0gASgLMhsuY2VkYXIudjMuRXhwckV4dGVuc2lvbkNhbGxIAFINZXh0'
-    'ZW5zaW9uQ2FsbEIGCgRleHBy');
+    'LnY0LkV4cHJIYXNBdHRyaWJ1dGVIAFIMaGFzQXR0cmlidXRlEigKBGxpa2UYGCABKAsyEi5jZW'
+    'Rhci52NC5FeHByTGlrZUgAUgRsaWtlEiwKAmlzGBkgASgLMhAuY2VkYXIudjQuRXhwcklzQgi6'
+    'j75tA2lzX0gAUgJpcxI8CgxpZl90aGVuX2Vsc2UYGiABKAsyGC5jZWRhci52NC5FeHBySWZUaG'
+    'VuRWxzZUgAUgppZlRoZW5FbHNlEiUKA3NldBgbIAEoCzIRLmNlZGFyLnY0LkV4cHJTZXRIAFID'
+    'c2V0Ei4KBnJlY29yZBgcIAEoCzIULmNlZGFyLnY0LkV4cHJSZWNvcmRIAFIGcmVjb3JkEkQKDm'
+    'V4dGVuc2lvbl9jYWxsGB0gASgLMhsuY2VkYXIudjQuRXhwckV4dGVuc2lvbkNhbGxIAFINZXh0'
+    'ZW5zaW9uQ2FsbBIvCgdnZXRfdGFnGB4gASgLMhQuY2VkYXIudjQuRXhwckdldFRhZ0gAUgZnZX'
+    'RUYWcSLwoHaGFzX3RhZxgfIAEoCzIULmNlZGFyLnY0LkV4cHJIYXNUYWdIAFIGaGFzVGFnQgYK'
+    'BGV4cHI=');
 
 @$core.Deprecated('Use exprValueDescriptor instead')
 const ExprValue$json = {
@@ -360,7 +381,7 @@ const ExprValue$json = {
       '3': 1,
       '4': 1,
       '5': 11,
-      '6': '.cedar.v3.Value',
+      '6': '.cedar.v4.Value',
       '10': 'value'
     },
   ],
@@ -368,7 +389,7 @@ const ExprValue$json = {
 
 /// Descriptor for `ExprValue`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List exprValueDescriptor = $convert.base64Decode(
-    'CglFeHByVmFsdWUSJQoFdmFsdWUYASABKAsyDy5jZWRhci52My5WYWx1ZVIFdmFsdWU=');
+    'CglFeHByVmFsdWUSJQoFdmFsdWUYASABKAsyDy5jZWRhci52NC5WYWx1ZVIFdmFsdWU=');
 
 @$core.Deprecated('Use exprVariableDescriptor instead')
 const ExprVariable$json = {
@@ -379,7 +400,7 @@ const ExprVariable$json = {
       '3': 1,
       '4': 1,
       '5': 14,
-      '6': '.cedar.v3.Variable',
+      '6': '.cedar.v4.Variable',
       '10': 'variable'
     },
   ],
@@ -387,7 +408,7 @@ const ExprVariable$json = {
 
 /// Descriptor for `ExprVariable`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List exprVariableDescriptor = $convert.base64Decode(
-    'CgxFeHByVmFyaWFibGUSLgoIdmFyaWFibGUYASABKA4yEi5jZWRhci52My5WYXJpYWJsZVIIdm'
+    'CgxFeHByVmFyaWFibGUSLgoIdmFyaWFibGUYASABKA4yEi5jZWRhci52NC5WYXJpYWJsZVIIdm'
     'FyaWFibGU=');
 
 @$core.Deprecated('Use exprSlotDescriptor instead')
@@ -399,7 +420,7 @@ const ExprSlot$json = {
       '3': 1,
       '4': 1,
       '5': 14,
-      '6': '.cedar.v3.SlotId',
+      '6': '.cedar.v4.SlotId',
       '10': 'slotId'
     },
   ],
@@ -407,7 +428,7 @@ const ExprSlot$json = {
 
 /// Descriptor for `ExprSlot`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List exprSlotDescriptor = $convert.base64Decode(
-    'CghFeHByU2xvdBIpCgdzbG90X2lkGAEgASgOMhAuY2VkYXIudjMuU2xvdElkUgZzbG90SWQ=');
+    'CghFeHByU2xvdBIpCgdzbG90X2lkGAEgASgOMhAuY2VkYXIudjQuU2xvdElkUgZzbG90SWQ=');
 
 @$core.Deprecated('Use exprUnknownDescriptor instead')
 const ExprUnknown$json = {
@@ -425,37 +446,37 @@ final $typed_data.Uint8List exprUnknownDescriptor =
 const ExprNot$json = {
   '1': 'ExprNot',
   '2': [
-    {'1': 'arg', '3': 1, '4': 1, '5': 11, '6': '.cedar.v3.Expr', '10': 'arg'},
+    {'1': 'arg', '3': 1, '4': 1, '5': 11, '6': '.cedar.v4.Expr', '10': 'arg'},
   ],
 };
 
 /// Descriptor for `ExprNot`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List exprNotDescriptor = $convert.base64Decode(
-    'CgdFeHByTm90EiAKA2FyZxgBIAEoCzIOLmNlZGFyLnYzLkV4cHJSA2FyZw==');
+    'CgdFeHByTm90EiAKA2FyZxgBIAEoCzIOLmNlZGFyLnY0LkV4cHJSA2FyZw==');
 
 @$core.Deprecated('Use exprNegateDescriptor instead')
 const ExprNegate$json = {
   '1': 'ExprNegate',
   '2': [
-    {'1': 'arg', '3': 1, '4': 1, '5': 11, '6': '.cedar.v3.Expr', '10': 'arg'},
+    {'1': 'arg', '3': 1, '4': 1, '5': 11, '6': '.cedar.v4.Expr', '10': 'arg'},
   ],
 };
 
 /// Descriptor for `ExprNegate`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List exprNegateDescriptor = $convert.base64Decode(
-    'CgpFeHByTmVnYXRlEiAKA2FyZxgBIAEoCzIOLmNlZGFyLnYzLkV4cHJSA2FyZw==');
+    'CgpFeHByTmVnYXRlEiAKA2FyZxgBIAEoCzIOLmNlZGFyLnY0LkV4cHJSA2FyZw==');
 
 @$core.Deprecated('Use exprEqualsDescriptor instead')
 const ExprEquals$json = {
   '1': 'ExprEquals',
   '2': [
-    {'1': 'left', '3': 1, '4': 1, '5': 11, '6': '.cedar.v3.Expr', '10': 'left'},
+    {'1': 'left', '3': 1, '4': 1, '5': 11, '6': '.cedar.v4.Expr', '10': 'left'},
     {
       '1': 'right',
       '3': 2,
       '4': 1,
       '5': 11,
-      '6': '.cedar.v3.Expr',
+      '6': '.cedar.v4.Expr',
       '10': 'right'
     },
   ],
@@ -463,20 +484,20 @@ const ExprEquals$json = {
 
 /// Descriptor for `ExprEquals`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List exprEqualsDescriptor = $convert.base64Decode(
-    'CgpFeHByRXF1YWxzEiIKBGxlZnQYASABKAsyDi5jZWRhci52My5FeHByUgRsZWZ0EiQKBXJpZ2'
-    'h0GAIgASgLMg4uY2VkYXIudjMuRXhwclIFcmlnaHQ=');
+    'CgpFeHByRXF1YWxzEiIKBGxlZnQYASABKAsyDi5jZWRhci52NC5FeHByUgRsZWZ0EiQKBXJpZ2'
+    'h0GAIgASgLMg4uY2VkYXIudjQuRXhwclIFcmlnaHQ=');
 
 @$core.Deprecated('Use exprNotEqualsDescriptor instead')
 const ExprNotEquals$json = {
   '1': 'ExprNotEquals',
   '2': [
-    {'1': 'left', '3': 1, '4': 1, '5': 11, '6': '.cedar.v3.Expr', '10': 'left'},
+    {'1': 'left', '3': 1, '4': 1, '5': 11, '6': '.cedar.v4.Expr', '10': 'left'},
     {
       '1': 'right',
       '3': 2,
       '4': 1,
       '5': 11,
-      '6': '.cedar.v3.Expr',
+      '6': '.cedar.v4.Expr',
       '10': 'right'
     },
   ],
@@ -484,20 +505,20 @@ const ExprNotEquals$json = {
 
 /// Descriptor for `ExprNotEquals`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List exprNotEqualsDescriptor = $convert.base64Decode(
-    'Cg1FeHByTm90RXF1YWxzEiIKBGxlZnQYASABKAsyDi5jZWRhci52My5FeHByUgRsZWZ0EiQKBX'
-    'JpZ2h0GAIgASgLMg4uY2VkYXIudjMuRXhwclIFcmlnaHQ=');
+    'Cg1FeHByTm90RXF1YWxzEiIKBGxlZnQYASABKAsyDi5jZWRhci52NC5FeHByUgRsZWZ0EiQKBX'
+    'JpZ2h0GAIgASgLMg4uY2VkYXIudjQuRXhwclIFcmlnaHQ=');
 
 @$core.Deprecated('Use exprInDescriptor instead')
 const ExprIn$json = {
   '1': 'ExprIn',
   '2': [
-    {'1': 'left', '3': 1, '4': 1, '5': 11, '6': '.cedar.v3.Expr', '10': 'left'},
+    {'1': 'left', '3': 1, '4': 1, '5': 11, '6': '.cedar.v4.Expr', '10': 'left'},
     {
       '1': 'right',
       '3': 2,
       '4': 1,
       '5': 11,
-      '6': '.cedar.v3.Expr',
+      '6': '.cedar.v4.Expr',
       '10': 'right'
     },
   ],
@@ -505,20 +526,20 @@ const ExprIn$json = {
 
 /// Descriptor for `ExprIn`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List exprInDescriptor = $convert.base64Decode(
-    'CgZFeHBySW4SIgoEbGVmdBgBIAEoCzIOLmNlZGFyLnYzLkV4cHJSBGxlZnQSJAoFcmlnaHQYAi'
-    'ABKAsyDi5jZWRhci52My5FeHByUgVyaWdodA==');
+    'CgZFeHBySW4SIgoEbGVmdBgBIAEoCzIOLmNlZGFyLnY0LkV4cHJSBGxlZnQSJAoFcmlnaHQYAi'
+    'ABKAsyDi5jZWRhci52NC5FeHByUgVyaWdodA==');
 
 @$core.Deprecated('Use exprLessThanDescriptor instead')
 const ExprLessThan$json = {
   '1': 'ExprLessThan',
   '2': [
-    {'1': 'left', '3': 1, '4': 1, '5': 11, '6': '.cedar.v3.Expr', '10': 'left'},
+    {'1': 'left', '3': 1, '4': 1, '5': 11, '6': '.cedar.v4.Expr', '10': 'left'},
     {
       '1': 'right',
       '3': 2,
       '4': 1,
       '5': 11,
-      '6': '.cedar.v3.Expr',
+      '6': '.cedar.v4.Expr',
       '10': 'right'
     },
   ],
@@ -526,20 +547,20 @@ const ExprLessThan$json = {
 
 /// Descriptor for `ExprLessThan`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List exprLessThanDescriptor = $convert.base64Decode(
-    'CgxFeHByTGVzc1RoYW4SIgoEbGVmdBgBIAEoCzIOLmNlZGFyLnYzLkV4cHJSBGxlZnQSJAoFcm'
-    'lnaHQYAiABKAsyDi5jZWRhci52My5FeHByUgVyaWdodA==');
+    'CgxFeHByTGVzc1RoYW4SIgoEbGVmdBgBIAEoCzIOLmNlZGFyLnY0LkV4cHJSBGxlZnQSJAoFcm'
+    'lnaHQYAiABKAsyDi5jZWRhci52NC5FeHByUgVyaWdodA==');
 
 @$core.Deprecated('Use exprLessThanOrEqualsDescriptor instead')
 const ExprLessThanOrEquals$json = {
   '1': 'ExprLessThanOrEquals',
   '2': [
-    {'1': 'left', '3': 1, '4': 1, '5': 11, '6': '.cedar.v3.Expr', '10': 'left'},
+    {'1': 'left', '3': 1, '4': 1, '5': 11, '6': '.cedar.v4.Expr', '10': 'left'},
     {
       '1': 'right',
       '3': 2,
       '4': 1,
       '5': 11,
-      '6': '.cedar.v3.Expr',
+      '6': '.cedar.v4.Expr',
       '10': 'right'
     },
   ],
@@ -547,20 +568,20 @@ const ExprLessThanOrEquals$json = {
 
 /// Descriptor for `ExprLessThanOrEquals`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List exprLessThanOrEqualsDescriptor = $convert.base64Decode(
-    'ChRFeHByTGVzc1RoYW5PckVxdWFscxIiCgRsZWZ0GAEgASgLMg4uY2VkYXIudjMuRXhwclIEbG'
-    'VmdBIkCgVyaWdodBgCIAEoCzIOLmNlZGFyLnYzLkV4cHJSBXJpZ2h0');
+    'ChRFeHByTGVzc1RoYW5PckVxdWFscxIiCgRsZWZ0GAEgASgLMg4uY2VkYXIudjQuRXhwclIEbG'
+    'VmdBIkCgVyaWdodBgCIAEoCzIOLmNlZGFyLnY0LkV4cHJSBXJpZ2h0');
 
 @$core.Deprecated('Use exprGreaterThanDescriptor instead')
 const ExprGreaterThan$json = {
   '1': 'ExprGreaterThan',
   '2': [
-    {'1': 'left', '3': 1, '4': 1, '5': 11, '6': '.cedar.v3.Expr', '10': 'left'},
+    {'1': 'left', '3': 1, '4': 1, '5': 11, '6': '.cedar.v4.Expr', '10': 'left'},
     {
       '1': 'right',
       '3': 2,
       '4': 1,
       '5': 11,
-      '6': '.cedar.v3.Expr',
+      '6': '.cedar.v4.Expr',
       '10': 'right'
     },
   ],
@@ -568,20 +589,20 @@ const ExprGreaterThan$json = {
 
 /// Descriptor for `ExprGreaterThan`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List exprGreaterThanDescriptor = $convert.base64Decode(
-    'Cg9FeHByR3JlYXRlclRoYW4SIgoEbGVmdBgBIAEoCzIOLmNlZGFyLnYzLkV4cHJSBGxlZnQSJA'
-    'oFcmlnaHQYAiABKAsyDi5jZWRhci52My5FeHByUgVyaWdodA==');
+    'Cg9FeHByR3JlYXRlclRoYW4SIgoEbGVmdBgBIAEoCzIOLmNlZGFyLnY0LkV4cHJSBGxlZnQSJA'
+    'oFcmlnaHQYAiABKAsyDi5jZWRhci52NC5FeHByUgVyaWdodA==');
 
 @$core.Deprecated('Use exprGreaterThanOrEqualsDescriptor instead')
 const ExprGreaterThanOrEquals$json = {
   '1': 'ExprGreaterThanOrEquals',
   '2': [
-    {'1': 'left', '3': 1, '4': 1, '5': 11, '6': '.cedar.v3.Expr', '10': 'left'},
+    {'1': 'left', '3': 1, '4': 1, '5': 11, '6': '.cedar.v4.Expr', '10': 'left'},
     {
       '1': 'right',
       '3': 2,
       '4': 1,
       '5': 11,
-      '6': '.cedar.v3.Expr',
+      '6': '.cedar.v4.Expr',
       '10': 'right'
     },
   ],
@@ -590,20 +611,20 @@ const ExprGreaterThanOrEquals$json = {
 /// Descriptor for `ExprGreaterThanOrEquals`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List exprGreaterThanOrEqualsDescriptor =
     $convert.base64Decode(
-        'ChdFeHByR3JlYXRlclRoYW5PckVxdWFscxIiCgRsZWZ0GAEgASgLMg4uY2VkYXIudjMuRXhwcl'
-        'IEbGVmdBIkCgVyaWdodBgCIAEoCzIOLmNlZGFyLnYzLkV4cHJSBXJpZ2h0');
+        'ChdFeHByR3JlYXRlclRoYW5PckVxdWFscxIiCgRsZWZ0GAEgASgLMg4uY2VkYXIudjQuRXhwcl'
+        'IEbGVmdBIkCgVyaWdodBgCIAEoCzIOLmNlZGFyLnY0LkV4cHJSBXJpZ2h0');
 
 @$core.Deprecated('Use exprAndDescriptor instead')
 const ExprAnd$json = {
   '1': 'ExprAnd',
   '2': [
-    {'1': 'left', '3': 1, '4': 1, '5': 11, '6': '.cedar.v3.Expr', '10': 'left'},
+    {'1': 'left', '3': 1, '4': 1, '5': 11, '6': '.cedar.v4.Expr', '10': 'left'},
     {
       '1': 'right',
       '3': 2,
       '4': 1,
       '5': 11,
-      '6': '.cedar.v3.Expr',
+      '6': '.cedar.v4.Expr',
       '10': 'right'
     },
   ],
@@ -611,20 +632,20 @@ const ExprAnd$json = {
 
 /// Descriptor for `ExprAnd`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List exprAndDescriptor = $convert.base64Decode(
-    'CgdFeHByQW5kEiIKBGxlZnQYASABKAsyDi5jZWRhci52My5FeHByUgRsZWZ0EiQKBXJpZ2h0GA'
-    'IgASgLMg4uY2VkYXIudjMuRXhwclIFcmlnaHQ=');
+    'CgdFeHByQW5kEiIKBGxlZnQYASABKAsyDi5jZWRhci52NC5FeHByUgRsZWZ0EiQKBXJpZ2h0GA'
+    'IgASgLMg4uY2VkYXIudjQuRXhwclIFcmlnaHQ=');
 
 @$core.Deprecated('Use exprOrDescriptor instead')
 const ExprOr$json = {
   '1': 'ExprOr',
   '2': [
-    {'1': 'left', '3': 1, '4': 1, '5': 11, '6': '.cedar.v3.Expr', '10': 'left'},
+    {'1': 'left', '3': 1, '4': 1, '5': 11, '6': '.cedar.v4.Expr', '10': 'left'},
     {
       '1': 'right',
       '3': 2,
       '4': 1,
       '5': 11,
-      '6': '.cedar.v3.Expr',
+      '6': '.cedar.v4.Expr',
       '10': 'right'
     },
   ],
@@ -632,20 +653,20 @@ const ExprOr$json = {
 
 /// Descriptor for `ExprOr`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List exprOrDescriptor = $convert.base64Decode(
-    'CgZFeHByT3ISIgoEbGVmdBgBIAEoCzIOLmNlZGFyLnYzLkV4cHJSBGxlZnQSJAoFcmlnaHQYAi'
-    'ABKAsyDi5jZWRhci52My5FeHByUgVyaWdodA==');
+    'CgZFeHByT3ISIgoEbGVmdBgBIAEoCzIOLmNlZGFyLnY0LkV4cHJSBGxlZnQSJAoFcmlnaHQYAi'
+    'ABKAsyDi5jZWRhci52NC5FeHByUgVyaWdodA==');
 
 @$core.Deprecated('Use exprAddDescriptor instead')
 const ExprAdd$json = {
   '1': 'ExprAdd',
   '2': [
-    {'1': 'left', '3': 1, '4': 1, '5': 11, '6': '.cedar.v3.Expr', '10': 'left'},
+    {'1': 'left', '3': 1, '4': 1, '5': 11, '6': '.cedar.v4.Expr', '10': 'left'},
     {
       '1': 'right',
       '3': 2,
       '4': 1,
       '5': 11,
-      '6': '.cedar.v3.Expr',
+      '6': '.cedar.v4.Expr',
       '10': 'right'
     },
   ],
@@ -653,20 +674,20 @@ const ExprAdd$json = {
 
 /// Descriptor for `ExprAdd`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List exprAddDescriptor = $convert.base64Decode(
-    'CgdFeHByQWRkEiIKBGxlZnQYASABKAsyDi5jZWRhci52My5FeHByUgRsZWZ0EiQKBXJpZ2h0GA'
-    'IgASgLMg4uY2VkYXIudjMuRXhwclIFcmlnaHQ=');
+    'CgdFeHByQWRkEiIKBGxlZnQYASABKAsyDi5jZWRhci52NC5FeHByUgRsZWZ0EiQKBXJpZ2h0GA'
+    'IgASgLMg4uY2VkYXIudjQuRXhwclIFcmlnaHQ=');
 
 @$core.Deprecated('Use exprSubtDescriptor instead')
 const ExprSubt$json = {
   '1': 'ExprSubt',
   '2': [
-    {'1': 'left', '3': 1, '4': 1, '5': 11, '6': '.cedar.v3.Expr', '10': 'left'},
+    {'1': 'left', '3': 1, '4': 1, '5': 11, '6': '.cedar.v4.Expr', '10': 'left'},
     {
       '1': 'right',
       '3': 2,
       '4': 1,
       '5': 11,
-      '6': '.cedar.v3.Expr',
+      '6': '.cedar.v4.Expr',
       '10': 'right'
     },
   ],
@@ -674,20 +695,20 @@ const ExprSubt$json = {
 
 /// Descriptor for `ExprSubt`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List exprSubtDescriptor = $convert.base64Decode(
-    'CghFeHByU3VidBIiCgRsZWZ0GAEgASgLMg4uY2VkYXIudjMuRXhwclIEbGVmdBIkCgVyaWdodB'
-    'gCIAEoCzIOLmNlZGFyLnYzLkV4cHJSBXJpZ2h0');
+    'CghFeHByU3VidBIiCgRsZWZ0GAEgASgLMg4uY2VkYXIudjQuRXhwclIEbGVmdBIkCgVyaWdodB'
+    'gCIAEoCzIOLmNlZGFyLnY0LkV4cHJSBXJpZ2h0');
 
 @$core.Deprecated('Use exprMultDescriptor instead')
 const ExprMult$json = {
   '1': 'ExprMult',
   '2': [
-    {'1': 'left', '3': 1, '4': 1, '5': 11, '6': '.cedar.v3.Expr', '10': 'left'},
+    {'1': 'left', '3': 1, '4': 1, '5': 11, '6': '.cedar.v4.Expr', '10': 'left'},
     {
       '1': 'right',
       '3': 2,
       '4': 1,
       '5': 11,
-      '6': '.cedar.v3.Expr',
+      '6': '.cedar.v4.Expr',
       '10': 'right'
     },
   ],
@@ -695,20 +716,20 @@ const ExprMult$json = {
 
 /// Descriptor for `ExprMult`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List exprMultDescriptor = $convert.base64Decode(
-    'CghFeHByTXVsdBIiCgRsZWZ0GAEgASgLMg4uY2VkYXIudjMuRXhwclIEbGVmdBIkCgVyaWdodB'
-    'gCIAEoCzIOLmNlZGFyLnYzLkV4cHJSBXJpZ2h0');
+    'CghFeHByTXVsdBIiCgRsZWZ0GAEgASgLMg4uY2VkYXIudjQuRXhwclIEbGVmdBIkCgVyaWdodB'
+    'gCIAEoCzIOLmNlZGFyLnY0LkV4cHJSBXJpZ2h0');
 
 @$core.Deprecated('Use exprContainsDescriptor instead')
 const ExprContains$json = {
   '1': 'ExprContains',
   '2': [
-    {'1': 'left', '3': 1, '4': 1, '5': 11, '6': '.cedar.v3.Expr', '10': 'left'},
+    {'1': 'left', '3': 1, '4': 1, '5': 11, '6': '.cedar.v4.Expr', '10': 'left'},
     {
       '1': 'right',
       '3': 2,
       '4': 1,
       '5': 11,
-      '6': '.cedar.v3.Expr',
+      '6': '.cedar.v4.Expr',
       '10': 'right'
     },
   ],
@@ -716,20 +737,20 @@ const ExprContains$json = {
 
 /// Descriptor for `ExprContains`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List exprContainsDescriptor = $convert.base64Decode(
-    'CgxFeHByQ29udGFpbnMSIgoEbGVmdBgBIAEoCzIOLmNlZGFyLnYzLkV4cHJSBGxlZnQSJAoFcm'
-    'lnaHQYAiABKAsyDi5jZWRhci52My5FeHByUgVyaWdodA==');
+    'CgxFeHByQ29udGFpbnMSIgoEbGVmdBgBIAEoCzIOLmNlZGFyLnY0LkV4cHJSBGxlZnQSJAoFcm'
+    'lnaHQYAiABKAsyDi5jZWRhci52NC5FeHByUgVyaWdodA==');
 
 @$core.Deprecated('Use exprContainsAllDescriptor instead')
 const ExprContainsAll$json = {
   '1': 'ExprContainsAll',
   '2': [
-    {'1': 'left', '3': 1, '4': 1, '5': 11, '6': '.cedar.v3.Expr', '10': 'left'},
+    {'1': 'left', '3': 1, '4': 1, '5': 11, '6': '.cedar.v4.Expr', '10': 'left'},
     {
       '1': 'right',
       '3': 2,
       '4': 1,
       '5': 11,
-      '6': '.cedar.v3.Expr',
+      '6': '.cedar.v4.Expr',
       '10': 'right'
     },
   ],
@@ -737,20 +758,20 @@ const ExprContainsAll$json = {
 
 /// Descriptor for `ExprContainsAll`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List exprContainsAllDescriptor = $convert.base64Decode(
-    'Cg9FeHByQ29udGFpbnNBbGwSIgoEbGVmdBgBIAEoCzIOLmNlZGFyLnYzLkV4cHJSBGxlZnQSJA'
-    'oFcmlnaHQYAiABKAsyDi5jZWRhci52My5FeHByUgVyaWdodA==');
+    'Cg9FeHByQ29udGFpbnNBbGwSIgoEbGVmdBgBIAEoCzIOLmNlZGFyLnY0LkV4cHJSBGxlZnQSJA'
+    'oFcmlnaHQYAiABKAsyDi5jZWRhci52NC5FeHByUgVyaWdodA==');
 
 @$core.Deprecated('Use exprContainsAnyDescriptor instead')
 const ExprContainsAny$json = {
   '1': 'ExprContainsAny',
   '2': [
-    {'1': 'left', '3': 1, '4': 1, '5': 11, '6': '.cedar.v3.Expr', '10': 'left'},
+    {'1': 'left', '3': 1, '4': 1, '5': 11, '6': '.cedar.v4.Expr', '10': 'left'},
     {
       '1': 'right',
       '3': 2,
       '4': 1,
       '5': 11,
-      '6': '.cedar.v3.Expr',
+      '6': '.cedar.v4.Expr',
       '10': 'right'
     },
   ],
@@ -758,63 +779,91 @@ const ExprContainsAny$json = {
 
 /// Descriptor for `ExprContainsAny`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List exprContainsAnyDescriptor = $convert.base64Decode(
-    'Cg9FeHByQ29udGFpbnNBbnkSIgoEbGVmdBgBIAEoCzIOLmNlZGFyLnYzLkV4cHJSBGxlZnQSJA'
-    'oFcmlnaHQYAiABKAsyDi5jZWRhci52My5FeHByUgVyaWdodA==');
+    'Cg9FeHByQ29udGFpbnNBbnkSIgoEbGVmdBgBIAEoCzIOLmNlZGFyLnY0LkV4cHJSBGxlZnQSJA'
+    'oFcmlnaHQYAiABKAsyDi5jZWRhci52NC5FeHByUgVyaWdodA==');
 
 @$core.Deprecated('Use exprGetAttributeDescriptor instead')
 const ExprGetAttribute$json = {
   '1': 'ExprGetAttribute',
   '2': [
-    {'1': 'left', '3': 1, '4': 1, '5': 11, '6': '.cedar.v3.Expr', '10': 'left'},
+    {'1': 'left', '3': 1, '4': 1, '5': 11, '6': '.cedar.v4.Expr', '10': 'left'},
     {'1': 'attr', '3': 2, '4': 1, '5': 9, '10': 'attr'},
   ],
 };
 
 /// Descriptor for `ExprGetAttribute`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List exprGetAttributeDescriptor = $convert.base64Decode(
-    'ChBFeHByR2V0QXR0cmlidXRlEiIKBGxlZnQYASABKAsyDi5jZWRhci52My5FeHByUgRsZWZ0Eh'
+    'ChBFeHByR2V0QXR0cmlidXRlEiIKBGxlZnQYASABKAsyDi5jZWRhci52NC5FeHByUgRsZWZ0Eh'
     'IKBGF0dHIYAiABKAlSBGF0dHI=');
 
 @$core.Deprecated('Use exprHasAttributeDescriptor instead')
 const ExprHasAttribute$json = {
   '1': 'ExprHasAttribute',
   '2': [
-    {'1': 'left', '3': 1, '4': 1, '5': 11, '6': '.cedar.v3.Expr', '10': 'left'},
+    {'1': 'left', '3': 1, '4': 1, '5': 11, '6': '.cedar.v4.Expr', '10': 'left'},
     {'1': 'attr', '3': 2, '4': 1, '5': 9, '10': 'attr'},
   ],
 };
 
 /// Descriptor for `ExprHasAttribute`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List exprHasAttributeDescriptor = $convert.base64Decode(
-    'ChBFeHBySGFzQXR0cmlidXRlEiIKBGxlZnQYASABKAsyDi5jZWRhci52My5FeHByUgRsZWZ0Eh'
+    'ChBFeHBySGFzQXR0cmlidXRlEiIKBGxlZnQYASABKAsyDi5jZWRhci52NC5FeHByUgRsZWZ0Eh'
     'IKBGF0dHIYAiABKAlSBGF0dHI=');
+
+@$core.Deprecated('Use exprGetTagDescriptor instead')
+const ExprGetTag$json = {
+  '1': 'ExprGetTag',
+  '2': [
+    {'1': 'left', '3': 1, '4': 1, '5': 11, '6': '.cedar.v4.Expr', '10': 'left'},
+    {'1': 'tag', '3': 2, '4': 1, '5': 11, '6': '.cedar.v4.Expr', '10': 'tag'},
+  ],
+};
+
+/// Descriptor for `ExprGetTag`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List exprGetTagDescriptor = $convert.base64Decode(
+    'CgpFeHByR2V0VGFnEiIKBGxlZnQYASABKAsyDi5jZWRhci52NC5FeHByUgRsZWZ0EiAKA3RhZx'
+    'gCIAEoCzIOLmNlZGFyLnY0LkV4cHJSA3RhZw==');
+
+@$core.Deprecated('Use exprHasTagDescriptor instead')
+const ExprHasTag$json = {
+  '1': 'ExprHasTag',
+  '2': [
+    {'1': 'left', '3': 1, '4': 1, '5': 11, '6': '.cedar.v4.Expr', '10': 'left'},
+    {'1': 'tag', '3': 2, '4': 1, '5': 11, '6': '.cedar.v4.Expr', '10': 'tag'},
+  ],
+};
+
+/// Descriptor for `ExprHasTag`. Decode as a `google.protobuf.DescriptorProto`.
+final $typed_data.Uint8List exprHasTagDescriptor = $convert.base64Decode(
+    'CgpFeHBySGFzVGFnEiIKBGxlZnQYASABKAsyDi5jZWRhci52NC5FeHByUgRsZWZ0EiAKA3RhZx'
+    'gCIAEoCzIOLmNlZGFyLnY0LkV4cHJSA3RhZw==');
 
 @$core.Deprecated('Use exprLikeDescriptor instead')
 const ExprLike$json = {
   '1': 'ExprLike',
   '2': [
-    {'1': 'left', '3': 1, '4': 1, '5': 11, '6': '.cedar.v3.Expr', '10': 'left'},
+    {'1': 'left', '3': 1, '4': 1, '5': 11, '6': '.cedar.v4.Expr', '10': 'left'},
     {'1': 'pattern', '3': 2, '4': 1, '5': 9, '10': 'pattern'},
   ],
 };
 
 /// Descriptor for `ExprLike`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List exprLikeDescriptor = $convert.base64Decode(
-    'CghFeHByTGlrZRIiCgRsZWZ0GAEgASgLMg4uY2VkYXIudjMuRXhwclIEbGVmdBIYCgdwYXR0ZX'
+    'CghFeHByTGlrZRIiCgRsZWZ0GAEgASgLMg4uY2VkYXIudjQuRXhwclIEbGVmdBIYCgdwYXR0ZX'
     'JuGAIgASgJUgdwYXR0ZXJu');
 
 @$core.Deprecated('Use exprIsDescriptor instead')
 const ExprIs$json = {
   '1': 'ExprIs',
   '2': [
-    {'1': 'left', '3': 1, '4': 1, '5': 11, '6': '.cedar.v3.Expr', '10': 'left'},
+    {'1': 'left', '3': 1, '4': 1, '5': 11, '6': '.cedar.v4.Expr', '10': 'left'},
     {'1': 'entity_type', '3': 2, '4': 1, '5': 9, '10': 'entityType'},
     {
       '1': 'in',
       '3': 3,
       '4': 1,
       '5': 11,
-      '6': '.cedar.v3.Expr',
+      '6': '.cedar.v4.Expr',
       '8': {'28700919': 'in_'},
       '9': 0,
       '10': 'in',
@@ -828,22 +877,22 @@ const ExprIs$json = {
 
 /// Descriptor for `ExprIs`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List exprIsDescriptor = $convert.base64Decode(
-    'CgZFeHBySXMSIgoEbGVmdBgBIAEoCzIOLmNlZGFyLnYzLkV4cHJSBGxlZnQSHwoLZW50aXR5X3'
-    'R5cGUYAiABKAlSCmVudGl0eVR5cGUSLQoCaW4YAyABKAsyDi5jZWRhci52My5FeHByQgi6j75t'
+    'CgZFeHBySXMSIgoEbGVmdBgBIAEoCzIOLmNlZGFyLnY0LkV4cHJSBGxlZnQSHwoLZW50aXR5X3'
+    'R5cGUYAiABKAlSCmVudGl0eVR5cGUSLQoCaW4YAyABKAsyDi5jZWRhci52NC5FeHByQgi6j75t'
     'A2luX0gAUgJpbogBAUIFCgNfaW4=');
 
 @$core.Deprecated('Use exprIfThenElseDescriptor instead')
 const ExprIfThenElse$json = {
   '1': 'ExprIfThenElse',
   '2': [
-    {'1': 'cond', '3': 1, '4': 1, '5': 11, '6': '.cedar.v3.Expr', '10': 'cond'},
-    {'1': 'then', '3': 2, '4': 1, '5': 11, '6': '.cedar.v3.Expr', '10': 'then'},
+    {'1': 'cond', '3': 1, '4': 1, '5': 11, '6': '.cedar.v4.Expr', '10': 'cond'},
+    {'1': 'then', '3': 2, '4': 1, '5': 11, '6': '.cedar.v4.Expr', '10': 'then'},
     {
       '1': 'otherwise',
       '3': 3,
       '4': 1,
       '5': 11,
-      '6': '.cedar.v3.Expr',
+      '6': '.cedar.v4.Expr',
       '10': 'otherwise'
     },
   ],
@@ -851,9 +900,9 @@ const ExprIfThenElse$json = {
 
 /// Descriptor for `ExprIfThenElse`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List exprIfThenElseDescriptor = $convert.base64Decode(
-    'Cg5FeHBySWZUaGVuRWxzZRIiCgRjb25kGAEgASgLMg4uY2VkYXIudjMuRXhwclIEY29uZBIiCg'
-    'R0aGVuGAIgASgLMg4uY2VkYXIudjMuRXhwclIEdGhlbhIsCglvdGhlcndpc2UYAyABKAsyDi5j'
-    'ZWRhci52My5FeHByUglvdGhlcndpc2U=');
+    'Cg5FeHBySWZUaGVuRWxzZRIiCgRjb25kGAEgASgLMg4uY2VkYXIudjQuRXhwclIEY29uZBIiCg'
+    'R0aGVuGAIgASgLMg4uY2VkYXIudjQuRXhwclIEdGhlbhIsCglvdGhlcndpc2UYAyABKAsyDi5j'
+    'ZWRhci52NC5FeHByUglvdGhlcndpc2U=');
 
 @$core.Deprecated('Use exprSetDescriptor instead')
 const ExprSet$json = {
@@ -864,7 +913,7 @@ const ExprSet$json = {
       '3': 1,
       '4': 3,
       '5': 11,
-      '6': '.cedar.v3.Expr',
+      '6': '.cedar.v4.Expr',
       '10': 'expressions'
     },
   ],
@@ -872,7 +921,7 @@ const ExprSet$json = {
 
 /// Descriptor for `ExprSet`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List exprSetDescriptor = $convert.base64Decode(
-    'CgdFeHByU2V0EjAKC2V4cHJlc3Npb25zGAEgAygLMg4uY2VkYXIudjMuRXhwclILZXhwcmVzc2'
+    'CgdFeHByU2V0EjAKC2V4cHJlc3Npb25zGAEgAygLMg4uY2VkYXIudjQuRXhwclILZXhwcmVzc2'
     'lvbnM=');
 
 @$core.Deprecated('Use exprRecordDescriptor instead')
@@ -884,7 +933,7 @@ const ExprRecord$json = {
       '3': 1,
       '4': 3,
       '5': 11,
-      '6': '.cedar.v3.ExprRecord.AttributesEntry',
+      '6': '.cedar.v4.ExprRecord.AttributesEntry',
       '10': 'attributes'
     },
   ],
@@ -901,7 +950,7 @@ const ExprRecord_AttributesEntry$json = {
       '3': 2,
       '4': 1,
       '5': 11,
-      '6': '.cedar.v3.Expr',
+      '6': '.cedar.v4.Expr',
       '10': 'value'
     },
   ],
@@ -910,20 +959,20 @@ const ExprRecord_AttributesEntry$json = {
 
 /// Descriptor for `ExprRecord`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List exprRecordDescriptor = $convert.base64Decode(
-    'CgpFeHByUmVjb3JkEkQKCmF0dHJpYnV0ZXMYASADKAsyJC5jZWRhci52My5FeHByUmVjb3JkLk'
+    'CgpFeHByUmVjb3JkEkQKCmF0dHJpYnV0ZXMYASADKAsyJC5jZWRhci52NC5FeHByUmVjb3JkLk'
     'F0dHJpYnV0ZXNFbnRyeVIKYXR0cmlidXRlcxpNCg9BdHRyaWJ1dGVzRW50cnkSEAoDa2V5GAEg'
-    'ASgJUgNrZXkSJAoFdmFsdWUYAiABKAsyDi5jZWRhci52My5FeHByUgV2YWx1ZToCOAE=');
+    'ASgJUgNrZXkSJAoFdmFsdWUYAiABKAsyDi5jZWRhci52NC5FeHByUgV2YWx1ZToCOAE=');
 
 @$core.Deprecated('Use exprExtensionCallDescriptor instead')
 const ExprExtensionCall$json = {
   '1': 'ExprExtensionCall',
   '2': [
     {'1': 'fn', '3': 1, '4': 1, '5': 9, '10': 'fn'},
-    {'1': 'args', '3': 2, '4': 3, '5': 11, '6': '.cedar.v3.Expr', '10': 'args'},
+    {'1': 'args', '3': 2, '4': 3, '5': 11, '6': '.cedar.v4.Expr', '10': 'args'},
   ],
 };
 
 /// Descriptor for `ExprExtensionCall`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List exprExtensionCallDescriptor = $convert.base64Decode(
     'ChFFeHByRXh0ZW5zaW9uQ2FsbBIOCgJmbhgBIAEoCVICZm4SIgoEYXJncxgCIAMoCzIOLmNlZG'
-    'FyLnYzLkV4cHJSBGFyZ3M=');
+    'FyLnY0LkV4cHJSBGFyZ3M=');

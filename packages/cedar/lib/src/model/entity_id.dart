@@ -96,7 +96,8 @@ final class EntityUid implements Component {
   @override
   operator ==(Object other) =>
       identical(this, other) ||
-      other is EntityUid && type == other.type && id == other.id;
+      other is EntityUid && type == other.type && id == other.id ||
+      other is EntityValue && this == other.uid;
 
   @override
   int get hashCode => Object.hash(type, id);

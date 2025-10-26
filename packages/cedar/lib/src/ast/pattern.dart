@@ -59,47 +59,19 @@ final class CedarPattern {
 
   String toCedar() => '"${toString(returnRaw: false)}"';
 
-  bool match(String arg) {
-    for (var i = 0; i < comps.length; i++) {
-      final comp = comps[i];
-      final lastChunk = i == comps.length - 1;
-      if (comp is Wildcard && comp.literal.isEmpty) {
-        return true;
-      }
-      var t = _matchChunk(comp.literal, arg);
-      if (t != null && (t.isEmpty || !lastChunk)) {
-        arg = t;
-        continue;
-      }
-      if (comp is Wildcard) {
-        for (var i = 0; i < arg.length; i++) {
-          t = _matchChunk(comp.literal, arg.substring(i + 1));
-          if (t != null) {
-            if (lastChunk && t.isNotEmpty) {
-              continue;
-            }
-            arg = t;
-            continue;
-          }
-        }
-      }
-      return false;
-    }
-    return arg.isEmpty;
-  }
+  bool match(String arg) => _buildRegExp().hasMatch(arg);
 
-  String? _matchChunk(String chunk, String s) {
-    for (var i = 0; i < chunk.length; i++) {
-      if (s.isEmpty) {
-        return null;
+  RegExp _buildRegExp() {
+    final buffer = StringBuffer('^');
+    for (final comp in comps) {
+      if (comp is Wildcard) {
+        buffer.write('.*');
+      } else {
+        buffer.write(RegExp.escape(comp.literal));
       }
-      if (chunk[i] != s[i]) {
-        return null;
-      }
-      s = s.substring(1);
-      chunk = chunk.substring(1);
     }
-    return s;
+    buffer.write(r'$');
+    return RegExp(buffer.toString(), dotAll: true);
   }
 
   @override

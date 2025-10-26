@@ -1,4 +1,5 @@
 import 'package:cedar/ast.dart';
+import 'package:cedar/cedar.dart';
 import 'package:cedar/src/eval/evalutator.dart';
 import 'package:fixnum/fixnum.dart';
 import 'package:test/test.dart';
@@ -159,7 +160,7 @@ void main() {
         expect(
           () => callDatetime(input),
           throwsA(
-            isA<ArgumentError>().having((e) => e.message, 'message', expected),
+            isA<TypeException>().having((e) => e.message, 'message', expected),
           ),
           reason: input,
         );
@@ -205,7 +206,7 @@ void main() {
         expect(
           () => callDuration(input),
           throwsA(
-            isA<ArgumentError>().having((e) => e.message, 'message', expected),
+            isA<TypeException>().having((e) => e.message, 'message', expected),
           ),
           reason: input,
         );

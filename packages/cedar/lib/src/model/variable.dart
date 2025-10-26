@@ -1,4 +1,4 @@
-import 'package:cedar/src/proto/cedar/v3/expr.pb.dart' as pb;
+import 'package:cedar/src/proto/cedar/v4/expr.pb.dart' as pb;
 
 enum CedarVariable {
   principal,

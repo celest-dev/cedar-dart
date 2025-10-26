@@ -15,7 +15,8 @@ dependencies:
   fixnum: ^1.1.0
   json_annotation: ^4.9.0
   meta: ^1.11.0
-  protobuf: ^4.0.0
+  protobuf: ^5.0.0
+  logging: ^1.2.0
   source_span: ^1.10.0
   string_scanner: ^1.2.0
 

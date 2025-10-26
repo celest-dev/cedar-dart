@@ -39,6 +39,16 @@ final class AttributeAccessException implements EvaluationException {
   String toString() => '$type does not have the attribute `$attribute`';
 }
 
+final class TagAccessException implements EvaluationException {
+  const TagAccessException(this.entityId, this.tag);
+
+  final EntityUid entityId;
+  final String tag;
+
+  @override
+  String toString() => 'Entity `$entityId` does not have the tag `$tag`';
+}
+
 final class OverflowException implements EvaluationException {
   const OverflowException(this.message);
 

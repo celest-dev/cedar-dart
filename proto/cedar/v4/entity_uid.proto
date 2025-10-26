@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+package cedar.v4;
+
+option go_package = "cedar/v4;cedarv4pb";
+
+message EntityUid {
+  string type = 1;
+  string id = 2;
+}

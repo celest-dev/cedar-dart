@@ -235,6 +235,24 @@ final class Evalutator implements ExprVisitor<Value> {
   }
 
   @override
+  Value visitGetTag(ExprGetTag getTag) {
+    final entityId = getTag.left.accept(this).expectEntityId();
+    if (entityId == const EntityUid.unknown()) {
+      throw const UnspecifiedEntityException();
+    }
+    final entity = context.entities[entityId];
+    if (entity == null) {
+      throw EntityNotFoundException(entityId);
+    }
+    final tagName = getTag.tag.accept(this).expectString().value;
+    final value = entity.tags[tagName];
+    if (value == null) {
+      throw TagAccessException(entityId, tagName);
+    }
+    return value;
+  }
+
+  @override
   Value visitGreaterThan(ExprGreaterThan greaterThan) {
     final lhs = greaterThan.left.accept(this);
     final rhs = greaterThan.right.accept(this);
@@ -265,6 +283,17 @@ final class Evalutator implements ExprVisitor<Value> {
         throw TypeException('Expected entity or record, got $value');
     }
     return Value.bool(attrs.containsKey(hasAttribute.attr));
+  }
+
+  @override
+  Value visitHasTag(ExprHasTag hasTag) {
+    final entityId = hasTag.left.accept(this).expectEntityId();
+    final entity = context.entities[entityId];
+    if (entity == null) {
+      return Value.bool(false);
+    }
+    final tagName = hasTag.tag.accept(this).expectString().value;
+    return Value.bool(entity.tags.containsKey(tagName));
   }
 
   @override
@@ -369,6 +398,12 @@ final class Evalutator implements ExprVisitor<Value> {
   Value visitNotEquals(ExprNotEquals notEquals) {
     final lhs = notEquals.left.accept(this);
     final rhs = notEquals.right.accept(this);
+    if (lhs.runtimeType != rhs.runtimeType) {
+      throw TypeException(
+        'Expected values of the same type for inequality comparison, '
+        'got $lhs and $rhs',
+      );
+    }
     return Value.bool(lhs != rhs);
   }
 
