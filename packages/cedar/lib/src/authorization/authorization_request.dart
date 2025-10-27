@@ -7,23 +7,25 @@ final class AuthorizationRequest {
   /// {@macro cedar.cedar_authorization_request}
   const AuthorizationRequest({
     this.entities = const {},
-    this.principal,
-    this.action,
-    this.resource,
+    EntityUid? principal,
+    EntityUid? action,
+    EntityUid? resource,
     this.context,
-  });
+  }) : principal = principal ?? const EntityUid.unknown(),
+       action = action ?? const EntityUid.unknown(),
+       resource = resource ?? const EntityUid.unknown();
 
   /// The entities in the request.
   final Map<EntityUid, Entity> entities;
 
   /// The principal component of the request.
-  final EntityUid? principal;
+  final EntityUid principal;
 
   /// The action component of the request.
-  final EntityUid? action;
+  final EntityUid action;
 
   /// The resource component of the request.
-  final EntityUid? resource;
+  final EntityUid resource;
 
   /// The context of the request.
   final Map<String, Value>? context;

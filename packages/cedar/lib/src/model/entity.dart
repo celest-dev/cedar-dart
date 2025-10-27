@@ -44,13 +44,35 @@ final class Entity implements Component {
   final Map<String, Value> attributes;
   final Map<String, Value> tags;
 
-  Map<String, Object?> toJson() => {
-    'uid': uid.toJson(),
-    'parents': parents.map((e) => e.toJson()).toList(),
-    'attrs': attributes.map((key, value) => MapEntry(key, value.toJson())),
-    if (tags.isNotEmpty)
-      'tags': tags.map((key, value) => MapEntry(key, value.toJson())),
-  };
+  Map<String, Object?> toJson({bool normalizedUids = false}) {
+    Object? serializeValue(Value value) {
+      final json = value.toJson();
+      return normalizedUids ? _normalizeEntityJson(json) : json;
+    }
+
+    final attrsJson = attributes.map(
+      (key, value) => MapEntry(key, serializeValue(value)),
+    );
+
+    final entityJson = <String, Object?>{
+      'uid': normalizedUids ? uid.normalized.toJson() : uid.toJson(),
+      'parents': parents
+          .map(
+            (parent) =>
+                normalizedUids ? parent.normalized.toJson() : parent.toJson(),
+          )
+          .toList(),
+      'attrs': attrsJson,
+    };
+
+    if (tags.isNotEmpty) {
+      entityJson['tags'] = tags.map(
+        (key, value) => MapEntry(key, serializeValue(value)),
+      );
+    }
+
+    return entityJson;
+  }
 
   pb.Entity toProto() {
     return pb.Entity(
@@ -91,4 +113,22 @@ final class Entity implements Component {
 
   @override
   Expr toExpr() => uid.toExpr();
+}
+
+Object? _normalizeEntityJson(Object? json) {
+  if (json is Map<String, Object?>) {
+    if (json.length == 2) {
+      final type = json['type'];
+      final id = json['id'];
+      if (type is String && id is String) {
+        final normalized = EntityUid.of(type, id).normalized;
+        return normalized.toJson();
+      }
+    }
+    return json.map((key, value) => MapEntry(key, _normalizeEntityJson(value)));
+  }
+  if (json is List) {
+    return [for (final element in json) _normalizeEntityJson(element)];
+  }
+  return json;
 }

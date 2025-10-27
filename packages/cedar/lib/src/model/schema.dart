@@ -51,8 +51,10 @@ final class CedarSchema {
     );
   }
 
-  Map<String, Object?> toJson() =>
-      _namespaces.map((name, namespace) => MapEntry(name, namespace.toJson()));
+  Map<String, Object?> toJson({bool normalizedUids = false}) => _namespaces.map(
+    (name, namespace) =>
+        MapEntry(name, namespace.toJson(normalizedUids: normalizedUids)),
+  );
 
   /// Validates that the schema contains only well-formed references.
   ///
@@ -109,6 +111,16 @@ final class CedarSchema {
             commonTypeIndex,
             errors,
             'entity $qualified shape',
+          );
+        }
+        if (schema.tags case final tags?) {
+          _resolveAndValidateType(
+            tags,
+            namespaceName,
+            entityIndex,
+            commonTypeIndex,
+            errors,
+            'tags of entity $qualified',
           );
         }
       });
@@ -260,14 +272,24 @@ final class CedarNamespace {
     );
   }
 
-  Map<String, Object?> toJson() => {
+  Map<String, Object?> toJson({bool normalizedUids = false}) => {
     if (_entityTypes != null)
       'entityTypes': _entityTypes!.map(
         (name, entityType) => MapEntry(name, entityType.toJson()),
       ),
     if (_actionTypes != null)
-      'actions': _actionTypes!.map(
-        (name, actionType) => MapEntry(name, actionType.toJson()),
+      'actions': Map.fromEntries(
+        _actionTypes!.entries.map(
+          (entry) => MapEntry(
+            normalizedUids
+                ? EntityUid(
+                    const EntityTypeName('Action'),
+                    EntityId(entry.key),
+                  ).normalized.id
+                : entry.key,
+            entry.value.toJson(normalizedUids: normalizedUids),
+          ),
+        ),
       ),
     if (_commonTypes != null)
       'commonTypes': _commonTypes!.map(
@@ -277,7 +299,7 @@ final class CedarNamespace {
 }
 
 final class CedarEntitySchema {
-  const CedarEntitySchema({this.memberOfTypes, this.shape});
+  const CedarEntitySchema({this.memberOfTypes, this.shape, this.tags});
 
   factory CedarEntitySchema.fromJson(Map<String, Object?> json) {
     return CedarEntitySchema(
@@ -285,15 +307,18 @@ final class CedarEntitySchema {
           ?.cast<String>()
           .toList(),
       shape: (json['shape'] as Map<String, Object?>?)?.let(CedarType.fromJson),
+      tags: (json['tags'] as Map<String, Object?>?)?.let(CedarType.fromJson),
     );
   }
 
   final List<String>? memberOfTypes;
   final CedarType? shape;
+  final CedarType? tags;
 
   Map<String, Object?> toJson() => {
     if (memberOfTypes != null) 'memberOfTypes': memberOfTypes,
     if (shape != null) 'shape': shape!.toJson(),
+    if (tags != null) 'tags': tags!.toJson(),
   };
 }
 
@@ -322,8 +347,10 @@ final class CedarActionSchema {
   final List<EntityUid>? memberOf;
   final CedarActionAppliesTo? appliesTo;
 
-  Map<String, Object?> toJson() => {
-    'memberOf': memberOf?.map((e) => e.toJson()).toList(),
+  Map<String, Object?> toJson({bool normalizedUids = false}) => {
+    'memberOf': memberOf
+        ?.map((e) => (normalizedUids ? e.normalized : e).toJson())
+        .toList(),
     'appliesTo': appliesTo?.toJson(),
   };
 }

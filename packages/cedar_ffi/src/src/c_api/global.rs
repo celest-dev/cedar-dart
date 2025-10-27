@@ -25,15 +25,18 @@ pub struct CCedarPolicySetResult {
 }
 
 /// Parses a policy set from a Cedar policy string into JSON.
-#[no_mangle]
+#[unsafe(no_mangle)]
 pub extern "C" fn cedar_parse_policy_set(policies: *const c_char) -> CCedarPolicySetResult {
     helpers::log_on_error(
         || {
             anyhow::ensure!(!policies.is_null(), "policies is null");
             let policies = helpers::string_from_c("policies", policies)?;
             let (policy_set, errors) = match cedar_policy::PolicySet::from_str(policies) {
-                Ok(policy_set) => (policy_set, vec![]),
-                Err(e) => (cedar_policy::PolicySet::new(), e.0),
+                Ok(policy_set) => (policy_set, Vec::new()),
+                Err(e) => (
+                    cedar_policy::PolicySet::new(),
+                    e.iter().map(ToString::to_string).collect::<Vec<_>>(),
+                ),
             };
 
             let policy_set_json = serde_json::to_string(&policy_set.to_json()?)?;
@@ -41,8 +44,8 @@ pub extern "C" fn cedar_parse_policy_set(policies: *const c_char) -> CCedarPolic
             let policy_set_json = helpers::string_to_c(policy_set_json)?;
 
             let errors = errors
-                .iter()
-                .map(|e| helpers::string_to_c(e.to_string()))
+                .into_iter()
+                .map(helpers::string_to_c)
                 .collect::<Result<Vec<_>, _>>()?
                 .to_owned();
             let errors_len = errors.len();
@@ -70,9 +73,9 @@ pub extern "C" fn cedar_parse_policy_set(policies: *const c_char) -> CCedarPolic
 }
 
 /// Links a policy template to a set of entities.
-/// 
+///
 /// Returns the linked policy template in JSON format.
-#[no_mangle]
+#[unsafe(no_mangle)]
 pub extern "C" fn cedar_link_policy_template(
     policy_template_json: *const c_char,
     entities_json: *const c_char,

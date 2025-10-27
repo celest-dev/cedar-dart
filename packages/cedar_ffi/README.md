@@ -17,5 +17,5 @@ The Cedar policy language is written in Rust. To bridge to Dart, some lightweigh
 The FFI bindings are generated using the `ffigen` tool. To regenerate the bindings, run the following command:
 
 ```sh
-$ dart --enable-experiment=native-assets run ffigen
+$ dart run ffigen --config=ffigen.yaml
 ```

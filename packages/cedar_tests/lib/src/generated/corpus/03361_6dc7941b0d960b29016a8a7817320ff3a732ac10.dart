@@ -1,0 +1,13 @@
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: file_names, unnecessary_string_escapes
+
+import 'dart:convert';
+
+import 'package:cedar_tests/src/corpus_types.dart';
+
+CedarTest load() {
+  const String rawJson =
+      '{"name":"6dc7941b0d960b29016a8a7817320ff3a732ac10","schema_json":{"":{"entityTypes":{"a":{}},"actions":{"bian":{"memberOf":null,"appliesTo":{"principalTypes":["a"],"resourceTypes":["a"],"context":{"type":"Record","attributes":{}}}}}}},"policies_cedar":"forbid(\\n  principal is a in a::\\"\\\\u{6}\\",\\n  action in [Action::\\"bian\\"],\\n  resource == a::\\"\\\\u{6}\\"\\n) when {\\n  (true && ((((datetime(\\"7476-01-07\\")).toDate()).toDate()) == (((datetime(\\"7476-09-07\\")).toDate()).toDate()))) && false\\n};\\n","should_validate":true,"entities_json":[{"uid":{"type":"a","id":"\\u0006"},"attrs":{},"parents":[]},{"uid":{"type":"Action","id":"bian"},"attrs":{},"parents":[]}],"queries":[{"desc":"Request 0","principal":{"type":"a","id":"\\u0006"},"resource":{"type":"a","id":"\\u0006"},"action":{"type":"Action","id":"bian"},"context":{},"decision":"Deny","reasons":[],"errors":[]},{"desc":"Request 1","principal":{"type":"a","id":"\\u0006"},"resource":{"type":"a","id":"\\u0006"},"action":{"type":"Action","id":"bian"},"context":{},"decision":"Deny","reasons":[],"errors":[]},{"desc":"Request 2","principal":{"type":"a","id":"\\u0006"},"resource":{"type":"a","id":"\\u0006"},"action":{"type":"Action","id":"bian"},"context":{},"decision":"Deny","reasons":[],"errors":[]},{"desc":"Request 3","principal":{"type":"a","id":"\\u0006"},"resource":{"type":"a","id":"\\u0006"},"action":{"type":"Action","id":"bian"},"context":{},"decision":"Deny","reasons":[],"errors":[]},{"desc":"Request 4","principal":{"type":"a","id":"\\u0006"},"resource":{"type":"a","id":"\\u0006"},"action":{"type":"Action","id":"bian"},"context":{},"decision":"Deny","reasons":[],"errors":[]},{"desc":"Request 5","principal":{"type":"a","id":"\\u0006"},"resource":{"type":"a","id":"\\u0006"},"action":{"type":"Action","id":"bian"},"context":{},"decision":"Deny","reasons":[],"errors":[]},{"desc":"Request 6","principal":{"type":"a","id":"\\u0006"},"resource":{"type":"a","id":"\\u0006"},"action":{"type":"Action","id":"bian"},"context":{},"decision":"Deny","reasons":[],"errors":[]},{"desc":"Request 7","principal":{"type":"a","id":"\\u0006"},"resource":{"type":"a","id":"\\u0006"},"action":{"type":"Action","id":"bian"},"context":{},"decision":"Deny","reasons":[],"errors":[]}]}';
+  final Map<String, Object?> data = jsonDecode(rawJson) as Map<String, Object?>;
+  return CedarTest.fromJson(data);
+}

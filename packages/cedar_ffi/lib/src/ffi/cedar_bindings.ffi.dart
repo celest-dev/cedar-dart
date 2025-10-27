@@ -160,17 +160,17 @@ final class CAuthorizationDecision extends ffi.Struct {
 final class CCedarQuery extends ffi.Struct {
   /// The principal to check authorization for, in entity UID format.
   ///
-  /// Can be `null` to indicate an anonymous principal.
+  /// Must not be `null`.
   external ffi.Pointer<ffi.Char> principal_str;
 
   /// The resource to check authorization for, in entity UID format.
   ///
-  /// Can be `null` to indicate an anonymous resource.
+  /// Must not be `null`.
   external ffi.Pointer<ffi.Char> resource_str;
 
   /// The action to check authorization for, in entity UID format.
   ///
-  /// Can be `null` to indicate an anonymous action.
+  /// Must not be `null`.
   external ffi.Pointer<ffi.Char> action_str;
 
   /// The check's context, if any, in JSON format.

@@ -1,4 +1,6 @@
-use cedar_policy::{AuthorizationError, Entities, EntityUid, PolicySet, Schema};
+use cedar_policy::{
+    AuthorizationError, Entities, EntityId, EntityTypeName, EntityUid, PolicySet, Schema,
+};
 use std::{
     ffi::c_char,
     ptr::{null, null_mut},
@@ -44,17 +46,17 @@ pub struct CCedarConfig {
 pub struct CCedarQuery {
     /// The principal to check authorization for, in entity UID format.
     ///
-    /// Can be `null` to indicate an anonymous principal.
+    /// Must not be `null`.
     principal_str: *const c_char,
 
     /// The resource to check authorization for, in entity UID format.
     ///
-    /// Can be `null` to indicate an anonymous resource.
+    /// Must not be `null`.
     resource_str: *const c_char,
 
     /// The action to check authorization for, in entity UID format.
     ///
-    /// Can be `null` to indicate an anonymous action.
+    /// Must not be `null`.
     action_str: *const c_char,
 
     /// The check's context, if any, in JSON format.
@@ -131,7 +133,7 @@ pub struct CAuthorizationDecision {
 /// Initializes the Cedar policy engine with the given configuration.
 ///
 /// This must be called exactly once before any other Cedar functions are called.
-#[no_mangle]
+#[unsafe(no_mangle)]
 pub extern "C" fn cedar_init(config: *const CCedarConfig) -> CInitResult {
     match init_from_c_config(config) {
         Ok(store) => CInitResult {
@@ -155,7 +157,7 @@ pub extern "C" fn cedar_init(config: *const CCedarConfig) -> CInitResult {
 /// De-initializes the Cedar policy engine.
 ///
 /// This must be called exactly once when the Cedar policy engine is no longer needed.
-#[no_mangle]
+#[unsafe(no_mangle)]
 pub extern "C" fn cedar_deinit(store: *mut CedarStore) {
     helpers::log_on_error(
         || {
@@ -171,7 +173,7 @@ pub extern "C" fn cedar_deinit(store: *mut CedarStore) {
 /// Performs a Cedar authorization check.
 ///
 /// This must be called after [cedar_init] has been called.
-#[no_mangle]
+#[unsafe(no_mangle)]
 pub extern "C" fn cedar_is_authorized(
     store: *mut CedarStore,
     query: *const CCedarQuery,
@@ -219,22 +221,22 @@ fn _cedar_is_authorized(
         context_json,
     );
 
-    let principal_id = match principal {
-        Some(principal) => Some(EntityUid::from_str(principal)?),
-        None => None,
+    let principal_id = match principal.as_deref() {
+        Some(principal) => parse_normalized_entity_uid(principal, "principal")?,
+        None => anyhow::bail!("principal is required"),
     };
-    let resource_id = match resource {
-        Some(resource) => Some(EntityUid::from_str(resource)?),
-        None => None,
+    let resource_id = match resource.as_deref() {
+        Some(resource) => parse_normalized_entity_uid(resource, "resource")?,
+        None => anyhow::bail!("resource is required"),
     };
-    let action_id = match action {
-        Some(action) => Some(EntityUid::from_str(action)?),
-        None => None,
+    let action_id = match action.as_deref() {
+        Some(action) => parse_normalized_entity_uid(action, "action")?,
+        None => anyhow::bail!("action is required"),
     };
     let context = match context_json {
         Some(context_json) => Some(cedar_policy::Context::from_json_str(
             context_json,
-            action_id.as_ref().map(|a| (&store.schema, a)),
+            Some((&store.schema, &action_id)),
         )?),
         None => None,
     };
@@ -257,13 +259,11 @@ fn _cedar_is_authorized(
     let errors = response
         .diagnostics()
         .errors()
-        .map(|e| {
-            serde_json::json!({
-                "policy_id": e.id().to_string(),
-                "message": match e {
-                    AuthorizationError::PolicyEvaluationError { error, .. } => error.to_string(),
-                },
-            })
+        .map(|error| match error {
+            AuthorizationError::PolicyEvaluationError(inner) => serde_json::json!({
+                "policy_id": inner.policy_id().to_string(),
+                "message": inner.inner().to_string(),
+            }),
         })
         .collect::<Vec<_>>()
         .to_owned();
@@ -294,6 +294,91 @@ fn _cedar_is_authorized(
         reasons_json_len,
     };
     Ok(c_response)
+}
+
+fn parse_normalized_entity_uid(value: &str, category: &str) -> anyhow::Result<EntityUid> {
+    let (type_part, id_part) = split_normalized_entity_uid(value).ok_or_else(|| {
+        anyhow::anyhow!("failed to parse {category} '{value}': missing '::\"' boundary")
+    })?;
+
+    anyhow::ensure!(
+        !type_part.is_empty(),
+        "failed to parse {category} '{value}': entity type is empty"
+    );
+
+    let type_name = EntityTypeName::from_str(type_part).map_err(|err| {
+        anyhow::anyhow!(
+            "failed to parse {category} '{value}': invalid type '{type_part}': {err:?}"
+        )
+    })?;
+
+    anyhow::ensure!(
+        id_part.starts_with('"') && id_part.ends_with('"'),
+        "failed to parse {category} '{value}': entity id must be quoted"
+    );
+    let id_body = &id_part[1..id_part.len() - 1];
+    let decoded_id = decode_normalized_entity_id(id_body).map_err(|err| {
+        anyhow::anyhow!(
+            "failed to parse {category} '{value}': invalid entity id escape: {err}"
+        )
+    })?;
+    let entity_id = EntityId::from_str(&decoded_id).expect("EntityId::from_str is infallible");
+
+    Ok(EntityUid::from_type_name_and_id(type_name, entity_id))
+}
+
+fn decode_normalized_entity_id(input: &str) -> anyhow::Result<String> {
+    let mut output = String::with_capacity(input.len());
+    let mut chars = input.chars().peekable();
+    while let Some(ch) = chars.next() {
+        if ch != '\\' {
+            output.push(ch);
+            continue;
+        }
+
+        let next = chars.next().ok_or_else(|| anyhow::anyhow!("dangling escape"))?;
+        match next {
+            '0' => output.push('\0'),
+            't' => output.push('\t'),
+            'n' => output.push('\n'),
+            'r' => output.push('\r'),
+            '\\' => output.push('\\'),
+            '"' => output.push('"'),
+            '\'' => output.push('\''),
+            'u' => {
+                anyhow::ensure!(
+                    matches!(chars.next(), Some('{')),
+                    "missing '{{' in unicode escape"
+                );
+                let mut hex = String::new();
+                while let Some(&c) = chars.peek() {
+                    if c == '}' {
+                        chars.next();
+                        break;
+                    }
+                    hex.push(c);
+                    chars.next();
+                }
+                anyhow::ensure!(!hex.is_empty(), "empty unicode escape");
+                let code_point = u32::from_str_radix(&hex, 16)
+                    .map_err(|err| anyhow::anyhow!("invalid unicode escape: {err}"))?;
+                let decoded = char::from_u32(code_point)
+                    .ok_or_else(|| anyhow::anyhow!("invalid unicode code point: {code_point}"))?;
+                output.push(decoded);
+            }
+            other => {
+                anyhow::bail!("unsupported escape sequence \\{other}");
+            }
+        }
+    }
+    Ok(output)
+}
+
+fn split_normalized_entity_uid(value: &str) -> Option<(&str, &str)> {
+    let boundary = value.find("::\"")?;
+    let type_part = &value[..boundary];
+    let id_part = &value[boundary + 2..];
+    Some((type_part, id_part))
 }
 
 /// Initializes the Cedar policy engine with the given C configuration.

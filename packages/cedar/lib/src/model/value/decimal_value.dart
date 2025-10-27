@@ -1,16 +1,21 @@
 part of '../value.dart';
 
+/// Cedar value that represents a fixed-scale decimal number.
 final class DecimalValue extends Value {
+  /// Creates a [DecimalValue] from a parsed [Decimal] and optional literal.
   DecimalValue(this.value, {this.literal});
 
+  /// Parses a Cedar `decimal` extension JSON string into a [DecimalValue].
   factory DecimalValue.fromJson(String json) {
     return DecimalValue.parse(json);
   }
 
+  /// Constructs a [DecimalValue] from the protobuf wire format.
   factory DecimalValue.fromProto(pb.DecimalValue decimalValue) {
     return DecimalValue.parse(decimalValue.value);
   }
 
+  /// Parses the given Cedar decimal literal into a [DecimalValue].
   factory DecimalValue.parse(String literal) {
     return DecimalValue(_parseDecimal(literal), literal: literal);
   }
@@ -40,6 +45,7 @@ final class DecimalValue extends Value {
   }
 }
 
+/// Parses a Cedar decimal literal, ensuring it fits within Cedar's range.
 Decimal _parseDecimal(String literal) {
   if (literal.isEmpty) {
     _decimalError('empty string');
@@ -85,12 +91,13 @@ Decimal _parseDecimal(String literal) {
   return Decimal.parse(literal);
 }
 
+/// Throws a formatted [ArgumentError] for decimal parsing failures.
 Never _decimalError(String message) {
   throw ArgumentError('error parsing decimal value: $message');
 }
 
 const int _kDecimalScale = 4;
 final BigInt _kDecimalScaleFactor = BigInt.from(10).pow(_kDecimalScale);
-final BigInt _kMaxDecimalScaled = BigInt.from(9223372036854775807);
-final BigInt _kMinDecimalScaled = BigInt.from(-9223372036854775808);
+final BigInt _kMaxDecimalScaled = BigInt.parse('9223372036854775807');
+final BigInt _kMinDecimalScaled = BigInt.parse('-9223372036854775808');
 final RegExp _decimalDigits = RegExp(r'^\d+$');

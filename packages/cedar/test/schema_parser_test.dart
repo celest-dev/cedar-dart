@@ -99,6 +99,31 @@ namespace HR {
       expect(() => schema.validate(), returnsNormally);
     });
 
+    test('parses entity tags clause', () {
+      const schemaSource = r'''
+entity Foo tags {
+  decimal: __cedar::decimal,
+};
+''';
+
+      final schema = CedarSchema.parse(schemaSource);
+      final json = schema.toJson();
+      expect(json[''], isNotNull);
+      final entity =
+          (json[''] as Map<String, Object?>)['entityTypes']
+              as Map<String, Object?>;
+      expect(entity['Foo'], isNotNull);
+      final tags =
+          (entity['Foo']! as Map<String, Object?>)['tags']
+              as Map<String, Object?>;
+      expect(tags, {
+        'type': 'Record',
+        'attributes': {
+          'decimal': {'type': 'Extension', 'name': 'decimal'},
+        },
+      });
+    });
+
     test('throws on unknown references during parse', () {
       const schemaSource = 'entity Foo = { bar: Missing };';
       expect(
@@ -175,6 +200,49 @@ namespace HR {
           ),
         ),
       );
+    });
+  });
+
+  group('CedarSchema.toJson', () {
+    test('normalizes entity UIDs on request', () {
+      const rawActionId = '\u0005';
+      const normalizedActionId = r'\u{5}';
+
+      final schema = CedarSchema.fromJson({
+        '': {
+          'actions': {
+            rawActionId: {
+              'memberOf': [
+                {'type': 'Action', 'id': rawActionId},
+              ],
+            },
+          },
+        },
+      });
+
+      final defaultActions =
+          (schema.toJson()['']! as Map<String, Object?>)['actions']!
+              as Map<String, Object?>;
+      final defaultMemberOf =
+          (defaultActions[rawActionId]! as Map<String, Object?>)['memberOf']!
+              as List<Object?>;
+      expect(defaultMemberOf.first, {'type': 'Action', 'id': rawActionId});
+
+      final normalizedActions =
+          (schema.toJson(normalizedUids: true)['']!
+                  as Map<String, Object?>)['actions']!
+              as Map<String, Object?>;
+      expect(normalizedActions.containsKey(rawActionId), isFalse);
+      expect(normalizedActions.containsKey(normalizedActionId), isTrue);
+
+      final normalizedMemberOf =
+          (normalizedActions[normalizedActionId]!
+                  as Map<String, Object?>)['memberOf']!
+              as List<Object?>;
+      expect(normalizedMemberOf.first, {
+        'type': 'Action',
+        'id': normalizedActionId,
+      });
     });
   });
 }

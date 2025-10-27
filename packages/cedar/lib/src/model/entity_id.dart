@@ -63,24 +63,10 @@ final class EntityUid implements Component {
   /// for more information.
   EntityUid get normalized => EntityUid(
     type,
-    String.fromCharCodes(
-          id.runes.expand((char) {
-            return switch (char) {
-              0 => '\\0'.codeUnits,
-              0x9 => '\\t'.codeUnits,
-              0xa => '\\n'.codeUnits,
-              0xd => '\\r'.codeUnits,
-              0x22 => '\\"'.codeUnits,
-              0x27 => "\\'".codeUnits,
-              < 0x20 ||
-              0x7f || // Delete
-              0x96 || // Non-breaking space
-              > 0xffff => '\\u{${char.toRadixString(16)}}'.codeUnits,
-              _ => [char],
-            };
-          }),
-        )
-        as EntityId,
+    EntityId(
+      (StringBuffer()..writeAll(id.runes.map(_normalizeEntityIdRune)))
+          .toString(),
+    ),
   );
 
   @override
@@ -102,3 +88,47 @@ final class EntityUid implements Component {
   @override
   int get hashCode => Object.hash(type, id);
 }
+
+String _normalizeEntityIdRune(int rune) {
+  switch (rune) {
+    case 0:
+      return r'\0';
+    case 0x9:
+      return r'\t';
+    case 0xa:
+      return r'\n';
+    case 0xd:
+      return r'\r';
+    case 0x22:
+      return r'\"';
+    case 0x27:
+      return r"\'";
+    case 0x5c:
+      return r'\\';
+    default:
+      return _isPrintableEntityRune(rune)
+          ? String.fromCharCode(rune)
+          : '\\u{${rune.toRadixString(16)}}';
+  }
+}
+
+bool _isPrintableEntityRune(int rune) {
+  if (rune < 0x20 || rune == 0x7f) {
+    return false;
+  }
+  final scalar = String.fromCharCode(rune);
+  if (_entityOtherCategory.hasMatch(scalar)) {
+    return false;
+  }
+  if (_entityMarkCategory.hasMatch(scalar)) {
+    return false;
+  }
+  if (_entitySeparatorCategory.hasMatch(scalar)) {
+    return rune == 0x20;
+  }
+  return true;
+}
+
+final RegExp _entityOtherCategory = RegExp(r'^\p{C}$', unicode: true);
+final RegExp _entityMarkCategory = RegExp(r'^\p{M}$', unicode: true);
+final RegExp _entitySeparatorCategory = RegExp(r'^\p{Z}$', unicode: true);

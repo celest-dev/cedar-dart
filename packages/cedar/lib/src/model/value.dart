@@ -133,7 +133,12 @@ Value _valueFromExtensionJson(Map<String, Object?> extn) {
       if (base is! DatetimeValue || duration is! DurationValue) {
         throw FormatException('Invalid offset arguments: ${extn['args']}');
       }
-      return base.offset(duration);
+      final DatetimeValue computed = base.offset(duration);
+      return DatetimeValue(
+        computed.milliseconds,
+        literal: computed.literal,
+        repr: DatetimeExtensionRepr(fn: fn, args: List.unmodifiable(args)),
+      );
     case 'durationSince':
       final args = _parseExtensionArgs(extn, fn, expectedLength: 2);
       final lhs = args[0];
@@ -150,7 +155,12 @@ Value _valueFromExtensionJson(Map<String, Object?> extn) {
       if (datetime is! DatetimeValue) {
         throw FormatException('Invalid toDate arguments: ${extn['args']}');
       }
-      return datetime.toDate();
+      final DatetimeValue computed = datetime.toDate();
+      return DatetimeValue(
+        computed.milliseconds,
+        literal: computed.literal,
+        repr: DatetimeExtensionRepr(fn: fn, args: List.unmodifiable(args)),
+      );
     case 'toTime':
       final args = _parseExtensionArgs(extn, fn, expectedLength: 1);
       final datetime = args.first;

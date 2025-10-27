@@ -132,6 +132,8 @@ enum OpBuiltin implements Op {
   };
 }
 
+enum ExtensionCallJsonForm { positional, singleArgObject, multiArgsObject }
+
 sealed class Expr {
   const Expr();
 
@@ -194,13 +196,63 @@ sealed class Expr {
       ),
       OpBuiltin.set => ExprSet.fromJson(value as List<Object?>),
       OpBuiltin.record => ExprRecord.fromJson(value as Map<String, Object?>),
-      final OpExtension op => ExprExtensionCall(
-        fn: op.name,
-        args: (value as List<Object?>)
-            .map((el) => Expr.fromJson(el as Map<String, Object?>))
-            .toList(),
-      ),
+      final OpExtension op => _extensionCallFromJson(op.name, value),
     };
+  }
+
+  static List<Expr> _extensionArgsFromList(String fn, List<Object?> json) {
+    return json.map((element) {
+      if (element is! Map<String, Object?>) {
+        throw FormatException(
+          'Invalid extension call argument for $fn: $element',
+        );
+      }
+      return Expr.fromJson(element);
+    }).toList();
+  }
+
+  static (List<Expr>, ExtensionCallJsonForm) _extensionArgsFromJson(
+    String fn,
+    Object? json,
+  ) {
+    if (json is List<Object?>) {
+      return (
+        _extensionArgsFromList(fn, json),
+        ExtensionCallJsonForm.positional,
+      );
+    }
+    if (json is Map<String, Object?>) {
+      if (json.containsKey('arg')) {
+        final singleArg = json['arg'];
+        if (singleArg is! Map<String, Object?>) {
+          throw FormatException(
+            'Invalid extension call argument for $fn: $singleArg',
+          );
+        }
+        return (
+          [Expr.fromJson(singleArg)],
+          ExtensionCallJsonForm.singleArgObject,
+        );
+      }
+      if (json.containsKey('args')) {
+        final multiArgs = json['args'];
+        if (multiArgs is! List<Object?>) {
+          throw FormatException(
+            'Invalid extension call arguments for $fn: $multiArgs',
+          );
+        }
+        return (
+          _extensionArgsFromList(fn, multiArgs),
+          ExtensionCallJsonForm.multiArgsObject,
+        );
+      }
+    }
+    throw FormatException('Invalid extension call arguments for $fn: $json');
+  }
+
+  static ExprExtensionCall _extensionCallFromJson(String fn, Object? json) {
+    final (args, form) = _extensionArgsFromJson(fn, json);
+    return ExprExtensionCall(fn: fn, args: args, jsonForm: form);
   }
 
   factory Expr.fromProto(pb.Expr proto) {
@@ -343,12 +395,13 @@ sealed class Expr {
   const factory Expr.extensionCall({
     required String fn,
     required List<Expr> args,
+    ExtensionCallJsonForm jsonForm,
   }) = ExprExtensionCall;
 
-  operator +(Expr rhs) => add(rhs);
-  operator -(Expr rhs) => subtract(rhs);
-  operator *(Expr rhs) => multiply(rhs);
-  operator -() => negate();
+  Expr operator +(Expr rhs) => add(rhs);
+  Expr operator -(Expr rhs) => subtract(rhs);
+  Expr operator *(Expr rhs) => multiply(rhs);
+  Expr operator -() => negate();
 
   Op get op;
 
@@ -366,7 +419,11 @@ sealed class Expr {
 }
 
 final class ExprExtensionCall extends Expr {
-  const ExprExtensionCall({required this.fn, required this.args});
+  const ExprExtensionCall({
+    required this.fn,
+    required this.args,
+    this.jsonForm = ExtensionCallJsonForm.positional,
+  });
 
   factory ExprExtensionCall.fromProto(pb.ExprExtensionCall proto) {
     return ExprExtensionCall(
@@ -377,6 +434,7 @@ final class ExprExtensionCall extends Expr {
 
   final String fn;
   final List<Expr> args;
+  final ExtensionCallJsonForm jsonForm;
 
   @override
   OpExtension get op => OpExtension(fn);
@@ -389,8 +447,14 @@ final class ExprExtensionCall extends Expr {
       visitor.visitExtensionCall(this, arg);
 
   @override
-  List<Map<String, Object?>> valueToJson() =>
-      args.map((arg) => arg.toJson()).toList();
+  Object? valueToJson() {
+    final positionalJson = args.map((arg) => arg.toJson()).toList();
+    return switch (jsonForm) {
+      ExtensionCallJsonForm.positional => positionalJson,
+      ExtensionCallJsonForm.singleArgObject => {'arg': positionalJson.first},
+      ExtensionCallJsonForm.multiArgsObject => {'args': positionalJson},
+    };
+  }
 
   @override
   pb.Expr toProto() => pb.Expr(
@@ -405,10 +469,11 @@ final class ExprExtensionCall extends Expr {
       identical(this, other) ||
       other is ExprExtensionCall &&
           fn == other.fn &&
+          jsonForm == other.jsonForm &&
           const ListEquality<Expr>().equals(args, other.args);
 
   @override
-  int get hashCode => Object.hashAll([fn, ...args]);
+  int get hashCode => Object.hashAll([fn, jsonForm, ...args]);
 
   @override
   String toString() => '$fn(${args.join(', ')})';
@@ -1349,7 +1414,7 @@ final class ExprGetTag extends Expr {
   factory ExprGetTag.fromJson(Map<String, Object?> json) {
     return ExprGetTag(
       left: Expr.fromJson(json['left'] as Map<String, Object?>),
-      tag: Expr.fromJson(json['tag'] as Map<String, Object?>),
+      tag: Expr.fromJson(json['right'] as Map<String, Object?>),
     );
   }
 
@@ -1381,7 +1446,7 @@ final class ExprGetTag extends Expr {
   @override
   Map<String, Object?> valueToJson() => {
     'left': left.toJson(),
-    'tag': tag.toJson(),
+    'right': tag.toJson(),
   };
 
   @override
@@ -1402,7 +1467,7 @@ final class ExprHasTag extends Expr {
   factory ExprHasTag.fromJson(Map<String, Object?> json) {
     return ExprHasTag(
       left: Expr.fromJson(json['left'] as Map<String, Object?>),
-      tag: Expr.fromJson(json['tag'] as Map<String, Object?>),
+      tag: Expr.fromJson(json['right'] as Map<String, Object?>),
     );
   }
 
@@ -1434,7 +1499,7 @@ final class ExprHasTag extends Expr {
   @override
   Map<String, Object?> valueToJson() => {
     'left': left.toJson(),
-    'tag': tag.toJson(),
+    'right': tag.toJson(),
   };
 
   @override
@@ -1453,9 +1518,20 @@ final class ExprLike extends Expr {
   const ExprLike({required this.left, required this.pattern});
 
   factory ExprLike.fromJson(Map<String, Object?> json) {
+    CedarPattern parsePattern(Object? raw) {
+      if (raw is String) {
+        return CedarPattern.parse(raw);
+      }
+      if (raw is List) {
+        final components = List<Object?>.from(raw);
+        return CedarPattern.from(components, jsonForm: components);
+      }
+      throw FormatException('Invalid pattern value: $raw');
+    }
+
     return ExprLike(
       left: Expr.fromJson(json['left'] as Map<String, Object?>),
-      pattern: CedarPattern.parse(json['pattern'] as String),
+      pattern: parsePattern(json['pattern']),
     );
   }
 
@@ -1487,7 +1563,7 @@ final class ExprLike extends Expr {
   @override
   Map<String, Object?> valueToJson() => {
     'left': left.toJson(),
-    'pattern': pattern.toString(),
+    'pattern': pattern.toJson(),
   };
 
   @override

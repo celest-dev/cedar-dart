@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:ffi';
+import 'dart:io';
 
 import 'package:cedar/cedar.dart';
 import 'package:cedar_ffi/src/ffi/cedar_bindings.ffi.dart' as bindings;
@@ -13,9 +14,17 @@ final class CedarEngine implements CedarAuthorizer, Finalizable {
     required CedarSchema schema,
     List<Entity>? entities,
     PolicySet? policySet,
-    CedarLogLevel logLevel = CedarLogLevel.off,
+    CedarLogLevel? logLevel,
     @visibleForTesting bool validate = true,
   }) {
+    logLevel ??= switch (Platform.environment['CEDAR_LOG_LEVEL']
+        ?.toLowerCase()) {
+      final level? => CedarLogLevel.values.firstWhere(
+        (e) => e.name == level,
+        orElse: () => CedarLogLevel.off,
+      ),
+      null => CedarLogLevel.off,
+    };
     final storeRef = using((arena) {
       final config = arena<bindings.CCedarConfig>();
       config.ref
@@ -35,7 +44,7 @@ final class CedarEngine implements CedarAuthorizer, Finalizable {
           null => nullptr,
         }
         ..validate = validate
-        ..log_level = logLevel.name.toNativeUtf8(allocator: arena).cast();
+        ..log_level = logLevel!.name.toNativeUtf8(allocator: arena).cast();
       final initResult = bindings.cedar_init(config);
       if (initResult.error != nullptr) {
         throw StateError(
@@ -76,30 +85,21 @@ final class CedarEngine implements CedarAuthorizer, Finalizable {
     return using((arena) {
       final query = arena<bindings.CCedarQuery>();
       query.ref
-        ..principal_str = switch (request.principal) {
-          final principal? =>
-            principal.normalized
-                .toString()
-                .toNativeUtf8(allocator: arena)
-                .cast(),
-          null => nullptr,
-        }
-        ..resource_str = switch (request.resource) {
-          final resource? =>
-            resource.normalized
-                .toString()
-                .toNativeUtf8(allocator: arena)
-                .cast(),
-          null => nullptr,
-        }
-        ..action_str = switch (request.action) {
-          final action? =>
-            action.normalized.toString().toNativeUtf8(allocator: arena).cast(),
-          null => nullptr,
-        }
+        ..principal_str = request.principal.normalized
+            .toString()
+            .toNativeUtf8(allocator: arena)
+            .cast()
+        ..resource_str = request.resource.normalized
+            .toString()
+            .toNativeUtf8(allocator: arena)
+            .cast()
+        ..action_str = request.action.normalized
+            .toString()
+            .toNativeUtf8(allocator: arena)
+            .cast()
         ..context_json = switch (request.context) {
           final context? => jsonEncode(
-            context,
+            context.map((key, value) => MapEntry(key, value.toJson())),
           ).toNativeUtf8(allocator: arena).cast(),
           null => nullptr,
         }
@@ -138,15 +138,20 @@ final class CedarEngine implements CedarAuthorizer, Finalizable {
               true => Decision.allow,
               false => Decision.deny,
             },
-            reasons: reasons_json == nullptr
-                ? const []
-                : (jsonDecode(
-                            reasons_json.cast<Utf8>().toDartString(
-                              length: reasons_json_len,
-                            ),
-                          )
-                          as List)
-                      .cast<String>(),
+            reasons: () {
+              final reasons = reasons_json == nullptr
+                  ? const []
+                  : (jsonDecode(
+                              reasons_json.cast<Utf8>().toDartString(
+                                length: reasons_json_len,
+                              ),
+                            )
+                            as List)
+                        .cast<String>();
+              return reasons
+                  .map((it) => AuthorizationReason(policyId: it))
+                  .toList();
+            }(),
             errors: errors_json == nullptr
                 ? const []
                 : () {

@@ -23,7 +23,7 @@ sealed class PolicyConstraint {
   Expr toExpr();
   Expr toVariableExpr(CedarVariable variable);
 
-  Map<String, Object?> toJson();
+  Map<String, Object?> toJson({bool normalizedUids = false});
 }
 
 sealed class PrincipalConstraint implements PolicyConstraint {
@@ -218,7 +218,9 @@ abstract mixin class PolicyConstraintAll implements PolicyConstraint {
       const ExprValue(Value.bool(true));
 
   @override
-  Map<String, Object?> toJson() => const {'op': 'All'};
+  Map<String, Object?> toJson({bool normalizedUids = false}) => const {
+    'op': 'All',
+  };
 
   @override
   bool operator ==(Object other) {
@@ -242,12 +244,16 @@ abstract mixin class PolicyConstraintEquals implements PolicyConstraint {
       ExprVariable(variable).equals(entity.toExpr());
 
   @override
-  Map<String, Object?> toJson() => switch (entity) {
-    final SlotId slotId => {'op': '==', 'slot': slotId.toJson()},
-    final EntityUid uid ||
-    EntityValue(:final uid) ||
-    Entity(:final uid) => {'op': '==', 'entity': uid.toJson()},
-  };
+  Map<String, Object?> toJson({bool normalizedUids = false}) =>
+      switch (entity) {
+        final SlotId slotId => {'op': '==', 'slot': slotId.toJson()},
+        final EntityUid uid ||
+        EntityValue(:final uid) ||
+        Entity(:final uid) => {
+          'op': '==',
+          'entity': (normalizedUids ? uid.normalized : uid).toJson(),
+        },
+      };
 
   @override
   bool operator ==(Object other) {
@@ -271,12 +277,16 @@ abstract mixin class PolicyConstraintIn implements PolicyConstraint {
       ExprVariable(variable).in_(entity.toExpr());
 
   @override
-  Map<String, Object?> toJson() => switch (entity) {
-    final SlotId slotId => {'op': 'in', 'slot': slotId.toJson()},
-    final EntityUid uid ||
-    EntityValue(:final uid) ||
-    Entity(:final uid) => {'op': 'in', 'entity': uid.toJson()},
-  };
+  Map<String, Object?> toJson({bool normalizedUids = false}) =>
+      switch (entity) {
+        final SlotId slotId => {'op': 'in', 'slot': slotId.toJson()},
+        final EntityUid uid ||
+        EntityValue(:final uid) ||
+        Entity(:final uid) => {
+          'op': 'in',
+          'entity': (normalizedUids ? uid.normalized : uid).toJson(),
+        },
+      };
 
   @override
   bool operator ==(Object other) {
@@ -300,7 +310,10 @@ abstract mixin class PolicyConstraintIs implements PolicyConstraint {
       ExprVariable(variable).is_(entityType);
 
   @override
-  Map<String, Object?> toJson() => {'op': 'is', 'entity_type': entityType};
+  Map<String, Object?> toJson({bool normalizedUids = false}) => {
+    'op': 'is',
+    'entity_type': entityType,
+  };
 
   @override
   bool operator ==(Object other) {
@@ -325,14 +338,14 @@ abstract mixin class PolicyConstraintIsIn implements PolicyConstraint {
       ExprVariable(variable).isIn(entityType, entity.toExpr());
 
   @override
-  Map<String, Object?> toJson() => {
+  Map<String, Object?> toJson({bool normalizedUids = false}) => {
     'op': 'is',
     'entity_type': entityType,
     'in': switch (entity) {
       final SlotId slotId => {'slot': slotId.toJson()},
-      final EntityUid uid ||
-      EntityValue(:final uid) ||
-      Entity(:final uid) => {'entity': uid.toJson()},
+      final EntityUid uid || EntityValue(:final uid) || Entity(:final uid) => {
+        'entity': (normalizedUids ? uid.normalized : uid).toJson(),
+      },
     },
   };
 
@@ -361,9 +374,11 @@ abstract mixin class PolicyConstraintInSet implements PolicyConstraint {
   ).in_(ExprSet(entities.map((e) => e.toExpr()).toList()));
 
   @override
-  Map<String, Object?> toJson() => {
+  Map<String, Object?> toJson({bool normalizedUids = false}) => {
     'op': 'in',
-    'entities': entities.map((e) => e.toJson()).toList(),
+    'entities': entities
+        .map((e) => (normalizedUids ? e.normalized : e).toJson())
+        .toList(),
   };
 
   @override

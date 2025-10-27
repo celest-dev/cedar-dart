@@ -1,0 +1,13 @@
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: file_names, unnecessary_string_escapes
+
+import 'dart:convert';
+
+import 'package:cedar_tests/src/corpus_types.dart';
+
+CedarTest load() {
+  const String rawJson =
+      '{"name":"74711ea2b4a72b9974c7d407833c80e4d4ff2634","schema_json":{"":{"entityTypes":{"N":{},"u":{},"v":{},"y33330010000000":{}},"actions":{"action":{"memberOf":null,"appliesTo":{"principalTypes":["N"],"resourceTypes":["v"],"context":{"type":"Record","attributes":{"r":{"type":"String","required":false}}}}}}}},"policies_cedar":"permit(\\n  principal in N::\\"\\",\\n  action,\\n  resource\\n) when {\\n  true\\n};\\n","should_validate":true,"entities_json":[{"uid":{"type":"Action","id":"action"},"attrs":{},"parents":[]},{"uid":{"type":"y33330010000000","id":""},"attrs":{},"parents":[]},{"uid":{"type":"u","id":""},"attrs":{},"parents":[]},{"uid":{"type":"N","id":""},"attrs":{},"parents":[]},{"uid":{"type":"v","id":""},"attrs":{},"parents":[]}],"queries":[{"desc":"Request 0","principal":{"type":"N","id":""},"resource":{"type":"v","id":""},"action":{"type":"Action","id":"action"},"context":{"r":""},"decision":"Allow","reasons":["policy0"],"errors":[]},{"desc":"Request 1","principal":{"type":"N","id":""},"resource":{"type":"v","id":""},"action":{"type":"Action","id":"action"},"context":{"r":""},"decision":"Allow","reasons":["policy0"],"errors":[]},{"desc":"Request 2","principal":{"type":"N","id":""},"resource":{"type":"v","id":""},"action":{"type":"Action","id":"action"},"context":{"r":""},"decision":"Allow","reasons":["policy0"],"errors":[]},{"desc":"Request 3","principal":{"type":"N","id":""},"resource":{"type":"v","id":""},"action":{"type":"Action","id":"action"},"context":{"r":""},"decision":"Allow","reasons":["policy0"],"errors":[]},{"desc":"Request 4","principal":{"type":"N","id":""},"resource":{"type":"v","id":""},"action":{"type":"Action","id":"action"},"context":{"r":"sh"},"decision":"Allow","reasons":["policy0"],"errors":[]},{"desc":"Request 5","principal":{"type":"N","id":""},"resource":{"type":"v","id":""},"action":{"type":"Action","id":"action"},"context":{"r":""},"decision":"Allow","reasons":["policy0"],"errors":[]},{"desc":"Request 6","principal":{"type":"N","id":""},"resource":{"type":"v","id":""},"action":{"type":"Action","id":"action"},"context":{"r":""},"decision":"Allow","reasons":["policy0"],"errors":[]},{"desc":"Request 7","principal":{"type":"N","id":""},"resource":{"type":"v","id":""},"action":{"type":"Action","id":"action"},"context":{"r":"\\u0019err"},"decision":"Allow","reasons":["policy0"],"errors":[]}]}';
+  final Map<String, Object?> data = jsonDecode(rawJson) as Map<String, Object?>;
+  return CedarTest.fromJson(data);
+}

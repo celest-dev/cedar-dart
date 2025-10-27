@@ -30,7 +30,7 @@ void main() {
               '__entity': {'type': 'User', 'id': 'alice'},
             },
           },
-          'tag': {'Value': 'department'},
+          'right': {'Value': 'department'},
         },
       };
 

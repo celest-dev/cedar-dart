@@ -3,7 +3,7 @@ An example of using `package:cedar_ffi` to evaluate authorization decisions.
 To run the example:
 
 ```sh
-$ dart --enable-experiment=native-assets run bin/example.dart
+$ dart run bin/example.dart
 ```
 
 You should see the following output:

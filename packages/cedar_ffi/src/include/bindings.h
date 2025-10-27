@@ -137,19 +137,19 @@ typedef struct CCedarQuery {
   /**
    * The principal to check authorization for, in entity UID format.
    *
-   * Can be `null` to indicate an anonymous principal.
+   * Must not be `null`.
    */
   const char *principal_str;
   /**
    * The resource to check authorization for, in entity UID format.
    *
-   * Can be `null` to indicate an anonymous resource.
+   * Must not be `null`.
    */
   const char *resource_str;
   /**
    * The action to check authorization for, in entity UID format.
    *
-   * Can be `null` to indicate an anonymous action.
+   * Must not be `null`.
    */
   const char *action_str;
   /**

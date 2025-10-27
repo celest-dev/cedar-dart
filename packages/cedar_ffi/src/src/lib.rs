@@ -49,9 +49,9 @@ impl CedarStore {
     /// Performs a Cedar authorization check.
     pub fn is_authorized(
         &self,
-        principal: Option<EntityUid>,
-        resource: Option<EntityUid>,
-        action: Option<EntityUid>,
+        principal: EntityUid,
+        resource: EntityUid,
+        action: EntityUid,
         context: Option<Context>,
         policies: Option<&PolicySet>,
         entities: Option<&Entities>,
@@ -68,7 +68,7 @@ impl CedarStore {
             principal,
             resource,
             action,
-            context,
+            context.as_ref(),
             self.should_validate,
             self.schema,
         );
@@ -76,7 +76,7 @@ impl CedarStore {
             principal,
             action,
             resource,
-            context.unwrap_or(Context::empty()),
+            context.unwrap_or_else(Context::empty),
             Some(&self.schema),
         )?;
         let response = self.authorizer.is_authorized(

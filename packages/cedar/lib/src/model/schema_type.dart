@@ -187,7 +187,6 @@ final class CedarRecordType extends CedarTypeDefinition {
   });
 
   final Map<String, CedarType> attributes;
-  // TODO: What is this used for?
   final bool? additionalAttributes;
 
   @override

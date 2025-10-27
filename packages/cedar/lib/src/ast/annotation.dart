@@ -17,8 +17,8 @@ final class Annotations with IterableMixin<Annotation> {
 
   final Map<String, String> annotations;
 
-  operator [](String key) => annotations[key];
-  operator []=(String key, String value) => annotations[key] = value;
+  String? operator [](String key) => annotations[key];
+  void operator []=(String key, String value) => annotations[key] = value;
 
   void add(Annotation annotation) {
     annotations[annotation.key] = annotation.value;

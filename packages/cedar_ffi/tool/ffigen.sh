@@ -2,4 +2,4 @@
 
 set -e
 
-dart --enable-experiment=native-assets run ffigen --config ffigen.yaml
+dart run ffigen --config ffigen.yaml

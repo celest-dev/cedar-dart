@@ -1,5 +1,8 @@
 part of '../value.dart';
 
+// Utilities for representing Cedar `datetime` values and converting between
+// extension JSON, internal `Int64` timestamps, and ISO-8601 text.
+
 const int _kMillisPerSecond = 1000;
 const int _kMillisPerMinute = 60 * _kMillisPerSecond;
 const int _kMillisPerHour = 60 * _kMillisPerMinute;
@@ -8,10 +11,27 @@ final Int64 _kMinInt64 = Int64.MIN_VALUE;
 final Int64 _kMaxInt64 = Int64.MAX_VALUE;
 final int _kMinInt64AsInt = _kMinInt64.toInt();
 final int _kMaxInt64AsInt = _kMaxInt64.toInt();
+final BigInt _kMillisPerSecondBigInt = BigInt.from(_kMillisPerSecond);
+final BigInt _kMillisPerMinuteBigInt = BigInt.from(_kMillisPerMinute);
+final BigInt _kMillisPerHourBigInt = BigInt.from(_kMillisPerHour);
+final BigInt _kMillisPerDayBigInt = BigInt.from(_kMillisPerDay);
+final BigInt _k400BigInt = BigInt.from(400);
+final BigInt _k365BigInt = BigInt.from(365);
+final BigInt _k1460BigInt = BigInt.from(1460);
+final BigInt _k36524BigInt = BigInt.from(36524);
+final BigInt _k146096BigInt = BigInt.from(146096);
+final BigInt _k5BigInt = BigInt.from(5);
+final BigInt _k153BigInt = BigInt.from(153);
 
+/// Cedar value that models an instant in time as milliseconds from Unix epoch.
 final class DatetimeValue extends Value {
-  const DatetimeValue(this.milliseconds, {this.literal});
+  const DatetimeValue(
+    this.milliseconds, {
+    this.literal,
+    DatetimeExtensionRepr? repr,
+  }) : _repr = repr;
 
+  /// Parses an ISO-8601 `datetime` extension literal into a [DatetimeValue].
   factory DatetimeValue.parse(String literal) {
     final int epochMillis = _parseDatetime(literal);
     return DatetimeValue(_intToInt64(epochMillis), literal: literal);
@@ -19,13 +39,15 @@ final class DatetimeValue extends Value {
 
   final Int64 milliseconds;
   final String? literal;
+  final DatetimeExtensionRepr? _repr;
 
-  String toIso8601String() => literal ?? _formatIso8601(milliseconds);
+  /// Returns this instant formatted as an ISO-8601 UTC timestamp.
+  String toIso8601String() => _formatIso8601(milliseconds);
 
+  /// Returns a new [DatetimeValue] offset by the supplied duration.
   DatetimeValue offset(DurationValue duration) {
     final BigInt result =
-        BigInt.from(milliseconds.toInt()) +
-        BigInt.from(duration.milliseconds.toInt());
+        milliseconds.toBigInt() + duration.milliseconds.toBigInt();
     if (!_bigIntWithinInt64(result)) {
       throw ArgumentError(
         'overflows when adding an offset: ${asExtensionLiteral()}+(${duration.asExtensionLiteral()})',
@@ -34,10 +56,10 @@ final class DatetimeValue extends Value {
     return DatetimeValue(_intToInt64(result.toInt()));
   }
 
+  /// Calculates the duration between this value and [other].
   DurationValue durationSince(DatetimeValue other) {
     final BigInt result =
-        BigInt.from(milliseconds.toInt()) -
-        BigInt.from(other.milliseconds.toInt());
+        milliseconds.toBigInt() - other.milliseconds.toBigInt();
     if (!_bigIntWithinInt64(result)) {
       throw ArgumentError(
         'overflows when computing the duration between ${asExtensionLiteral()} and ${other.asExtensionLiteral()}',
@@ -46,6 +68,7 @@ final class DatetimeValue extends Value {
     return DurationValue(_intToInt64(result.toInt()));
   }
 
+  /// Truncates this instant to midnight UTC, returning only the date portion.
   DatetimeValue toDate() {
     final int epoch = milliseconds.toInt();
     final int result;
@@ -69,17 +92,25 @@ final class DatetimeValue extends Value {
     return DatetimeValue(_intToInt64(result));
   }
 
+  /// Returns the time-of-day component as a [DurationValue].
   DurationValue toTime() {
     final int epoch = milliseconds.toInt();
     final int remainder = epoch % _kMillisPerDay;
     return DurationValue(_intToInt64(remainder));
   }
 
+  /// Returns the Cedar extension literal representation of this value.
   String asExtensionLiteral() => 'datetime("${toIso8601String()}")';
 
   @override
-  Map<String, Object?> toJson() => {
-    '__extn': {'fn': 'datetime', 'arg': toIso8601String()},
+  Map<String, Object?> toJson() => switch (_repr) {
+    final DatetimeExtensionRepr repr? => repr.toJson(),
+    null => {
+      '__extn': {
+        'fn': 'datetime',
+        'arg': literal ?? _formatIso8601(milliseconds),
+      },
+    },
   };
 
   @override
@@ -112,6 +143,7 @@ Int64 _intToInt64(int value) {
 bool _isWithinInt64(int value) =>
     value >= _kMinInt64AsInt && value <= _kMaxInt64AsInt;
 
+/// Parses a Cedar `datetime` literal as milliseconds since the Unix epoch.
 int _parseDatetime(String input) {
   final int length = input.length;
   if (length < 10) {
@@ -252,10 +284,12 @@ void _datetimeUnexpectedChar(String input, int index) {
   _datetimeError('unexpected character ${_quoteRune(rune)}');
 }
 
+/// Throws a formatted [ArgumentError] for datetime parsing failures.
 Never _datetimeError(String message) {
   throw ArgumentError('error parsing datetime value: $message');
 }
 
+/// Reads four ASCII digits and interprets them as an integer.
 int _parseFourDigits(String input, int start, String errorMessage) {
   final int a = input.codeUnitAt(start);
   final int b = input.codeUnitAt(start + 1);
@@ -267,6 +301,7 @@ int _parseFourDigits(String input, int start, String errorMessage) {
   return (a - 0x30) * 1000 + (b - 0x30) * 100 + (c - 0x30) * 10 + (d - 0x30);
 }
 
+/// Reads two ASCII digits and interprets them as an integer.
 int _parseTwoDigits(String input, int start, String errorMessage) {
   final int a = input.codeUnitAt(start);
   final int b = input.codeUnitAt(start + 1);
@@ -276,6 +311,7 @@ int _parseTwoDigits(String input, int start, String errorMessage) {
   return (a - 0x30) * 10 + (b - 0x30);
 }
 
+/// Reads three ASCII digits and interprets them as an integer.
 int _parseThreeDigits(String input, int start, String errorMessage) {
   final int a = input.codeUnitAt(start);
   final int b = input.codeUnitAt(start + 1);
@@ -288,6 +324,7 @@ int _parseThreeDigits(String input, int start, String errorMessage) {
 
 bool _isDigit(int codeUnit) => codeUnit >= 0x30 && codeUnit <= 0x39;
 
+/// Renders an ASCII rune for inclusion inside an error message.
 String _quoteRune(int codeUnit) {
   switch (codeUnit) {
     case 0x08:
@@ -314,17 +351,117 @@ String _quoteRune(int codeUnit) {
   return "'${String.fromCharCode(codeUnit)}'";
 }
 
+/// Formats the provided `milliseconds` as an ISO-8601 UTC timestamp.
 String _formatIso8601(Int64 milliseconds) {
-  final DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(
-    milliseconds.toInt(),
-    isUtc: true,
-  );
-  final String year = dateTime.year.toString().padLeft(4, '0');
-  final String month = dateTime.month.toString().padLeft(2, '0');
-  final String day = dateTime.day.toString().padLeft(2, '0');
-  final String hour = dateTime.hour.toString().padLeft(2, '0');
-  final String minute = dateTime.minute.toString().padLeft(2, '0');
-  final String second = dateTime.second.toString().padLeft(2, '0');
-  final String millisecond = dateTime.millisecond.toString().padLeft(3, '0');
-  return '$year-$month-${day}T$hour:$minute:$second.${millisecond}Z';
+  final BigInt ms = milliseconds.toBigInt();
+
+  var days = ms ~/ _kMillisPerDayBigInt;
+  var millisOfDay = ms - days * _kMillisPerDayBigInt;
+  if (millisOfDay.isNegative) {
+    // Adjust for negative timestamps to keep the remainder within [0, day).
+    millisOfDay += _kMillisPerDayBigInt;
+    days -= BigInt.one;
+  }
+
+  final _CivilDate date = _civilFromDays(days);
+
+  final int hour = (millisOfDay ~/ _kMillisPerHourBigInt).toInt();
+  millisOfDay %= _kMillisPerHourBigInt;
+  final int minute = (millisOfDay ~/ _kMillisPerMinuteBigInt).toInt();
+  millisOfDay %= _kMillisPerMinuteBigInt;
+  final int second = (millisOfDay ~/ _kMillisPerSecondBigInt).toInt();
+  millisOfDay %= _kMillisPerSecondBigInt;
+  final int millisecond = millisOfDay.toInt();
+
+  final String year = _formatIsoYear(date.year);
+  final String month = date.month.toString().padLeft(2, '0');
+  final String day = date.day.toString().padLeft(2, '0');
+  final String hourStr = hour.toString().padLeft(2, '0');
+  final String minuteStr = minute.toString().padLeft(2, '0');
+  final String secondStr = second.toString().padLeft(2, '0');
+  final String millisecondStr = millisecond.toString().padLeft(3, '0');
+  return '$year-$month-${day}T$hourStr:$minuteStr:$secondStr.${millisecondStr}Z';
+}
+
+/// Formats a potentially extended-range year with the required sign prefix.
+String _formatIsoYear(BigInt year) {
+  final bool isNegative = year.isNegative;
+  final BigInt absYear = year.abs();
+  final String digits = absYear.toString();
+  if (absYear <= BigInt.from(9999)) {
+    final String padded = digits.padLeft(4, '0');
+    return isNegative ? '-$padded' : padded;
+  }
+  if (isNegative) {
+    return '-$digits';
+  }
+  return '+$digits';
+}
+
+/// Converts a day count since the Unix epoch to a proleptic Gregorian date.
+_CivilDate _civilFromDays(BigInt days) {
+  const int offset = 719468;
+  const int eraLength = 146097;
+  final BigInt bigOffset = BigInt.from(offset);
+  final BigInt eraLen = BigInt.from(eraLength);
+
+  // Based on Howard Hinnant's civil-from-days algorithm, extended to BigInt.
+  final BigInt z = days + bigOffset;
+  final BigInt era = z.isNegative
+      ? (z - (eraLen - BigInt.one)) ~/ eraLen
+      : z ~/ eraLen;
+  final BigInt doe = z - era * eraLen; // day-of-era [0, 146096]
+  final BigInt yoe =
+      (doe -
+          doe ~/ _k1460BigInt +
+          doe ~/ _k36524BigInt -
+          doe ~/ _k146096BigInt) ~/
+      _k365BigInt;
+  BigInt year = yoe + era * _k400BigInt;
+  final BigInt doy =
+      doe -
+      (_k365BigInt * yoe + yoe ~/ BigInt.from(4) - yoe ~/ BigInt.from(100));
+  final BigInt mp = (_k5BigInt * doy + BigInt.from(2)) ~/ _k153BigInt;
+  final BigInt dayCalc =
+      doy - (_k153BigInt * mp + BigInt.from(2)) ~/ _k5BigInt + BigInt.one;
+  final int day = dayCalc.toInt();
+  final int month;
+  if (mp < BigInt.from(10)) {
+    month = (mp + BigInt.from(3)).toInt();
+  } else {
+    month = (mp - BigInt.from(9)).toInt();
+  }
+  if (month <= 2) {
+    year += BigInt.one;
+  }
+  return _CivilDate(year, month, day);
+}
+
+/// Immutable representation of a proleptic Gregorian civil date.
+class _CivilDate {
+  const _CivilDate(this.year, this.month, this.day);
+
+  final BigInt year;
+  final int month;
+  final int day;
+}
+
+/// Retains the original Cedar extension invocation for JSON round-tripping.
+class DatetimeExtensionRepr {
+  const DatetimeExtensionRepr({required this.fn, this.args = const []});
+
+  final String fn;
+  final List<Value> args;
+
+  Map<String, Object?> toJson() => {
+    '__extn': {
+      'fn': fn,
+      if (args.isNotEmpty) 'args': args.map((value) => value.toJson()).toList(),
+    },
+  };
+}
+
+extension on Int64 {
+  /// Converts this Int64 to a BigInt for arithmetic.
+  BigInt toBigInt() => BigInt.from(toInt());
 }

@@ -83,14 +83,22 @@ abstract class PolicySet
   BuiltMap<String, Policy> get templates;
   BuiltList<TemplateLink> get templateLinks;
 
-  Map<String, Object?> toJson() => {
-    'staticPolicies': policies
-        .map((key, value) => MapEntry(key, value.toJson()))
-        .toMap(),
+  Map<String, Object?> toJson({bool normalizedUids = false}) => {
     'templates': templates
-        .map((key, value) => MapEntry(key, value.toJson()))
+        .map(
+          (key, value) =>
+              MapEntry(key, value.toJson(normalizedUids: normalizedUids)),
+        )
         .toMap(),
-    'templateLinks': templateLinks.map((link) => link.toJson()).toList(),
+    'staticPolicies': policies
+        .map(
+          (key, value) =>
+              MapEntry(key, value.toJson(normalizedUids: normalizedUids)),
+        )
+        .toMap(),
+    'templateLinks': templateLinks
+        .map((link) => link.toJson(normalizedUids: normalizedUids))
+        .toList(),
   };
 
   pb.PolicySet toProto() {
@@ -120,9 +128,9 @@ abstract class PolicySet
   AuthorizationResponse isAuthorized(AuthorizationRequest request) {
     final context = EvaluationContext(
       entities: request.entities,
-      principal: request.principal ?? EntityUid.unknown(),
-      action: request.action ?? EntityUid.unknown(),
-      resource: request.resource ?? EntityUid.unknown(),
+      principal: request.principal,
+      action: request.action,
+      resource: request.resource,
       context: RecordValue(request.context ?? const {}),
     );
     final evaluator = Evalutator(context);
@@ -369,10 +377,13 @@ final class TemplateLink {
   final String newId;
   final Map<SlotId, EntityUid> values;
 
-  Map<String, Object?> toJson() => {
+  Map<String, Object?> toJson({bool normalizedUids = false}) => {
     'templateId': templateId,
     'newId': newId,
-    'values': values.map((k, v) => MapEntry(k.toJson(), v.toJson())),
+    'values': values.map(
+      (k, v) =>
+          MapEntry(k.toJson(), (normalizedUids ? v.normalized : v).toJson()),
+    ),
   };
 
   pb.TemplateLink toProto() {

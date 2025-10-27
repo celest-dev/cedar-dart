@@ -13,10 +13,10 @@ final class BoolValue extends Value {
 
   final bool value;
 
-  operator ~() => BoolValue(!value);
-  operator &(BoolValue other) => BoolValue(value && other.value);
-  operator |(BoolValue other) => BoolValue(value || other.value);
-  operator ^(BoolValue other) => BoolValue(value ^ other.value);
+  BoolValue operator ~() => BoolValue(!value);
+  BoolValue operator &(BoolValue other) => BoolValue(value && other.value);
+  BoolValue operator |(BoolValue other) => BoolValue(value || other.value);
+  BoolValue operator ^(BoolValue other) => BoolValue(value ^ other.value);
 
   @override
   bool toJson() => value;

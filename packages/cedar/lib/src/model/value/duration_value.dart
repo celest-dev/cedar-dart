@@ -1,8 +1,10 @@
 part of '../value.dart';
 
+/// Cedar value that represents a span of time measured in milliseconds.
 final class DurationValue extends Value {
   const DurationValue(this.milliseconds, {this.literal});
 
+  /// Parses a Cedar `duration` extension literal into a [DurationValue].
   factory DurationValue.parse(String literal) {
     final int totalMillis = _parseDuration(literal);
     return DurationValue(_intToInt64(totalMillis), literal: literal);
@@ -11,23 +13,33 @@ final class DurationValue extends Value {
   final Int64 milliseconds;
   final String? literal;
 
-  String toCanonicalString() => literal ?? _formatDuration(milliseconds);
+  /// Returns the canonical Cedar string form (e.g. `1h20m`).
+  String toCanonicalString() => _formatDuration(milliseconds);
 
+  /// Exposes the raw milliseconds contained in this duration.
   Int64 toMilliseconds() => milliseconds;
 
+  /// Returns the whole seconds contained in this duration.
   Int64 toSeconds() => _intToInt64(milliseconds.toInt() ~/ _kMillisPerSecond);
 
+  /// Returns the whole minutes contained in this duration.
   Int64 toMinutes() => _intToInt64(milliseconds.toInt() ~/ _kMillisPerMinute);
 
+  /// Returns the whole hours contained in this duration.
   Int64 toHours() => _intToInt64(milliseconds.toInt() ~/ _kMillisPerHour);
 
+  /// Returns the whole days contained in this duration.
   Int64 toDays() => _intToInt64(milliseconds.toInt() ~/ _kMillisPerDay);
 
+  /// Yields the Cedar extension literal for this duration.
   String asExtensionLiteral() => 'duration("${toCanonicalString()}")';
 
   @override
   Map<String, Object?> toJson() => {
-    '__extn': {'fn': 'duration', 'arg': toCanonicalString()},
+    '__extn': {
+      'fn': 'duration',
+      'arg': literal ?? _formatDuration(milliseconds),
+    },
   };
 
   @override
@@ -50,6 +62,7 @@ final class DurationValue extends Value {
   String toString() => asExtensionLiteral();
 }
 
+/// Parses a Cedar `duration` literal into an integer millisecond count.
 int _parseDuration(String input) {
   final int length = input.length;
   if (length <= 1) {
@@ -75,6 +88,7 @@ int _parseDuration(String input) {
   while (index < length && unitIndex < _durationUnits.length) {
     final int codeUnit = input.codeUnitAt(index);
     if (_isDigit(codeUnit)) {
+      // Accumulate the magnitude for the upcoming unit, checking Int64 bounds.
       value = (value * BigInt.from(10)) + BigInt.from(codeUnit - 0x30);
       if (!_bigIntWithinInt64(value)) {
         _durationError('overflow');
@@ -97,6 +111,7 @@ int _parseDuration(String input) {
       if (codeUnit == 0x6D &&
           index + 1 < length &&
           input.codeUnitAt(index + 1) == 0x73) {
+        // Treat "ms" as a single unit and advance past both characters.
         unit = 'ms';
         index++;
       }
@@ -113,6 +128,7 @@ int _parseDuration(String input) {
         _durationError("unexpected unit '$unit'");
       }
 
+      // Aggregate total milliseconds while respecting the Int64 envelope.
       final BigInt addition = value * _durationUnitToMillisBigInt[unit]!;
       total += addition;
       if (!_bigIntWithinInt64(total)) {
@@ -142,6 +158,7 @@ int _parseDuration(String input) {
   return result.toInt();
 }
 
+/// Throws a formatted [ArgumentError] for duration parsing failures.
 Never _durationError(String message) {
   throw ArgumentError('error parsing duration value: $message');
 }
@@ -155,6 +172,7 @@ const Map<String, int> _durationUnitToMillis = {
   'ms': 1,
 };
 
+/// Lookup table for converting recognized duration units to `BigInt` millis.
 final Map<String, BigInt> _durationUnitToMillisBigInt = {
   for (final entry in _durationUnitToMillis.entries)
     entry.key: BigInt.from(entry.value),
@@ -163,9 +181,11 @@ final Map<String, BigInt> _durationUnitToMillisBigInt = {
 final BigInt _kMinInt64BigInt = BigInt.from(_kMinInt64AsInt);
 final BigInt _kMaxInt64BigInt = BigInt.from(_kMaxInt64AsInt);
 
+/// Returns true when [value] fits within the signed 64-bit range.
 bool _bigIntWithinInt64(BigInt value) =>
     value >= _kMinInt64BigInt && value <= _kMaxInt64BigInt;
 
+/// Formats a millisecond duration into the Cedar canonical string encoding.
 String _formatDuration(Int64 milliseconds) {
   final int value = milliseconds.toInt();
   if (value == 0) {
@@ -179,6 +199,7 @@ String _formatDuration(Int64 milliseconds) {
     remaining = -remaining;
   }
 
+  // Decompose from largest to smallest units to follow Cedar's canonical form.
   final int days = remaining ~/ _kMillisPerDay;
   if (days > 0) {
     buffer

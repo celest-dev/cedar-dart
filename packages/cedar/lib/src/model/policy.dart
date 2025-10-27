@@ -202,12 +202,14 @@ final class Policy {
     return res;
   }
 
-  Map<String, Object?> toJson() => {
+  Map<String, Object?> toJson({bool normalizedUids = false}) => {
     'effect': effect.toJson(),
-    'principal': principal.toJson(),
-    'action': action.toJson(),
-    'resource': resource.toJson(),
-    'conditions': conditions.map((c) => c.toJson()).toList(),
+    'principal': principal.toJson(normalizedUids: normalizedUids),
+    'action': action.toJson(normalizedUids: normalizedUids),
+    'resource': resource.toJson(normalizedUids: normalizedUids),
+    'conditions': conditions
+        .map((c) => c.toJson(normalizedUids: normalizedUids))
+        .toList(),
     if (annotations case final annotations?)
       'annotations': annotations.toJson(),
     if (position case final position?) 'position': position.toJson(),
@@ -256,8 +258,6 @@ final class Policy {
     }
     return true;
   }
-  // annotations == other.annotations &&
-  // position == other.position;
 
   @override
   int get hashCode => Object.hashAll([
@@ -336,7 +336,7 @@ final class Condition {
   final ConditionKind kind;
   final Expr body;
 
-  Map<String, Object?> toJson() => {
+  Map<String, Object?> toJson({bool normalizedUids = false}) => {
     'kind': kind.toJson(),
     'body': body.toJson(),
   };

@@ -27,7 +27,6 @@ void main() {
                 .toList(),
             policySet: CedarPolicySetFfi.fromCedar(policiesCedar),
             validate: shouldValidate,
-            logLevel: CedarLogLevel.trace,
           );
           addTearDown(cedar.close);
         });
