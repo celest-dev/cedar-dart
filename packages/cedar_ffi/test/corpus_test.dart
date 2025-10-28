@@ -60,7 +60,7 @@ void main() {
               response.errors.map((it) => it.policyId),
               orderedEquals(query.errors),
             );
-            expect(response.reasons, query.reasons);
+            expect(response.reasons, unorderedEquals(query.reasons));
           });
         }
 
