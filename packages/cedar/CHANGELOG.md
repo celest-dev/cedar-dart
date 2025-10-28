@@ -1,3 +1,15 @@
+## 1.0.0
+
+- chore: Bump Dart SDK constraint to ^3.8.0
+- feat: Implement Cedar V4 parity
+  - Implement IP address extensions
+  - Add datetime and duration extensions
+  - Template linking and diagnostics
+  - Schema parsing and validation
+  - Adds v4 protobuf schemas
+  - Fixes remaining discrepancies in implementation
+  - Updates corpus tests
+
 ## 0.2.6
 
 - chore: Bump Dart SDK constraint to `^3.7.0`

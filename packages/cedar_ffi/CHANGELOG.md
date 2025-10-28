@@ -1,7 +1,8 @@
-## NEXT
+## 1.0.0
 
-- chore: Update native assets dependencies
-- chore: Remove unused dependencies
+- chore: Bump Dart SDK constraint to ^3.9.0
+- chore: Update dependencies
+- fix!: Adjust FFI bindings for Cedar 4.7 changes
 
 ## 0.2.1
 
